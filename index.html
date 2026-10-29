@@ -196,8 +196,7 @@ body.casa #dailyBanner { top: calc(var(--hdrh, 56px) + 166px); }
 .ccam { position: absolute; left: 0; top: 0; width: min(100%, 560px); transform-origin: 0 0; transition: transform .9s cubic-bezier(.65,0,.35,1); }
 .ccam:after { content: ""; position: absolute; left: -50%; right: -50%; top: 99.5%; height: 150%; background: linear-gradient(#36241a, #1d130d 30%); opacity: 0; transition: opacity .3s; }
 .zoomed .ccam:after { opacity: 1; }
-.chouse { position: relative; width: 100%; aspect-ratio: 200 / 384; overflow: hidden; cursor: pointer;
-  -webkit-mask-image: radial-gradient(75% 62% at 50% 52%, #000 78%, transparent 100%); mask-image: radial-gradient(75% 62% at 50% 52%, #000 78%, transparent 100%); }
+.chouse { position: relative; width: 100%; aspect-ratio: 200 / 384; overflow: hidden; cursor: pointer; }
 .zoomed .chouse { -webkit-mask-image: none; mask-image: none; }
 .chouse canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
 .chouse canvas[data-l=b] { filter: blur(2.2px) saturate(1.15); transform: scale(1.03); }
@@ -280,6 +279,28 @@ body.casa #realBanner { display: none !important; }
 
 .chouse .vign { background: none; }
 .zoomed .chouse .vign { background: radial-gradient(130% 90% at 50% 40%, transparent 60%, #05061a99 100%); }
+/* cartello del resoconto nell'orto */
+.csignw { position: absolute; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 4px 6px 5px; min-width: 74px; cursor: pointer;
+  background: linear-gradient(#8a5a32, #6b4423); border: 2px solid #3b220f; border-radius: 3px; box-shadow: inset 0 1px 0 #b07a48, inset 0 -2px 0 #4d2e15, 0 4px 10px #0008; color: #fff3d6; transform: translateY(-100%); transition: opacity .4s; }
+.csignw:after { content: ""; position: absolute; left: 50%; top: 100%; width: 4px; height: 12px; margin-left: -2px; background: #4d2e15; }
+.csignw .pix { font-size: 8px; color: #f5deb3; }
+.csignw b { font: 600 13px var(--mono); text-shadow: 1px 1px 0 #2b1608; }
+.csignw b.pos { color: #a7f3a0; } .csignw b.neg { color: #ffb4a8; } .csignw b.mut { color: #fff3d6; }
+.csignw small { font: 500 9px var(--sans); color: #f5deb3; }
+.zoomed .csignw { opacity: 0; pointer-events: none; }
+.wkbox { background: #0b1029; border: 1px solid #2c3566; border-radius: 3px; padding: 10px; margin-bottom: 10px; }
+body:not(.casa) .wkbox { background: var(--card); border-color: var(--line2); border-radius: 8px; }
+.wkbox.real { border-color: #8a6a2a; }
+.wkt { font-size: 10px; color: #a9a3c4; }
+.wkbox.real .wkt { color: #f5c96a; }
+.wkbig { font: 700 22px var(--mono); margin: 2px 0 4px; }
+.wkrow { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12.5px; margin-bottom: 4px; }
+.srvpos { font-size: 12.5px; padding: 6px 0; border-bottom: 1px solid #2c3566; }
+.csignw.low { transform: none; }
+.csignw.low:after { top: auto; bottom: 100%; height: 10px; }
+.csignw b { font-size: 12px; }
+.cbody #weekPanel > .ph h2, .cbody #srvPanel > .ph h2 { display: none; }
+.csignw.low { min-width: 64px; padding: 3px 5px 4px; } .csignw.low small { font-size: 8px; }
 
 </style>
 </head>
@@ -313,6 +334,21 @@ body.casa #realBanner { display: none !important; }
         </div>
       </div>
       <div class="runchecks" id="runChecks"></div>
+    </section>
+
+    <section class="panel hidden" id="srvPanel">
+      <div class="ph"><h2>Bot vero · sul server</h2><span class="note" id="srvNet"></span></div>
+      <div class="stats">
+        <div class="stat"><div class="lbl">Conto vero</div><div class="val" id="srvEq" style="color:#F5C96A">—</div></div>
+        <div class="stat"><div class="lbl">Oggi (chiuse)</div><div class="val" id="srvDay">—</div></div>
+        <div class="stat"><div class="lbl">Settimana (chiuse)</div><div class="val" id="srvWeek">—</div></div>
+        <div class="stat"><div class="lbl">Posizioni aperte</div><div class="val" id="srvOpenN">—</div></div>
+      </div>
+      <div id="srvPos" style="margin-top:10px"></div>
+      <div class="ph" style="margin-top:12px"><h2>Operazioni vere (ultimi 30 giorni)</h2><span class="note" id="srvTot"></span></div>
+      <div class="tbl"><table><thead><tr><th>Quando</th><th>Moneta</th><th>Cosa</th><th>Prezzo</th><th>Risultato</th></tr></thead><tbody id="srvHist"></tbody></table></div>
+      <div class="note" id="srvNoHist">Nessuna operazione negli ultimi 30 giorni.</div>
+      <div class="note" style="margin-top:8px">Dati letti da Hyperliquid. Il bot vero si accende, si spegne e si regola da Telegram (/stato, /avvia, /ferma, /rischio). Il TEST FREE resta nella sala giochi.</div>
     </section>
 
     <section class="panel sim" id="simPanel">
@@ -364,6 +400,11 @@ body.casa #realBanner { display: none !important; }
         <tbody id="histBody"></tbody>
       </table></div>
       <div class="note" id="noHist">Ancora nessuna operazione chiusa.</div>
+    </section>
+
+    <section class="panel" id="weekPanel">
+      <div class="ph"><h2>Resoconto settimanale</h2><span class="note" id="weekRange"></span></div>
+      <div id="weekBody"></div>
     </section>
   </div>
 
@@ -1611,8 +1652,8 @@ function drawHouse(g, t, st) {
   R(g, ops.x + 40, ops.y + 46, 90, 6, "#3b2a1e"); R(g, ops.x + 42, ops.y + 52, 4, 20, "#2d2017"); R(g, ops.x + 124, ops.y + 52, 4, 20, "#2d2017");
   R(g, ops.x + 60, ops.y + 41, 30, 5, "#1f2937"); for (let i = 0; i < 6; i++) R(g, ops.x + 62 + i * 4, ops.y + 42, 3, 2, i % 2 ? "#60a5fa" : "#94a3b8");
   // grande pulsante AVVIA (rosso = fermo, verde = in funzione)
-  const on = st.running, pulse = (Math.sin(t / 300) + 1) / 2;
-  R(g, ops.x + 100, ops.y + 36, 18, 10, "#2b2b2b"); R(g, ops.x + 102, ops.y + 32 + (on ? 1 : 0), 14, 6, on ? "#22c55e" : "#ef4444"); R(g, ops.x + 104, ops.y + 32 + (on ? 1 : 0), 10, 1, on ? "#86efac" : "#fca5a5");
+  const on = st.running || st.server, pulse = (Math.sin(t / 300) + 1) / 2;
+  R(g, ops.x + 100, ops.y + 36, 18, 10, "#2b2b2b"); R(g, ops.x + 102, ops.y + 32 + (on ? 1 : 0), 14, 6, st.server ? "#f59e0b" : on ? "#22c55e" : "#ef4444"); R(g, ops.x + 104, ops.y + 32 + (on ? 1 : 0), 10, 1, st.server ? "#fde68a" : on ? "#86efac" : "#fca5a5");
   // cassaforte (wallet)
   const sx = ops.x + 136, sy = ops.y + ops.h - 30;
   R(g, sx, sy, 16, 18, "#3f4654"); R(g, sx + 1, sy + 1, 14, 16, "#596273"); R(g, sx + 6, sy + 6, 5, 5, "#cbd5e1"); R(g, sx + 8, sy + 8, 1, 1, "#1f2937"); R(g, sx + 13, sy + 5, 1, 8, "#a3acb9");
@@ -1659,7 +1700,7 @@ function drawLights(g, t, st) {
   glow(g, games.x + 78, games.y + 9, 34, "rgb(236,72,153)", 0.35 + 0.15 * f);
   glow(g, 100, 102, 44, "rgb(255,200,120)", 0.55); glow(g, 100, 174, 60, "rgb(255,200,120)", 0.55);
   for (let k = 0; k < 3; k++) glow(g, ops.x + 58 + k * 26, ops.y + 17, 20, "rgb(74,222,128)", 0.32);
-  glow(g, ops.x + 109, ops.y + 34, 16, st.running ? "rgb(34,197,94)" : "rgb(239,68,68)", 0.55 + 0.25 * f);
+  glow(g, ops.x + 109, ops.y + 34, 16, st.server ? "rgb(245,158,11)" : st.running ? "rgb(34,197,94)" : "rgb(239,68,68)", 0.55 + 0.25 * f);
   for (const x of [lab.x + 59, lab.x + 129]) glow(g, x, lab.y + 10, 40, "rgb(255,150,50)", 0.7 + 0.12 * Math.sin(t / 90 + x));
   glow(g, lab.x + 92, lab.y + 40, 30, "rgb(74,222,128)", 0.18);
   glow(g, 160, 34, 30, "rgb(255,243,207)", 0.25);
@@ -1670,7 +1711,7 @@ function drawLights(g, t, st) {
 function drawFront(g, t) {
   g.clearRect(0, 0, W, H);
   const r = rng(5);
-  for (let i = 0; i < 18; i++) { const x = (i < 9 ? r() * 30 - 8 : W - 22 + r() * 30), h = 10 + r() * 22; g.fillStyle = i % 3 ? "#1f4d2a" : "#2d6a3a"; g.beginPath(); g.ellipse(x, 258 - h / 3, 9, h / 2, 0, 0, 7); g.fill(); }
+  if (!(root.Scene && root.Scene.landOn)) for (let i = 0; i < 18; i++) { const x = (i < 9 ? r() * 30 - 8 : W - 22 + r() * 30), h = 10 + r() * 22; g.fillStyle = i % 3 ? "#1f4d2a" : "#2d6a3a"; g.beginPath(); g.ellipse(x, 258 - h / 3, 9, h / 2, 0, 0, 7); g.fill(); }
   // lucciole
   for (let i = 0; i < 8; i++) { const x = (i * 37 + t / 40) % W, y = 236 + 10 * Math.sin(t / 900 + i * 2); g.fillStyle = `rgba(253,224,71,${0.4 + 0.4 * Math.sin(t / 300 + i)})`; g.fillRect(x | 0, y | 0, 1, 1); }
 }
@@ -1741,7 +1782,7 @@ function drawLand(g, t) {
   // balle di fieno
   for (const x of [20, 32, 26]) { R(g, x, GY - 8, 10, 8, "#c9a24a"); R(g, x, GY - 8, 10, 1, "#e1bf62"); R(g, x + 4, GY - 8, 1, 8, "#a78334"); }
   // trattore rosso che va avanti e indietro nel campo
-  const tp = (Math.sin(t / 6000) + 1) / 2, tx = 166 + tp * 30 | 0, dir = Math.cos(t / 6000) > 0 ? 1 : -1, ty = GY - 15;
+  const tp = (Math.sin(t / 6000) + 1) / 2, tx = 150 + tp * 34 | 0, dir = Math.cos(t / 6000) > 0 ? 1 : -1, ty = GY - 15;
   const bump = Math.floor(t / 150) % 2;
   g.save(); g.translate(tx + 10, 0); g.scale(dir, 1); g.translate(-10, 0);
   R(g, 0, ty + 3 - bump, 14, 6, "#c0392b"); R(g, 9, ty - 4 - bump, 7, 8, "#a93226"); R(g, 10, ty - 3 - bump, 5, 4, "#9fd3ff"); R(g, 2, ty - 1 - bump, 2, 4, "#555"); // corpo, cabina, finestrino, marmitta
@@ -1753,7 +1794,7 @@ function drawLand(g, t) {
   // spaventapasseri
   R(g, 132, GY - 30, 2, 22, "#6b4a33"); R(g, 126, GY - 25, 14, 2, "#6b4a33"); R(g, 129, GY - 33, 8, 6, "#e0c48a"); R(g, 127, GY - 35, 12, 2, "#5b3a24"); R(g, 128, GY - 25, 10, 8, "#3b6fb6");
   // cassetta della posta e sentiero (destra della casa)
-  R(g, 392, GY - 14, 2, 14, "#6b4a33"); R(g, 388, GY - 19, 10, 6, "#2563eb"); R(g, 396, GY - 22, 1, 4, "#ef4444"); R(g, 396, GY - 22, 3, 1, "#ef4444");
+  R(g, 398, GY - 14, 2, 14, "#6b4a33"); R(g, 394, GY - 19, 10, 6, "#2563eb"); R(g, 402, GY - 22, 1, 4, "#ef4444"); R(g, 402, GY - 22, 3, 1, "#ef4444");
   for (let i = 0; i < 10; i++) R(g, 384 + i * 6, GY + 1, 4, 2, "#c9b08a");
   // laghetto con riflessi
   g.fillStyle = "#1e3a6e"; g.beginPath(); g.ellipse(430, GY + 3, 22, 3, 0, 0, 7); g.fill();
@@ -1765,7 +1806,7 @@ function drawLand(g, t) {
   const tree = (x, h, c1, c2) => { R(g, x - 1, GY - h / 3, 3, h / 3, "#4a3020"); g.fillStyle = c1; g.beginPath(); g.ellipse(x, GY - h / 3 - h / 3, h / 3.2, h / 2.6, 0, 0, 7); g.fill(); g.fillStyle = c2; g.beginPath(); g.ellipse(x - 2, GY - h / 3 - h / 2.5, h / 6, h / 5, 0, 0, 7); g.fill(); };
   const pine = (x, h, c) => { R(g, x, GY - 5, 2, 5, "#4a3020"); g.fillStyle = c; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(x + 1, GY - h + k * h / 4); g.lineTo(x - 7 + k, GY - 4 - (2 - k) * h / 5); g.lineTo(x + 9 - k, GY - 4 - (2 - k) * h / 5); g.fill(); } };
   tree(458, 46, "#2f6b3a", "#4c9a52"); tree(540, 52, "#2a5e35", "#3f8a49"); pine(444, 30, "#235232"); pine(575, 44, "#1f4a2d"); pine(505, 36, "#275a36");
-  tree(30, 40, "#2f6b3a", "#4c9a52"); pine(8, 40, "#1f4a2d"); pine(398, 22, "#2a5e35");
+  tree(30, 40, "#2f6b3a", "#4c9a52"); pine(8, 40, "#1f4a2d"); pine(476, 26, "#2a5e35");
   pine(-40, 46, "#1f4a2d"); tree(-70, 50, "#2a5e35", "#3f8a49"); pine(-88, 36, "#235232"); tree(620, 44, "#2f6b3a", "#4c9a52"); pine(650, 50, "#1f4a2d"); pine(682, 34, "#275a36");
   // fiori nel prato
   for (let i = 0; i < 60; i++) { const x = X0 + r() * LW; if (x > 185 && x < 415) continue; R(g, x, GY - 1 - (r() * 2 | 0), 1, 1, ["#f9a8d4", "#fde68a", "#fff", "#c4b5fd"][i % 4]); }
@@ -1818,6 +1859,7 @@ const TOGGLES = [
   { id: "catchup", t: "Recupero alla riapertura", d: "Aggiorna stop e uscite con le candele perse a pagina chiusa", def: true },
   { id: "sound", t: "Suono a ogni operazione", d: "", def: false },
   { id: "save", t: "Salva nel browser", d: "Conserva conto, posizioni e impostazioni", def: true },
+  { id: "week", t: "Resoconto settimanale", d: "Cartello nell'orto del trattore con il totale della settimana; toccandolo si aprono operazioni aperte, chiuse e le ultime 8 settimane (vero e finto)", def: true },
   { id: "observe", t: "Solo osservazione (bot sul server)", d: "Il telefono mostra conto vero, posizioni e storico ma non manda nessun ordine: li manda CashMkr Server. Basta collegare l'indirizzo del wallet, senza chiave", def: false },
   { id: "real", t: "Soldi veri", d: "Il bot e i pulsanti manuali inviano anche ordini veri al wallet collegato e verificato", def: false },
   { id: "rememberKey", t: "Ricorda la chiave dell'API wallet", d: "Spento: alla riapertura della pagina va reinserita", def: false },
@@ -2201,7 +2243,9 @@ async function refreshWallet(first) {
     const k = todayKey(), D = S.real.day;
     if (D.key !== k) S.real.day = { key: k, startEq: acc.equity, locked: "" };
     if (S.tog.dailyLimit && S.real.day.locked !== k && S.real.day.startEq > 0 && acc.equity < S.real.day.startEq * (1 - S.cfg.daily / 100)) { S.real.day.locked = k; rlog(`Perdita di oggi oltre il ${S.cfg.daily}%: niente nuovi ordini veri fino a domani (UTC).`); }
+    await loadFills();
     if (keyOk() && !S.tog.observe) { W.busy = true; try { await manageReal(); } finally { W.busy = false; } }
+    wkLoad();
   } catch (e) { W.err = e.message; }
   renderWallet();
 }
@@ -2299,6 +2343,32 @@ async function doRealOpen(coin, stratId, side, slPct, tpPct, lev, notionalWanted
     beep(660);
   } catch (e) { rlog(`${coin}: errore nell'invio dell'ordine vero: ${e.message}`); }
 }
+/* ---------- bot vero sul server (Solo osservazione): tutto letto da Hyperliquid ---------- */
+let SRV = { fills: [], at: 0 };
+async function loadFills() {
+  if (!HLC || !S.tog.observe || Date.now() - SRV.at < 60000) return;
+  try { SRV.fills = (await HLC.fills(Date.now() - 30 * 86400000)) || []; SRV.at = Date.now(); } catch (e) {}
+}
+function weekStart() { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); }
+const fillNet = f => (+f.closedPnl || 0) - (+f.fee || 0);
+function renderServer() {
+  const on = S.tog.observe && !!HLC; $("srvPanel").classList.toggle("hidden", !on); if (!on) return;
+  const a = W.acc, F = SRV.fills.slice().sort((x, y) => y.time - x.time);
+  $("srvNet").textContent = (S.wallet.net === "mainnet" ? "MAINNET" : "TESTNET") + " · " + (S.wallet.addr ? S.wallet.addr.slice(0, 6) + "…" + S.wallet.addr.slice(-4) : "");
+  $("srvEq").textContent = a ? usd2(a.equity) : "—";
+  const d0 = new Date(); d0.setHours(0, 0, 0, 0);
+  const sum = t => F.filter(f => f.time >= t).reduce((x, f) => x + fillNet(f), 0), gd = sum(d0.getTime()), gw = sum(weekStart()), g30 = F.reduce((x, f) => x + fillNet(f), 0);
+  const put = (id, v) => { $(id).textContent = (v >= 0 ? "+" : "") + usd2(v); $(id).className = "val " + cls(v); };
+  put("srvDay", gd); put("srvWeek", gw);
+  const ps = a ? Object.entries(a.positions) : [];
+  $("srvOpenN").textContent = ps.length;
+  $("srvPos").innerHTML = ps.map(([c, p]) => { const so = stopOrders(c); return `<div class="note" style="color:var(--text)"><b>${c}</b> ${+p.szi > 0 ? '<b class="pos">LONG</b>' : '<b class="neg">SHORT</b>'} ${Math.abs(+p.szi)} · entrata ${usd(+p.entryPx)} · G/P <b class="${cls(+p.unrealizedPnl)}">${(+p.unrealizedPnl >= 0 ? "+" : "") + usd2(+p.unrealizedPnl)}</b> · stop ${so.length ? so.map(o => usd(+o.triggerPx)).join(", ") : '<b class="neg">nessuno!</b>'}</div>`; }).join("");
+  const closes = F.filter(f => /close/i.test(f.dir || "")), wins = closes.filter(f => fillNet(f) > 0).length;
+  $("srvTot").textContent = F.length ? `30 giorni: ${(g30 >= 0 ? "+" : "") + usd2(g30)} · ${closes.length} chiusure, ${wins} in guadagno` : "";
+  $("srvNoHist").classList.toggle("hidden", F.length > 0);
+  $("srvHist").innerHTML = F.slice(0, 60).map(f => { const cl = /close/i.test(f.dir || ""), n = fillNet(f);
+    return `<tr><td>${dt(f.time)}</td><td><b>${f.coin}</b></td><td>${(f.dir || (f.side === "B" ? "Acquisto" : "Vendita")).replace("Open Long", "Apre LONG").replace("Open Short", "Apre SHORT").replace("Close Long", "Chiude LONG").replace("Close Short", "Chiude SHORT")}</td><td>${usd(+f.px)}</td><td class="${cl ? cls(n) : "mut"}">${cl ? (n >= 0 ? "+" : "") + usd2(n) : "commissione " + usd2(+f.fee || 0)}</td></tr>`; }).join("");
+}
 function renderWallet() {
   const net = S.wallet.net;
   document.querySelectorAll("#netChips .chip").forEach(c => c.classList.toggle("on", c.dataset.net === net));
@@ -2326,6 +2396,7 @@ function renderWallet() {
   $("bWClose").disabled = !(ps.length && keyOk());
   const H = S.real.history;
   if (H.length) { const tot = H.reduce((s, h) => s + (isNaN(h.pnl) ? 0 : h.pnl), 0); $("wOrders").innerHTML += `<br>Operazioni vere chiuse: ${H.length} · totale <b class="${cls(tot)}">${(tot >= 0 ? "+" : "") + usd2(tot)}</b>`; }
+  renderServer();
 }
 
 /* ---------------- avvio / arresto, timer, schermo acceso ---------------- */
@@ -2503,7 +2574,7 @@ function renderManual() {
     + (notional < Core.DEFAULTS.minNotional ? `<br><b class="neg">Sotto l'ordine minimo di 10 $.</b>` : "");
 }
 function renderLog() { $("log").innerHTML = S.log.slice(0, 120).map(l => `<div>${l.replace(/</g, "&lt;")}</div>`).join(""); }
-function renderAll() { renderRun(); renderHeader(); renderAccount(); renderCoins(); renderOpen(); renderHist(); renderStrats(); renderManual(); renderWallet(); drawChart(); }
+function renderAll() { renderRun(); renderHeader(); renderAccount(); renderCoins(); renderOpen(); renderHist(); renderStrats(); renderManual(); renderWallet(); renderServer(); renderWeek(); drawChart(); }
 
 /* grafico */
 const cv = $("chart"), cx = cv.getContext("2d");
@@ -2522,6 +2593,8 @@ function drawChart() {
   let hi = -Infinity, lo = Infinity;
   for (let i = a; i < n; i++) { hi = Math.max(hi, R.h[i]); lo = Math.min(lo, R.l[i]); if (bU && !isNaN(bU(i))) { hi = Math.max(hi, bU(i)); lo = Math.min(lo, bD(i)); } }
   const lines = [];
+  // posizioni vere (Solo osservazione): entrata in oro, stop sull'exchange in rosso
+  if (S.tog.observe && W.acc && W.acc.positions[coin]) { const rp = W.acc.positions[coin]; lines.push([+rp.entryPx, "#F5C96A"]); for (const o of stopOrders(coin)) lines.push([+o.triggerPx, "#F87171"]); }
   for (const p of (S.book ? S.book.positions.filter(p => coinOf(p) === coin) : [])) {
     lines.push([p.entry, "#3B82F6"]); if (p.sl > 0 && p.sl < 1e11) lines.push([p.sl, "#F87171"]); if (p.tp) lines.push([p.tp, "#4ADE80"]); lines.push([p.liq, "#FBBF24"]);
   }
@@ -2550,6 +2623,79 @@ function buildToggles() {
     <label class="sw"><input type="checkbox" data-tog="${t.id}" ${S.tog[t.id] ? "checked" : ""} ${t.locked ? "disabled" : ""}><span></span></label></div>`).join("");
 }
 
+/* ---------------- resoconto settimanale (cartello nell'orto + finestra) ---------------- */
+// Le operazioni vere si leggono dagli eseguiti di Hyperliquid: funzionano anche se gli ordini li manda CashMkr Server.
+const WEEK = 7 * 86400000;
+// lunedì 00:00 (ora del telefono) della settimana che contiene t
+function wkStart(t) { const d = new Date(t); const wd = (d.getDay() + 6) % 7; d.setHours(0, 0, 0, 0); return d.getTime() - wd * 86400000; }
+const dm = t => new Date(t).toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit" });
+const WK = { fills: null, at: 0, busy: false };
+async function wkLoad(force) {
+  if (!HLC || !S.wallet.addr || WK.busy) return;
+  if (!force && WK.at && Date.now() - WK.at < 60000) return;
+  WK.busy = true;
+  try { WK.fills = (await HLC.fills(wkStart(Date.now()) - 7 * WEEK)) || []; WK.at = Date.now(); renderWeek(); }
+  catch (e) {}
+  WK.busy = false;
+}
+// raggruppa gli eseguiti in operazioni: aperture e chiusure per moneta, a distanza di meno di 2 minuti
+function realOps(from, to) {
+  const F = (WK.fills || []).filter(f => +f.time >= from && +f.time < to).sort((a, b) => a.time - b.time);
+  const isClose = f => f.dir ? /^Close|>|Liquidat/i.test(f.dir) : Math.abs(+f.closedPnl || 0) > 0;
+  const group = arr => { const out = []; for (const f of arr) { const g = out.find(o => o.coin === f.coin && Math.abs(f.time - o.last) < 120000); if (g) { g.pnl += (+f.closedPnl || 0) - (+f.fee || 0); g.last = +f.time; g.n++; } else out.push({ coin: f.coin, t: +f.time, last: +f.time, pnl: (+f.closedPnl || 0) - (+f.fee || 0), side: /Short/i.test(f.dir || "") ? -1 : (f.side === "A" ? -1 : 1), dir: f.dir || "", n: 1 }); } return out; };
+  const opens = group(F.filter(f => !isClose(f))), closes = group(F.filter(isClose));
+  const total = F.reduce((s, f) => s + (+f.closedPnl || 0) - (+f.fee || 0), 0);
+  return { opens, closes, total };
+}
+function simOps(from, to) {
+  const H = S.book ? S.book.history : [];
+  const closed = H.filter(h => h.closed >= from && h.closed < to && !h.partial);
+  const opened = new Set(H.filter(h => h.opened >= from && h.opened < to).map(h => h.id));
+  if (S.book) for (const p of S.book.positions) if (p.opened >= from && p.opened < to) opened.add("o" + p.id);
+  const total = H.filter(h => h.closed >= from && h.closed < to).reduce((s, h) => s + h.pnl, 0);
+  return { opened: opened.size, closed, total };
+}
+const signUsd = v => (v >= 0 ? "+" : "") + usd2(v);
+function renderWeek() {
+  const panel = $("weekPanel"); if (!panel) return;
+  panel.classList.toggle("hidden", !S.tog.week);
+  if (!S.tog.week) return;
+  const w0 = wkStart(Date.now()), w1 = w0 + WEEK;
+  $("weekRange").textContent = `lunedì ${dm(w0)} → domenica ${dm(w1 - 1)}`;
+  const hasReal = !!(HLC && W.acc), R = hasReal && WK.fills ? realOps(w0, w1) : null, Sm = simOps(w0, w1);
+  const openNow = hasReal ? Object.entries(W.acc.positions) : [], unreal = openNow.reduce((s, [, p]) => s + (+p.unrealizedPnl || 0), 0);
+  const simOpen = S.book ? S.book.positions : [], simUnreal = simOpen.reduce((s, p) => { const q = M[coinOf(p)].price; return s + (q ? Core.unrealized(p, q) : 0); }, 0);
+  let h = "";
+  if (hasReal) {
+    if (!R) h += `<div class="note">Conto vero: lettura delle operazioni in corso…</div>`;
+    else {
+      const won = R.closes.filter(o => o.pnl > 0).length;
+      h += `<div class="wkbox real"><div class="wkt pix">Conto vero · ${S.wallet.net}</div>
+        <div class="wkbig ${cls(R.total)}">${signUsd(R.total)}</div>
+        <div class="wkrow"><span>Aperte <b>${R.opens.length}</b></span><span>Chiuse <b>${R.closes.length}</b></span><span>Vinte <b class="pos">${won}</b> · perse <b class="neg">${R.closes.length - won}</b></span></div>
+        <div class="note">${openNow.length ? `Ancora aperte: ${openNow.map(([c, p]) => `${c} ${+p.szi > 0 ? "long" : "short"}`).join(", ")} · non realizzato <b class="${cls(unreal)}">${signUsd(unreal)}</b>` : "Nessuna posizione aperta adesso."}</div>
+        ${R.closes.length ? `<div class="tbl"><table><thead><tr><th>Chiusa</th><th>Moneta</th><th>G/P</th></tr></thead><tbody>${R.closes.slice().reverse().map(o => `<tr><td>${dt(o.last)}</td><td><b>${o.coin}</b></td><td class="${cls(o.pnl)}"><b>${signUsd(o.pnl)}</b></td></tr>`).join("")}</tbody></table></div>` : ""}</div>`;
+    }
+  }
+  const sw = Sm.closed.filter(x => x.pnl > 0).length;
+  h += `<div class="wkbox sim"><div class="wkt pix">TEST FREE · soldi finti</div>
+    <div class="wkbig ${cls(Sm.total)}">${eurS(Sm.total)}</div>
+    <div class="wkrow"><span>Aperte <b>${Sm.opened}</b></span><span>Chiuse <b>${Sm.closed.length}</b></span><span>Vinte <b class="pos">${sw}</b> · perse <b class="neg">${Sm.closed.length - sw}</b></span></div>
+    <div class="note">${simOpen.length ? `Ancora aperte: ${simOpen.map(p => `${coinOf(p)} ${p.side > 0 ? "long" : "short"}`).join(", ")} · non realizzato <b class="${cls(simUnreal)}">${eurS(simUnreal)}</b>` : "Nessuna posizione finta aperta."}</div></div>`;
+  // ultime 8 settimane
+  const rows = []; for (let k = 0; k < 8; k++) { const a = w0 - k * WEEK, b = a + WEEK, rr = R ? realOps(a, b) : null, ss = simOps(a, b); rows.push(`<tr><td>${dm(a)}–${dm(b - 1)}${k === 0 ? " <span class='note'>(in corso)</span>" : ""}</td>${hasReal ? `<td class="${rr ? cls(rr.total) : ""}">${rr ? signUsd(rr.total) + ` <span class="note">${rr.closes.length} op</span>` : "—"}</td>` : ""}<td class="${cls(ss.total)}">${eurS(ss.total)} <span class="note">${ss.closed.length} op</span></td></tr>`); }
+  h += `<div class="tbl" style="margin-top:10px"><table><thead><tr><th>Settimana</th>${hasReal ? "<th>Vero</th>" : ""}<th>Finto</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
+  if (!hasReal) h += `<div class="note" style="margin-top:6px">Collega l'indirizzo del wallet nella cassaforte per vedere anche le operazioni vere.</div>`;
+  $("weekBody").innerHTML = h;
+  Casa.sign();
+}
+// riassunto per il cartello nell'orto
+function weekSummary() {
+  const w0 = wkStart(Date.now()), w1 = w0 + WEEK;
+  if (HLC && W.acc && WK.fills) { const r = realOps(w0, w1); return { txt: signUsd(r.total), n: r.closes.length, cls: cls(r.total), lbl: "vero" }; }
+  const s = simOps(w0, w1); return { txt: eurS(s.total), n: s.closed.length, cls: cls(s.total), lbl: "finto" };
+}
+
 /* ---------------- grafica casa HD-2D: casa da lontano, zoom sulle stanze, comandi dentro le stanze ---------------- */
 const Casa = (() => {
   const box = $("casa"), main = document.querySelector("main");
@@ -2567,10 +2713,11 @@ const Casa = (() => {
     coins: ["Le monete", ["coinsPanel", "chartPanel"]],
     manual: ["Joystick · operazione manuale", ["manualPanel", "chartPanel"]],
     lab: ["Laboratorio", ["labPanel"]],
+    week: ["Resoconto settimanale", ["weekPanel"]],
   };
   const MENU = {
     ops: ["Sala operativa · il bot vero", [["run", "Avvia / ferma", "Timer e stato"], ["chart", "Grafico", "Strategie e segnali"], ["wallet", "Wallet", "La cassaforte · soldi veri"], ["risk", "Rischio", "Rischio e posizioni"], ["log", "Diario", "Registro del bot"], ["tog", "Pannello", "Interruttori"]]],
-    games: ["Sala giochi · test free", [["sim", "Conto finto", "Saldo, posizioni e storico"], ["coins", "Cabinati", "Le 4 monete"], ["manual", "Joystick", "Operazione manuale"]]],
+    games: ["Sala giochi · test free", [["sim", "Conto finto", "Saldo, posizioni e storico"], ["coins", "Cabinati", "Le 4 monete"], ["manual", "Joystick", "Operazione manuale"], ["week", "Resoconto", "La settimana, vero e finto"]]],
     lab: ["Laboratorio · prova sul passato", [["lab", "Nuova prova", "Scarica e prova"], ["lab:res", "Risultati", "Ultima prova e mesi"], ["lab:data", "Dati", "Carica CSV o pacchetto"]]],
   };
   const R = Scene.ROOMS, O = R.ops, G = R.games, L = R.lab;
@@ -2583,13 +2730,14 @@ const Casa = (() => {
   const state = () => {
     if (!S.tog.house || !built) return { off: true };
     const sim = {}; if (S.book) for (const p of S.book.positions) sim[coinOf(p)] = p.side > 0 ? "long" : "short";
-    return { running: S.tog.bot, real: realOn(), sim, still: !S.tog.anim };
+    return { running: S.tog.bot, real: realOn() || (S.tog.observe && !!(HLC && W.acc)), server: S.tog.observe && !!HLC, sim, still: !S.tog.anim };
   };
   function build() {
     if (built) return; built = true;
     box.innerHTML = `<div class="cstage" id="cStage"><div class="ccam" id="cCam"><div class="cland" id="cLand"></div><div class="chouse" id="cHouse"></div></div>
       <div class="hudw hl" id="hudL" title="Tocca per passare da conto vero a saldo finto"><div class="pix" id="hudLL">Saldo finto</div><div class="mono blue" id="hudSim">—</div><div class="hsub" id="hudSub"></div></div>
       <div class="hudw hr"><div class="pix" id="hudRunL">Bot</div><div class="mono" id="hudRun">—</div></div>
+      <button class="csignw" id="cWeek" title="Resoconto settimanale"><span class="pix">Settimana</span><b id="cWeekV">—</b><small id="cWeekN"></small></button>
       <button class="cwin cback pix" id="cBack">◂ Casa</button>
       <div class="cwin chint pix" id="cHint">Tocca una stanza</div>
       <div class="cwin csheet" id="cSheet"><button class="cx pix" id="cX" title="Chiudi">✕</button><button class="cup pix hidden" id="cUp">◂ Stanza</button><div class="cttl pix" id="cTitle"></div><div class="cbody" id="cBody"></div></div></div>`;
@@ -2608,7 +2756,8 @@ const Casa = (() => {
     const stg = $("cStage"); stg.addEventListener("scroll", () => { if (stg.scrollTop || stg.scrollLeft) { stg.scrollTop = 0; stg.scrollLeft = 0; } });
     house.addEventListener("room", e => { if (!cur) zoomTo(e.detail); });
     $("hudL").onclick = () => { if (!(HLC && W.acc)) return; S.hud = S.hud === "sim" ? "real" : "sim"; save(); tick(); };
-    $("cBack").onclick = home; $("cX").onclick = () => { if (openW) menu(cur); else home(); };
+    $("cWeek").onclick = e => { e.stopPropagation(); wkLoad(true); open("week"); };
+    $("cBack").onclick = home; $("cX").onclick = () => { if (openW && cur) menu(cur); else home(); };
     $("cUp").onclick = () => menu(cur);
     $("cBody").addEventListener("click", e => { const b = e.target.closest("button[data-w]"); if (b) open(b.dataset.w); });
     window.addEventListener("resize", () => { if (!S.tog.house) return; hdrH(); cur ? zoomTo(cur, true) : home(); });
@@ -2628,10 +2777,19 @@ const Casa = (() => {
     restore(); cur = null; const st = stage(); if (!st) return;
     $("cSheet").classList.remove("open", "tall"); st.classList.remove("zoomed");
     const hh = house().clientHeight, hw = house().clientWidth, sc = Math.min(1, (st.clientHeight - 30) / hh, st.clientWidth / hw) * 0.72;
-    cam().style.transform = `translate(${(st.clientWidth - hw * sc) / 2}px,${(st.clientHeight - hh * sc) / 2 - 6}px) scale(${sc})`;
+    const tx = (st.clientWidth - hw * sc) / 2, ty = (st.clientHeight - hh * sc) / 2 - 6;
+    cam().style.transform = `translate(${tx}px,${ty}px) scale(${sc})`;
+    // cartello nell'orto: sul prato a sinistra della casa, vicino al campo e al trattore
+    const gy = ty + 254 / Scene.H * hh * sc, cw = $("cWeek"); sign();
+    // se a sinistra della casa non c'è spazio (telefono), il cartello sta piantato nell'orto appena sotto il prato
+    const room = tx + 18 / Scene.W * hw * sc;
+    if (room >= cw.offsetWidth + 6) { cw.classList.remove("low"); cw.style.top = Math.round(gy) + "px"; cw.style.left = Math.round(room - cw.offsetWidth - 2) + "px"; }
+    else { cw.classList.add("low"); cw.style.top = Math.round(gy + 10) + "px"; cw.style.left = "4px"; }
   }
   function menu(k) {
-    restore(); const [t, items] = MENU[k]; $("cTitle").textContent = t; $("cUp").classList.add("hidden");
+    if (!k) return home();
+    restore(); let [t, items] = MENU[k];
+    if (k === "ops" && S.tog.observe && HLC) items = items.map(x => x[0] === "run" ? ["run", "Bot vero", "Conto, posizioni e operazioni"] : x); $("cTitle").textContent = t; $("cUp").classList.add("hidden");
     $("cBody").innerHTML = '<div class="copts">' + items.map(([w, a, b]) => `<button data-w="${w}" class="pix">${a}<b>${b}</b></button>`).join("") + "</div>";
     $("cSheet").classList.remove("tall"); $("cSheet").classList.add("open");
   }
@@ -2640,9 +2798,11 @@ const Casa = (() => {
   function open(w) {
     if (w.startsWith("coin:")) { const c = w.slice(5); S.chartCoin = c; save(); renderCoinChips(); renderHeader(); renderManual(); w = "coins"; }
     let scrollTo = null; if (w === "lab:res") { w = "lab"; scrollTo = "labOut"; } if (w === "lab:data") { w = "lab"; scrollTo = "labFile"; }
+    if (w === "week") renderWeek();
     const room = { run: "ops", chart: "ops", wallet: "ops", risk: "ops", log: "ops", tog: "ops", sim: "games", coins: "games", manual: "games", lab: "lab" }[w];
     if (room && cur !== room) zoomTo(room, true);
-    restore(); openW = w; const [title, ids] = WIN[w];
+    restore(); openW = w; let [title, ids] = WIN[w];
+    if (w === "run" && S.tog.observe && HLC) { title = "Bot vero · sul server"; ids = ["srvPanel", "runPanel"]; }
     $("cTitle").textContent = title; $("cUp").classList.remove("hidden");
     const body = $("cBody"); body.innerHTML = "";
     for (const id of ids) { const el = $(id); moved.push([el, el.parentNode, el.nextSibling]); body.appendChild(el); }
@@ -2669,10 +2829,17 @@ const Casa = (() => {
       $("hudLL").textContent = "Saldo finto"; $("hudSim").textContent = $("sEquity").textContent; $("hudSim").className = "mono blue";
       $("hudSub").textContent = hasReal ? "tocca: conto vero" : "";
     }
-    $("hudRun").textContent = S.tog.bot ? $("runTimer").textContent : "fermo"; $("hudRun").className = "mono " + (S.tog.bot ? "pos" : "neg");
-    $("hudRunL").textContent = S.tog.bot ? "In funzione" : "Bot";
+    if (S.tog.observe && HLC) {
+      const n = W.acc ? Object.keys(W.acc.positions).length : 0;
+      $("hudRunL").textContent = "Bot vero · server"; $("hudRun").textContent = W.acc ? (n ? n + (n > 1 ? " posizioni" : " posizione") : "in attesa") : "—"; $("hudRun").className = "mono " + (n ? "gold" : "blue");
+    } else {
+      $("hudRun").textContent = S.tog.bot ? $("runTimer").textContent : "fermo"; $("hudRun").className = "mono " + (S.tog.bot ? "pos" : "neg");
+      $("hudRunL").textContent = S.tog.bot ? "In funzione" : "Bot";
+    }
+    sign();
     // etichette dei cabinati con prezzo e posizione in classifica
     const rk = coinsOn().length ? (() => { try { return ranks(); } catch (e) { return {}; } })() : {};
+    const hr = box.querySelector('.chot[data-win="run"] span'); if (hr) hr.textContent = S.tog.observe && HLC ? "BOT VERO" : "AVVIA / FERMA";
     box.querySelectorAll('.chot[data-win^="coin:"] span').forEach(sp => { const c = sp.parentNode.dataset.win.slice(5), m = M[c]; sp.textContent = c + (m.price ? " " + usd(m.price) : "") + (rk[c] != null && S.coinOn[c] ? " · " + (rk[c] + 1) + "ª" : S.coinOn[c] ? "" : " · spenta"); });
   }
   const hdrH = () => document.documentElement.style.setProperty("--hdrh", document.querySelector(".hdr").offsetHeight + "px");
@@ -2683,7 +2850,13 @@ const Casa = (() => {
     if (on) { build(); hdrH(); requestAnimationFrame(() => { cur ? zoomTo(cur, true) : home(); tick(); }); }
     else { restore(); if (built) { $("cSheet").classList.remove("open", "tall"); stage().classList.remove("zoomed"); } cur = null; drawChart(); }
   }
-  return { apply, open, home, zoomTo, reveal };
+  function sign() {
+    const cw = $("cWeek"); if (!cw) return;
+    cw.classList.toggle("hidden", !S.tog.week);
+    if (!S.tog.week) return;
+    const w = weekSummary(); $("cWeekV").textContent = w.txt; $("cWeekV").className = w.cls; $("cWeekN").textContent = `${w.n} op chiuse · ${w.lbl}`;
+  }
+  return { apply, open, home, zoomTo, reveal, sign };
 })();
 
 /* ---------------- laboratorio (più monete) ---------------- */
@@ -2928,6 +3101,8 @@ function bind() {
     if (id === "steady") for (const k of COINS) M[k].lastBot = 0;
     if (id === "rsTop" && Object.keys(labD).length) showLabData();
     if (id === "house") Casa.apply();
+    if (id === "observe") { SRV.at = 0; refreshWallet(); }
+    if (id === "week") { renderWeek(); Casa.sign(); }
     log(`Interruttore "${TOGGLES.find(t => t.id === id).t}": ${S.tog[id] ? "acceso" : "spento"}.`);
     if (id === "save" && !S.tog.save) { try { localStorage.removeItem(KEY); } catch (_) {} } else save();
     renderAll();
@@ -2993,7 +3168,7 @@ function start() {
     setInterval(async () => { await refreshAll(); processClosed(); }, 20000);
     setInterval(() => { if (needRender) { needRender = false; renderAll(); } else { renderRun(); renderHeader(); renderAccount(); renderOpen(); renderCoins(); } }, 1000);
     setInterval(() => save(), 60000);
-    setInterval(() => { renderStrats(); drawChart(); }, 15000);
+    setInterval(() => { renderStrats(); drawChart(); renderWeek(); }, 15000);
   })();
 }
 $("lockForm").addEventListener("submit", submitLock);
