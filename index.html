@@ -1818,6 +1818,7 @@ const TOGGLES = [
   { id: "catchup", t: "Recupero alla riapertura", d: "Aggiorna stop e uscite con le candele perse a pagina chiusa", def: true },
   { id: "sound", t: "Suono a ogni operazione", d: "", def: false },
   { id: "save", t: "Salva nel browser", d: "Conserva conto, posizioni e impostazioni", def: true },
+  { id: "observe", t: "Solo osservazione (bot sul server)", d: "Il telefono mostra conto vero, posizioni e storico ma non manda nessun ordine: li manda CashMkr Server. Basta collegare l'indirizzo del wallet, senza chiave", def: false },
   { id: "real", t: "Soldi veri", d: "Il bot e i pulsanti manuali inviano anche ordini veri al wallet collegato e verificato", def: false },
   { id: "rememberKey", t: "Ricorda la chiave dell'API wallet", d: "Spento: alla riapertura della pagina va reinserita", def: false },
   { id: "askPw", t: "Password all'apertura", d: "Dati salvati cifrati: senza password l'app non si apre", def: true },
@@ -2161,7 +2162,7 @@ const usd2 = v => (v < 0 ? "−" : "") + "$" + Math.abs(v).toLocaleString("it-IT
 const walletSig = () => S.wallet.net + "|" + S.wallet.addr.toLowerCase() + "|" + (HLC ? HLC.agentAddress().toLowerCase() : "");
 const keyOk = () => !!(HLC && HLC.key && HLC.agentAddress());
 const verified = () => keyOk() && S.wallet.verifiedFor === walletSig();
-const realOn = () => S.tog.real && verified();
+const realOn = () => S.tog.real && verified() && !S.tog.observe;
 function rlog(msg) { log("💶 " + (S.wallet.net === "mainnet" ? "[MAINNET] " : "[TESTNET] ") + msg); }
 // gli ordini veri passano in fila uno alla volta (aperture e chiusure su più monete nello stesso momento)
 let realQ = Promise.resolve();
@@ -2200,7 +2201,7 @@ async function refreshWallet(first) {
     const k = todayKey(), D = S.real.day;
     if (D.key !== k) S.real.day = { key: k, startEq: acc.equity, locked: "" };
     if (S.tog.dailyLimit && S.real.day.locked !== k && S.real.day.startEq > 0 && acc.equity < S.real.day.startEq * (1 - S.cfg.daily / 100)) { S.real.day.locked = k; rlog(`Perdita di oggi oltre il ${S.cfg.daily}%: niente nuovi ordini veri fino a domani (UTC).`); }
-    if (keyOk()) { W.busy = true; try { await manageReal(); } finally { W.busy = false; } }
+    if (keyOk() && !S.tog.observe) { W.busy = true; try { await manageReal(); } finally { W.busy = false; } }
   } catch (e) { W.err = e.message; }
   renderWallet();
 }
@@ -2261,6 +2262,7 @@ async function doRealClose(coin, why) {
   catch (e) { rlog(`${coin}: chiusura non riuscita: ${e.message}`); }
 }
 function realClose(coin, why) {
+  if (S.tog.observe) { rlog(`${coin}: chiusura non inviata, il telefono è in "Solo osservazione" (gli ordini li manda CashMkr Server).`); return Promise.resolve(); }
   if (!keyOk()) return Promise.resolve();
   return enqueue(() => doRealClose(coin, why)).then(() => refreshWallet());
 }
@@ -2306,6 +2308,7 @@ function renderWallet() {
   $("wInfo").classList.toggle("hidden", !HLC);
   const np = $("netPill");
   if (realOn()) { np.className = net === "mainnet" ? "pill real" : "pill warn"; np.textContent = net === "mainnet" ? "MAINNET · SOLDI VERI" : "TESTNET · ordini veri di prova"; }
+  else if (HLC && S.tog.observe) { np.className = "pill ok"; np.textContent = `${net} · solo osservazione`; }
   else if (HLC) { np.className = "pill"; np.textContent = `wallet ${net} · ${verified() ? "verificato" : keyOk() ? "da verificare" : "sola lettura"}`; }
   else np.className = "pill hidden";
   $("realBanner").classList.toggle("hidden", !realOn());
@@ -2317,7 +2320,7 @@ function renderWallet() {
   $("wState").innerHTML = W.err ? `<span class="neg">${W.err}</span>` : realOn() ? '<span class="pos">ordini veri attivi</span>' : verified() ? '<span class="blue">verificato, ordini spenti</span>' : keyOk() ? '<span class="warnc">da verificare</span>' : '<span class="mut">sola lettura</span>';
   const ps = a ? Object.entries(a.positions) : [];
   $("wPos").innerHTML = ps.length ? ps.map(([c, p]) => { const R = S.real.pos[c];
-    return `<div><b>${c}</b>: ${+p.szi > 0 ? '<b class="pos">LONG</b>' : '<b class="neg">SHORT</b>'} ${Math.abs(+p.szi)} ${c} · entrata ${usd(+p.entryPx)} · leva ${p.leverage && p.leverage.value}x · liquidazione ${p.liquidationPx ? usd(+p.liquidationPx) : "—"} · G/P <b class="${cls(+p.unrealizedPnl)}">${usd2(+p.unrealizedPnl)}</b>${R ? ` · gestita dal bot (${stratName(R.strat)}${R.beDone ? ", stop a pareggio" : ""})` : " · <span class='warnc'>non aperta dal bot</span>"}</div>`; }).join("") : "Nessuna posizione sul conto.";
+    return `<div><b>${c}</b>: ${+p.szi > 0 ? '<b class="pos">LONG</b>' : '<b class="neg">SHORT</b>'} ${Math.abs(+p.szi)} ${c} · entrata ${usd(+p.entryPx)} · leva ${p.leverage && p.leverage.value}x · liquidazione ${p.liquidationPx ? usd(+p.liquidationPx) : "—"} · G/P <b class="${cls(+p.unrealizedPnl)}">${usd2(+p.unrealizedPnl)}</b>${R ? ` · gestita dal bot (${stratName(R.strat)}${R.beDone ? ", stop a pareggio" : ""})` : S.tog.observe ? " · <span class='pos'>gestita da CashMkr Server</span>" : " · <span class='warnc'>non aperta dal bot</span>"}</div>`; }).join("") : "Nessuna posizione sul conto.";
   const prot = ps.map(([c]) => { const so = stopOrders(c); return so.length ? `${c}: ` + so.map(o => `${o.orderType || "trigger"} a ${usd(+o.triggerPx)}`).join(", ") : `<span class="neg">${c}: nessuno stop attivo sull'exchange!</span>`; });
   $("wOrders").innerHTML = prot.length ? "Protezioni sull'exchange: " + prot.join(" · ") : "";
   $("bWClose").disabled = !(ps.length && keyOk());
