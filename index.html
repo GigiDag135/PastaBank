@@ -187,8 +187,8 @@ body.casa .hdr .px { font-size: 15px; }
 body.casa #nextBar { display: none; }
 body.casa .hdr .pill { border: 1px solid #33407a; }
 /* avvisi importanti come fumetti sopra la casa */
-body.casa .banner { position: fixed; z-index: 25; left: 10px; right: 10px; margin: 0; top: calc(var(--hdrh, 56px) + 54px); background: #0b1029f2 !important; border: 2px solid var(--gold) !important; border-radius: 6px; box-shadow: 0 6px 18px #000a; font-size: 12.5px; }
-body.casa .banner:after { content: ""; position: absolute; bottom: -8px; left: 50%; border: 7px solid transparent; border-top-color: var(--gold); border-bottom: 0; }
+body.casa .hdr ~ .banner { position: fixed; z-index: 25; left: 10px; right: 10px; margin: 0; top: calc(var(--hdrh, 56px) + 54px); background: #0b1029f2 !important; border: 2px solid var(--gold) !important; border-radius: 6px; box-shadow: 0 6px 18px #000a; font-size: 12.5px; }
+body.casa .hdr ~ .banner:after { content: ""; position: absolute; bottom: -8px; left: 50%; border: 7px solid transparent; border-top-color: var(--gold); border-bottom: 0; }
 body.casa #realBanner { top: calc(var(--hdrh, 56px) + 110px); }
 body.casa #dailyBanner { top: calc(var(--hdrh, 56px) + 166px); }
 .cstage { position: fixed; left: 0; right: 0; bottom: 0; top: var(--hdrh, 56px); overflow: hidden; z-index: 5;
@@ -248,15 +248,25 @@ body.casa .modal .ph h2 { font: 13px "CashPix"; letter-spacing: 1px; color: #d8b
 /* ritocchi grafica casa */
 body.casa .hdr .px, body.casa .hdr .pill.sim { display: none; }
 body.casa .hdr .pill { font-size: 10px; padding: 3px 8px; }
-body.casa .banner { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; padding: 8px 12px; font-size: 11.5px; line-height: 1.35; }
-body.casa .banner .note { display: none; }
-body.casa .banner.hidden { display: none !important; }
+body.casa .hdr ~ .banner { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; padding: 8px 12px; font-size: 11.5px; line-height: 1.35; }
+body.casa .hdr ~ .banner .note { display: none; }
+body.casa .hdr ~ .banner.hidden { display: none !important; }
 body.casa .runbtn { border: 2px solid #5a1010; border-radius: 6px; background: linear-gradient(#22c55e, #15803d); box-shadow: inset 0 2px 0 #86efac, inset 0 -4px 0 #14532d, 0 4px 0 #052e16, 0 0 22px #22c55e77; color: #fff; font: 18px "CashPix"; letter-spacing: 2px; text-shadow: 1px 1px 0 #14532d; border-color: #0f3d22; }
 body.casa .runbtn.stop { border-color: #5a1010; background: linear-gradient(#ef4444, #991b1b); box-shadow: inset 0 2px 0 #fca5a5, inset 0 -4px 0 #7f1d1d, 0 4px 0 #3b0a0a, 0 0 18px #ef444466; text-shadow: 1px 1px 0 #7f1d1d; }
 body.casa .runtimer { color: #e9ffe9; text-shadow: 0 0 10px #22c55e88; }
 body.casa .runstate b { font: 12px "CashPix"; letter-spacing: 1px; }
 .cbody .btn.blue, .cbody .btn.primary { box-shadow: 0 0 12px #3b82f655; }
 body.casa #realBanner { display: none !important; }
+
+/* laboratorio dentro la finestra della casa (telefono) */
+.cbody #lSummary { position: static; display: block; margin: 10px 0 0; -webkit-line-clamp: unset; }
+.cbody .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cbody .stat .val { font-size: 15px; overflow-wrap: anywhere; }
+.cbody .tbl { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.cbody #labCurve { width: 100%; }
+.cstage, .cbody { overscroll-behavior: contain; }
+.cbody table { font-size: 11.5px; }
+.cbody th, .cbody td { padding: 6px 5px; }
 
 </style>
 </head>
@@ -2482,6 +2492,7 @@ const Casa = (() => {
       d.style.cssText = `left:${px(x)}%;top:${pc(y)}%;width:${px(w)}%;height:${pc(h)}%`; d.innerHTML = `<span>${label}</span>`;
       d.onclick = e => { e.stopPropagation(); open(win); }; house.appendChild(d);
     }
+    const stg = $("cStage"); stg.addEventListener("scroll", () => { if (stg.scrollTop || stg.scrollLeft) { stg.scrollTop = 0; stg.scrollLeft = 0; } });
     house.addEventListener("room", e => { if (!cur) zoomTo(e.detail); });
     $("cBack").onclick = home; $("cX").onclick = () => { if (openW) menu(cur); else home(); };
     $("cUp").onclick = () => menu(cur);
@@ -2522,7 +2533,14 @@ const Casa = (() => {
     const body = $("cBody"); body.innerHTML = "";
     for (const id of ids) { const el = $(id); moved.push([el, el.parentNode, el.nextSibling]); body.appendChild(el); }
     $("cSheet").classList.add("open", "tall"); body.scrollTop = 0;
-    setTimeout(() => { drawChart(); if (window.__lastCurve) drawCurve(...window.__lastCurve); if (scrollTo && !$(scrollTo).closest(".hidden")) $(scrollTo).scrollIntoView({ block: "start" }); else if (scrollTo === "labFile") $("labData").scrollIntoView({ block: "center" }); }, 60);
+    setTimeout(() => { drawChart(); if (window.__lastCurve) drawCurve(...window.__lastCurve); if (scrollTo && !$(scrollTo).closest(".hidden")) reveal($(scrollTo)); else if (scrollTo === "labFile") reveal($("labData")); }, 60);
+  }
+  // porta in vista un elemento: dentro la finestra della casa scorre solo la finestra (niente scorrimento della pagina, che su iPhone sposta tutto)
+  function reveal(el) {
+    if (!el) return;
+    const cb = $("cBody");
+    if (S.tog.house && built && cb && cb.contains(el)) { cb.scrollTo({ top: el.getBoundingClientRect().top - cb.getBoundingClientRect().top + cb.scrollTop - 4, behavior: "smooth" }); stage().scrollTop = 0; }
+    else if (!S.tog.house) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   function tick() {
     if (!S.tog.house || !built) return;
@@ -2541,7 +2559,7 @@ const Casa = (() => {
     if (on) { build(); hdrH(); requestAnimationFrame(() => { cur ? zoomTo(cur, true) : home(); tick(); }); }
     else { restore(); if (built) { $("cSheet").classList.remove("open", "tall"); stage().classList.remove("zoomed"); } cur = null; drawChart(); }
   }
-  return { apply, open, home, zoomTo };
+  return { apply, open, home, zoomTo, reveal };
 })();
 
 /* ---------------- laboratorio (più monete) ---------------- */
@@ -2675,7 +2693,7 @@ function runLab() {
     const t0 = performance.now(), r = Core.backtestMulti(data, strats, Object.assign(opts(), { start, fromT, rs: S.tog.rsTop ? Core.RS : null, btcDaily: !data.BTC && labD.BTC ? E.resample(toTyped(labD.BTC.arr), 96).C : null }));
     showLab(r, start, strats, coins, data, performance.now() - t0);
     $("bLabRun").disabled = false; $("bLabRun").textContent = "Rifai la prova sui dati caricati";
-    $("labOut").scrollIntoView({ behavior: "smooth", block: "start" });
+    Casa.reveal($("labOut"));
   }, 30);
 }
 $("bLabRun").onclick = runLab;
@@ -2699,7 +2717,7 @@ function showLab(r, start, strats, coins, data, ms) {
   $("lStrats").innerHTML = strats.map(s => row(s.title, H.filter(h => h.strat === s.id))).join("");
   const gw = wins.reduce((a, h) => a + h.pnl, 0), gl = -loss.reduce((a, h) => a + h.pnl, 0);
   const days = (r.to - r.from) / 86400000, monthly = (Math.pow(fin / start, 30 / Math.max(1, days)) - 1) * 100, yearly = (Math.pow(fin / start, 365 / Math.max(1, days)) - 1) * 100;
-  const on = strats.map(s => s.title + (s.dir === "long" ? " (solo long" : " (long+short") + (s.vol === "low" ? ", vol bassa)" : ")")).join(", "), rk = S.cfg.risk.toLocaleString("it-IT");
+  const on = strats.map(s => s.title + (s.dir === "long" ? " (solo long" : s.dir === "short" ? " (solo short sulla più debole, BTC in discesa" : " (long+short") + (s.vol === "low" ? ", vol bassa)" : ")")).join(", "), rk = S.cfg.risk.toLocaleString("it-IT");
   $("lSummary").innerHTML = `<div><b>Risultato finale: ${eur(start)} → <span class="${cls(fin - start)}">${eur(fin)}</span></b> · guadagno <b class="${cls(fin - start)}">${eurS(fin - start)} (${pct((fin / start - 1) * 100)})</b> in ${Math.round(days)} giorni
     <br>${H.length} operazioni su ${coins.join(", ")}: <span class="pos">${wins.length} vinte</span> e <span class="neg">${loss.length} perse</span> (${H.length ? Math.round(wins.length / H.length * 100) : 0}% vinte) · guadagno medio per operazione ${H.length ? eurS((fin - start) / H.length) : "—"}
     · fattore di profitto ${gl > 0 ? (gw / gl).toFixed(2).replace(".", ",") : "—"} · resa media mensile ${pct(monthly)}${days >= 300 ? " · annua " + pct(yearly) : ""} · discesa massima −${(r.mdd * 100).toFixed(1).replace(".", ",")}%
