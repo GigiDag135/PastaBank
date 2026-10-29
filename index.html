@@ -164,6 +164,17 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
   .panel { padding: 12px; }
 }
 
+/* monete */
+.coins { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 760px) { .coins { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ccard { background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 10px; min-width: 0; }
+.ccard.on { border-color: rgba(59,130,246,.5); }
+.ccard .top { display: flex; align-items: center; gap: 8px; }
+.ccard b.name { font: 700 15px var(--mono); flex: 1; }
+.ccard .cpx { font: 600 15px var(--mono); margin-top: 4px; }
+.ccard .cst { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+#coinChips { margin-right: 6px; }
+
 </style>
 </head>
 <body>
@@ -176,7 +187,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
   <span class="pill" id="botPill">bot</span>
   <span class="pill hidden" id="netPill"></span>
   <span class="sub" id="nextBar"></span>
-  <span class="px" id="price">—</span>
+  <span class="px"><span class="sub" id="priceCoin">BTC</span> <span id="price">—</span></span>
 </header>
 
 <div class="banner bad hidden" id="failBanner"><span class="grow" id="failText"></span><span class="note">Le nuove entrate del bot sono sospese finché i dati non tornano regolari.</span></div>
@@ -206,8 +217,14 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
     </section>
 
     <section class="panel">
+      <div class="ph"><h2>Monete</h2><span class="note">ognuna con il suo interruttore · una posizione per moneta</span></div>
+      <div class="coins" id="coins"></div>
+    </section>
+
+    <section class="panel">
       <div class="ph">
-        <h2>BTC-USD · <span id="tfLabel">2 ore</span></h2>
+        <h2><span id="chartCoinLbl">BTC</span>-USD · <span id="tfLabel">2 ore</span></h2>
+        <div class="chips" id="coinChips"><span class="chip" data-coin="BTC">BTC</span><span class="chip" data-coin="ETH">ETH</span><span class="chip" data-coin="SOL">SOL</span><span class="chip" data-coin="XRP">XRP</span></div>
         <div class="chips" id="tfChips">
           <span class="chip" data-f="1">15m</span><span class="chip" data-f="4">1h</span><span class="chip" data-f="8">2h</span><span class="chip" data-f="16">4h</span><span class="chip" data-f="32">8h</span>
         </div>
@@ -224,7 +241,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
     <section class="panel">
       <div class="ph"><h2>Posizioni aperte</h2></div>
       <div class="tbl"><table>
-        <thead><tr><th>Strategia</th><th>Lato</th><th>Leva</th><th>Margine</th><th>Entrata</th><th>Stop</th><th>Obiettivo</th><th>Liquid.</th><th>G/P</th><th></th></tr></thead>
+        <thead><tr><th>Moneta</th><th>Strategia</th><th>Lato</th><th>Leva</th><th>Margine</th><th>Entrata</th><th>Stop</th><th>Obiettivo</th><th>Liquid.</th><th>G/P</th><th></th></tr></thead>
         <tbody id="openBody"></tbody>
       </table></div>
       <div class="note" id="noOpen">Nessuna posizione aperta.</div>
@@ -233,7 +250,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
     <section class="panel">
       <div class="ph"><h2>Storico operazioni</h2><span class="note" id="histInfo"></span></div>
       <div class="tbl"><table>
-        <thead><tr><th>Chiusa</th><th>Strategia</th><th>Lato</th><th>Leva</th><th>Entrata</th><th>Uscita</th><th>Motivo</th><th>G/P</th></tr></thead>
+        <thead><tr><th>Chiusa</th><th>Moneta</th><th>Strategia</th><th>Lato</th><th>Leva</th><th>Entrata</th><th>Uscita</th><th>Motivo</th><th>G/P</th></tr></thead>
         <tbody id="histBody"></tbody>
       </table></div>
       <div class="note" id="noHist">Ancora nessuna operazione chiusa.</div>
@@ -244,7 +261,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
     <section class="panel">
       <div class="ph"><h2>Rischio</h2></div>
       <div class="row"><label>Rischio per operazione (% del saldo)</label><input type="number" id="cRisk" min="0.1" max="10" step="0.1"></div>
-      <div class="row"><label>Posizioni del bot aperte insieme, al massimo</label><input type="number" id="cMaxPos" min="1" max="6" step="1"></div>
+      <div class="row"><label>Posizioni del bot aperte insieme, al massimo</label><input type="number" id="cMaxPos" min="1" max="4" step="1"></div>
       <div class="row"><label>Leva massima consentita</label><input type="number" id="cMaxLev" min="1" max="40" step="1"></div>
       <div class="row"><label>Perdita massima giornaliera (%)</label><input type="number" id="cDaily" min="1" max="50" step="1"></div>
       <div class="note">La perdita di ogni operazione del bot è limitata dallo stop al rischio scelto; la leva serve solo a impegnare meno margine, e la liquidazione resta sempre più lontana dello stop.</div>
@@ -273,7 +290,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
         </div>
         <div id="wPos" class="note" style="margin-top:10px"></div>
         <div id="wOrders" class="note" style="margin-top:6px"></div>
-        <div class="row"><button class="btn" id="bWClose" disabled>Chiudi la posizione reale</button></div>
+        <div class="row"><button class="btn" id="bWClose" disabled>Chiudi tutte le posizioni reali</button></div>
       </div>
       <details class="note" style="margin-top:8px"><summary>Come ottenere la chiave dell'API wallet</summary>
         <p>1. Apri <b>app.hyperliquid.xyz/API</b> (oppure <b>app.hyperliquid-testnet.xyz/API</b> per la testnet), collega MetaMask, dai un nome e premi <b>Generate</b>, poi <b>Authorize API Wallet</b>.</p>
@@ -285,7 +302,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
     </section>
 
     <section class="panel" id="manualPanel">
-      <div class="ph"><h2>Operazione manuale</h2></div>
+      <div class="ph"><h2>Operazione manuale · <span id="mCoin">BTC</span></h2><span class="note">sulla moneta scelta nel grafico</span></div>
       <div id="manualBody">
         <div class="row"><label>Leva <b id="mLevVal" class="mono" style="color:var(--text)"></b></label><input type="range" id="mLev" min="1" max="40"></div>
         <div class="row"><label>Margine (€)</label><input type="number" id="mMargin" min="1" step="1"></div>
@@ -321,8 +338,8 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
     </div>
     <div class="row">
       <button class="btn" id="bLabRun" disabled>Rifai la prova sui dati caricati</button>
-      <label class="btn" style="flex:none;min-width:0;color:var(--text)">Carica file CSV<input type="file" id="labFile" accept=".csv,text/csv" class="hidden"></label>
-      <span class="note">Usa le strategie accese, il rischio, il limite di posizioni, commissioni e funding attuali.</span>
+      <label class="btn" style="flex:none;min-width:0;color:var(--text)">Carica file CSV<input type="file" id="labFile" accept=".csv,text/csv" multiple class="hidden"></label>
+      <span class="note">Usa le monete e le strategie accese, il rischio, il limite di posizioni, commissioni e funding attuali. Per i file CSV il nome deve iniziare con btc_, eth_, sol_ o xrp_ (si possono caricare più file insieme).</span>
     </div>
     <div id="labOut" class="hidden">
       <div class="banner" id="lSummary" style="margin:10px 0 0;border:1px solid rgba(59,130,246,.45);background:rgba(59,130,246,.08)"></div>
@@ -335,6 +352,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
       <canvas id="labCurve"></canvas>
       <div class="note" id="lCompare" style="margin-top:6px"></div>
       <div class="tbl" style="margin-top:10px"><table><thead><tr><th>Mese</th><th>Operazioni</th><th>G/P del mese</th><th>Saldo a fine mese</th></tr></thead><tbody id="lMonths"></tbody></table></div>
+      <div class="tbl" style="margin-top:10px"><table><thead><tr><th>Moneta</th><th>Operazioni</th><th>Vinte</th><th>G/P</th></tr></thead><tbody id="lCoins"></tbody></table></div>
       <div class="tbl" style="margin-top:10px"><table><thead><tr><th>Strategia</th><th>Operazioni</th><th>Vinte</th><th>G/P</th></tr></thead><tbody id="lStrats"></tbody></table></div>
     </div>
   </section>
@@ -343,7 +361,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
 <div class="modal hidden" id="setup">
   <div class="panel sim">
     <div class="ph"><h2>TEST FREE · capitale finto</h2></div>
-    <p class="note" style="margin-top:0">Scegli quanti euro finti usare. Le operazioni vengono calcolate sul prezzo reale di Bitcoin, come se i soldi fossero veri. La pagina deve restare aperta: quando la chiudi il bot si ferma, e alla riapertura aggiorna le posizioni aperte con le candele perse.</p>
+    <p class="note" style="margin-top:0">Scegli quanti euro finti usare. Le operazioni vengono calcolate sui prezzi reali di BTC, ETH, SOL e XRP, come se i soldi fossero veri. La pagina deve restare aperta: quando la chiudi il bot si ferma, e alla riapertura aggiorna le posizioni aperte con le candele perse.</p>
     <div class="chips" id="capChips">
       <span class="chip" data-c="50">50 €</span><span class="chip on" data-c="100">100 €</span><span class="chip" data-c="150">150 €</span><span class="chip" data-c="200">200 €</span><span class="chip" data-c="500">500 €</span><span class="chip" data-c="1000">1000 €</span>
     </div>
@@ -965,23 +983,25 @@ class Client {
     if (!r.ok) throw new Error("Hyperliquid HTTP " + r.status);
     return r.json();
   }
-  async btc() {
+  // metadati di tutte le monete (indice, decimali, leva massima)
+  async metas() {
     if (this.meta) return this.meta;
-    const [meta, ctxs] = await this.info({ type: "metaAndAssetCtxs" });
-    const i = meta.universe.findIndex(a => a.name === "BTC");
-    if (i < 0) throw new Error("BTC non trovato su " + this.net);
-    this.meta = { asset: i, szDecimals: meta.universe[i].szDecimals, maxLeverage: meta.universe[i].maxLeverage };
-    return this.meta;
+    const [meta] = await this.info({ type: "metaAndAssetCtxs" });
+    const m = {}; meta.universe.forEach((a, i) => { if (!a.isDelisted) m[a.name] = { asset: i, szDecimals: a.szDecimals, maxLeverage: a.maxLeverage }; });
+    this.meta = m; return m;
   }
-  async mid() { const m = await this.info({ type: "allMids" }); const p = parseFloat(m.BTC); if (!(p > 0)) throw new Error("prezzo BTC non disponibile"); return p; }
+  async coinMeta(coin) { const m = (await this.metas())[coin]; if (!m) throw new Error(coin + " non disponibile su " + this.net); return m; }
+  async btc() { return this.coinMeta("BTC"); }
+  async mids() { return this.info({ type: "allMids" }); }
+  async mid(coin) { const m = await this.mids(); const p = parseFloat(m[coin || "BTC"]); if (!(p > 0)) throw new Error("prezzo " + (coin || "BTC") + " non disponibile"); return p; }
   async account() {
     const [perp, spot] = await Promise.all([this.info({ type: "clearinghouseState", user: this.address }), this.info({ type: "spotClearinghouseState", user: this.address }).catch(() => ({}))]);
     const usdc = ((spot && spot.balances) || []).find(b => b.coin === "USDC") || {};
     const spotTot = +(usdc.total || 0), spotHold = +(usdc.hold || 0), perpVal = +((perp.marginSummary || {}).accountValue || 0);
-    const pos = (perp.assetPositions || []).map(a => a.position).find(p => p && p.coin === "BTC" && +p.szi !== 0) || null;
-    return { equity: spotTot + perpVal, available: Math.max(0, spotTot - spotHold) + +(perp.withdrawable || 0), perpValue: perpVal, spot: spotTot, position: pos };
+    const positions = {}; for (const a of perp.assetPositions || []) { const p = a.position; if (p && +p.szi !== 0) positions[p.coin] = p; }
+    return { equity: spotTot + perpVal, available: Math.max(0, spotTot - spotHold) + +(perp.withdrawable || 0), perpValue: perpVal, spot: spotTot, positions, position: positions.BTC || null };
   }
-  async openOrders() { const o = await this.info({ type: "frontendOpenOrders", user: this.address }); return o.filter(x => x.coin === "BTC"); }
+  async openOrders() { return this.info({ type: "frontendOpenOrders", user: this.address }); }
   async fills(since) { return this.info({ type: "userFillsByTime", user: this.address, startTime: Math.floor(since), aggregateByTime: true }); }
   nonce() { const n = Math.max(Date.now(), this.lastNonce + 1); this.lastNonce = n; return n; }
   async exchange(action) {
@@ -992,52 +1012,51 @@ class Client {
     if (j.status !== "ok") throw new Error(typeof j.response === "string" ? j.response : JSON.stringify(j.response || j));
     return (j.response && j.response.data) || {};
   }
-  orderWire(isBuy, px, sz, reduceOnly, type) {
-    const m = this.meta;
+  wire(m, isBuy, px, sz, reduceOnly, type) {
     return { a: m.asset, b: isBuy, p: floatToWire(roundPx(px, m.szDecimals)), s: floatToWire(roundSz(sz, m.szDecimals)), r: reduceOnly, t: type };
   }
-  async setLeverage(lev) { await this.btc(); return this.exchange({ type: "updateLeverage", asset: this.meta.asset, isCross: false, leverage: Math.round(lev) }); }
+  trig(m, px, kind) { return { trigger: { isMarket: true, triggerPx: floatToWire(roundPx(px, m.szDecimals)), tpsl: kind } }; }
+  async setLeverage(coin, lev) { const m = await this.coinMeta(coin); return this.exchange({ type: "updateLeverage", asset: m.asset, isCross: false, leverage: Math.round(lev) }); }
   // Ingresso a mercato (IOC aggressivo) con stop (e obiettivo) inviati nella stessa richiesta
-  async openProtected(isBuy, sz, mid, sl, tp, slippage) {
-    await this.btc(); const m = this.meta;
+  async openProtected(coin, isBuy, sz, mid, sl, tp, slippage) {
+    const m = await this.coinMeta(coin);
     const px = isBuy ? mid * (1 + slippage) : mid * (1 - slippage);
-    const orders = [this.orderWire(isBuy, px, sz, false, { limit: { tif: "Ioc" } })];
-    if (tp) orders.push(this.orderWire(!isBuy, tp, sz, true, { trigger: { isMarket: true, triggerPx: floatToWire(roundPx(tp, m.szDecimals)), tpsl: "tp" } }));
-    orders.push(this.orderWire(!isBuy, sl, sz, true, { trigger: { isMarket: true, triggerPx: floatToWire(roundPx(sl, m.szDecimals)), tpsl: "sl" } }));
+    const orders = [this.wire(m, isBuy, px, sz, false, { limit: { tif: "Ioc" } })];
+    if (tp) orders.push(this.wire(m, !isBuy, tp, sz, true, this.trig(m, tp, "tp")));
+    orders.push(this.wire(m, !isBuy, sl, sz, true, this.trig(m, sl, "sl")));
     const d = await this.exchange({ type: "order", orders, grouping: "normalTpsl" });
     return d.statuses || [];
   }
-  async placeStop(isBuy, sz, px) {
-    await this.btc(); const m = this.meta;
-    const d = await this.exchange({ type: "order", orders: [this.orderWire(isBuy, px, sz, true, { trigger: { isMarket: true, triggerPx: floatToWire(roundPx(px, m.szDecimals)), tpsl: "sl" } })], grouping: "na" });
+  async placeStop(coin, isBuy, sz, px) {
+    const m = await this.coinMeta(coin);
+    const d = await this.exchange({ type: "order", orders: [this.wire(m, isBuy, px, sz, true, this.trig(m, px, "sl"))], grouping: "na" });
     const st = (d.statuses || [])[0] || {}; if (st.error) throw new Error(st.error);
     return st.resting ? st.resting.oid : null;
   }
-  async cancel(oid) { await this.btc(); return this.exchange({ type: "cancel", cancels: [{ a: this.meta.asset, o: oid }] }); }
-  async cancelAllTriggers() { for (const o of await this.openOrders()) if (o.isTrigger && o.reduceOnly) { try { await this.cancel(o.oid); } catch (e) {} } }
-  // Riduce la posizione a mercato di sz BTC (ordine solo-riduzione)
-  async reduceMarket(isBuy, sz, slippage) {
-    await this.btc(); const mid = await this.mid();
+  async cancel(coin, oid) { const m = await this.coinMeta(coin); return this.exchange({ type: "cancel", cancels: [{ a: m.asset, o: oid }] }); }
+  async cancelTriggers(coin) { for (const o of await this.openOrders()) if (o.coin === coin && o.isTrigger && o.reduceOnly) { try { await this.cancel(coin, o.oid); } catch (e) {} } }
+  async reduceMarket(coin, isBuy, sz, slippage) {
+    const m = await this.coinMeta(coin), mid = await this.mid(coin);
     const px = isBuy ? mid * (1 + slippage) : mid * (1 - slippage);
-    const d = await this.exchange({ type: "order", orders: [this.orderWire(isBuy, px, sz, true, { limit: { tif: "Ioc" } })], grouping: "na" });
+    const d = await this.exchange({ type: "order", orders: [this.wire(m, isBuy, px, sz, true, { limit: { tif: "Ioc" } })], grouping: "na" });
     const st = (d.statuses || [])[0] || {}; if (st.error) throw new Error(st.error);
     return st.filled || null;
   }
-  async closeMarket(slippage) {
-    const acc = await this.account(); if (!acc.position) return null;
-    const szi = +acc.position.szi, mid = await this.mid(), isBuy = szi < 0;
+  async closeMarket(coin, slippage) {
+    const acc = await this.account(), p = acc.positions[coin]; if (!p) return null;
+    const szi = +p.szi, m = await this.coinMeta(coin), mid = await this.mid(coin), isBuy = szi < 0;
     const px = isBuy ? mid * (1 + slippage) : mid * (1 - slippage);
-    const d = await this.exchange({ type: "order", orders: [this.orderWire(isBuy, px, Math.abs(szi), true, { limit: { tif: "Ioc" } })], grouping: "na" });
-    await this.cancelAllTriggers();
+    const d = await this.exchange({ type: "order", orders: [this.wire(m, isBuy, px, Math.abs(szi), true, { limit: { tif: "Ioc" } })], grouping: "na" });
+    await this.cancelTriggers(coin);
     return (d.statuses || [])[0] || {};
   }
-  // Verifica: ordine che non può eseguirsi (molto lontano dal prezzo), poi annullato subito
+  // Verifica: ordine BTC che non può eseguirsi (molto lontano dal prezzo), poi annullato subito
   async verify() {
-    await this.btc(); const mid = await this.mid(), m = this.meta;
+    const m = await this.coinMeta("BTC"), mid = await this.mid("BTC");
     const px = roundPx(mid * 0.5, m.szDecimals), sz = Math.max(roundSz(11 / px, m.szDecimals) + 10 ** -m.szDecimals, 10 ** -m.szDecimals);
-    const d = await this.exchange({ type: "order", orders: [this.orderWire(true, px, sz, false, { limit: { tif: "Gtc" } })], grouping: "na" });
+    const d = await this.exchange({ type: "order", orders: [this.wire(m, true, px, sz, false, { limit: { tif: "Gtc" } })], grouping: "na" });
     const st = (d.statuses || [])[0] || {};
-    if (st.resting) { await this.cancel(st.resting.oid); return { ok: true, msg: "Firma valida: ordine di prova inviato e annullato." }; }
+    if (st.resting) { await this.cancel("BTC", st.resting.oid); return { ok: true, msg: "Firma valida: ordine di prova inviato e annullato." }; }
     if (st.error) return { ok: /margin|insufficient|balance/i.test(st.error), msg: st.error };
     return { ok: false, msg: JSON.stringify(st) };
   }
@@ -1062,17 +1081,17 @@ const STRATEGIES = [
     title: "Keltner · 1 ora",
     what: "Entra quando il prezzo esce verso l'alto dal canale media ± 2× ATR, segno che parte un movimento.",
     exit: "Stop a 2× ATR; chiude al segnale opposto (uscita dal canale verso il basso).",
-    research: "Ricerca su 4 anni: in attivo in ogni anno 2023-2026, 100% delle varianti in attivo. Solo long con volatilità bassa, 100 € e rischio 1%: 274 € da aprile 2023, vinte 26%, al massimo 15 perdite di fila, discesa massima -14%." },
+    research: "Ricerca su 4 anni: in attivo in ogni anno 2023-2026, 100% delle varianti in attivo. Solo long con volatilità bassa, 100 € e rischio 1%: 274 € da aprile 2023, vinte 26%, al massimo 15 perdite di fila, discesa massima -14%. Su ETH, SOL e XRP è la famiglia più solida trovata: in attivo in ogni anno su tutte e 4 le monete." },
   { id: "mom1h", f: 4, key: "momentum", p: { n: 12, th: 3, tf: 0 }, ex: { sl: 2, opp: 1 }, dir: "long", vol: "low", def: true,
     title: "Momentum · 1 ora",
     what: "Entra quando in 12 ore il prezzo si è mosso più di 3 volte la sua volatilità normale: una spinta vera, non rumore.",
     exit: "Stop a 2× ATR; chiude al segnale opposto (spinta altrettanto forte nell'altra direzione).",
-    research: "Ricerca su 4 anni: in attivo in ogni anno 2023-2026. Solo long con volatilità bassa, 100 € e rischio 1%: 241 € da aprile 2023, vinte 26%, al massimo 11 perdite di fila. Insieme a Keltner 1h, una posizione alla volta: 284 €." },
+    research: "Ricerca su 4 anni: in attivo in ogni anno 2023-2026. Solo long con volatilità bassa, 100 € e rischio 1%: 241 € da aprile 2023, vinte 26%, al massimo 11 perdite di fila. Insieme a Keltner 1h, una posizione alla volta: 284 €. In attivo ogni anno anche su ETH, SOL e XRP." },
   { id: "sq4h", f: 16, key: "squeeze", p: { n: 30, k: 2, q: 0.15, look: 200, tf: 0 }, ex: { sl: 2, opp: 1 }, dir: "long", vol: "all", def: true,
     title: "Squeeze di volatilità · 4 ore",
     what: "Aspetta che BTC resti calmo (bande di Bollinger strette) e compra quando il prezzo esce con forza verso l'alto.",
     exit: "Stop a 2× ATR; chiude al segnale opposto (uscita dalle bande verso il basso).",
-    research: "Ricerca su 4 anni: in attivo in ogni anno 2023-2026 (100% delle varianti). Aggiunta a Keltner 1h + Momentum 1h: 100 € → 300 € invece di 284 €, discesa massima -13% invece di -16%." },
+    research: "Ricerca su 4 anni: in attivo in ogni anno 2023-2026 (100% delle varianti). Aggiunta a Keltner 1h + Momentum 1h: 100 € → 300 € invece di 284 €, discesa massima -13% invece di -16%. Le tre strategie insieme su BTC, ETH, SOL e XRP (una posizione per moneta, rischio 0,5%): 100 € → circa 640 € da aprile 2023, anni +85% / +112% / +28% / +28%, discesa massima -23%. Entrando solo sulle 2 monete più forti (3, 7 e 14 giorni): 636 € con discesa -15% allo stesso rischio, 1.286 € (-19%) con rischio 0,75%." },
   { id: "sq2h", f: 8, key: "squeeze", p: { n: 30, k: 2, q: 0.15, look: 200, tf: 0 }, ex: { sl: 2, opp: 1, be: 1 }, dir: "both", vol: "all", def: false,
     title: "Squeeze di volatilità · 2 ore",
     what: "Aspetta che BTC resti calmo (bande di Bollinger strette) e entra quando il prezzo esce con forza da una parte.",
@@ -1095,7 +1114,9 @@ const STRATEGIES = [
     research: "Provata solo sull'ultimo anno: meno affidabile." },
 ];
 // configurazione migliore trovata (si applica al primo avvio e con "Ripristina la configurazione migliore")
-const BEST = { version: 3, cfg: { risk: 1, maxPos: 1, maxLev: 40 } };
+const BEST = { version: 5, cfg: { risk: 0.75, maxPos: 4, maxLev: 40 } };
+// "Solo le monete più forti": classifica sui rendimenti di 3, 7 e 14 giorni, entra solo sulle prime 2
+const RS = { lbs: [3, 7, 14], top: 2 };
 
 const DEFAULTS = { risk: 0.01, maxPos: 1, maxLev: 40, fee: 0.00045, feeIn: 0.00045, slip: 0.0001, funding: 0.0001, mmr: 0.0125, minNotional: 10 };
 
@@ -1165,7 +1186,7 @@ function closePos(B, pos, px, t, why, o) {
   if (why === "Liquidata") pnl = -pos.margin - pos.feeIn;
   B.balance += pnl;
   B.positions = B.positions.filter(p => p.id !== pos.id);
-  const tr = { id: pos.id, strat: pos.strat, side: pos.side, lev: pos.lev, entry: pos.entry, exit: px, opened: pos.opened, closed: t, why, pnl, r: pnl / pos.riskAmt, notional: pos.qty * pos.entry };
+  const tr = { id: pos.id, coin: pos.coin || "BTC", strat: pos.strat, side: pos.side, lev: pos.lev, entry: pos.entry, exit: px, opened: pos.opened, closed: t, why, pnl, r: pnl / pos.riskAmt, notional: pos.qty * pos.entry };
   B.history.push(tr);
   return tr;
 }
@@ -1176,7 +1197,7 @@ function closePart(B, pos, px, t, frac, o) {
   const fIn = pos.feeIn * frac, fOut = o.feesOn ? q * px * o.fee : 0, fund = o.fundingOn ? q * pos.entry * o.funding * hours / 8 : 0;
   const pnl = q * (px - pos.entry) * pos.side - fIn - fOut - fund, rk = pos.riskAmt * frac;
   B.balance += pnl;
-  B.history.push({ id: pos.id, strat: pos.strat, side: pos.side, lev: pos.lev, entry: pos.entry, exit: px, opened: pos.opened, closed: t, why: "Uscita parziale", pnl, r: pnl / rk, notional: q * pos.entry, partial: true });
+  B.history.push({ id: pos.id, coin: pos.coin || "BTC", strat: pos.strat, side: pos.side, lev: pos.lev, entry: pos.entry, exit: px, opened: pos.opened, closed: t, why: "Uscita parziale", pnl, r: pnl / rk, notional: q * pos.entry, partial: true });
   pos.qty -= q; pos.margin *= 1 - frac; pos.feeIn -= fIn; pos.riskAmt -= rk; pos.partDone = true;
 }
 
@@ -1219,8 +1240,8 @@ function manageOnTick(B, pos, px, t, o) {
 
 /* Apertura con rischio % del saldo. Restituisce la posizione o un motivo di rifiuto (stringa). */
 function openAuto(B, strat, side, px, atr, t, o) {
-  const open = B.positions.filter(p => p.by === "bot");
-  if (open.some(p => p.strat === strat.id)) return "posizione già aperta";
+  const coin = o.coin || "BTC", open = B.positions.filter(p => p.by === "bot");
+  if (B.positions.some(p => (p.coin || "BTC") === coin)) return "c'è già una posizione su " + coin;
   if (open.length >= o.maxPos) return "già aperte " + o.maxPos + " posizioni (limite)";
   const entry = px * (1 + side * o.slip), slD = strat.ex.sl * atr, slPct = slD / entry;
   const lev = Math.max(1, Math.min(o.maxLev, Math.floor(1 / (slPct * 1.5 + o.mmr))));
@@ -1230,7 +1251,7 @@ function openAuto(B, strat, side, px, atr, t, o) {
   const free = B.balance - B.positions.reduce((a, p) => a + p.margin, 0);
   if (notional / lev > free * 0.95) notional = Math.max(0, free * 0.95 * lev);
   if (notional < o.minNotional) return "ordine sotto il minimo di " + o.minNotional + " $";
-  const pos = { id: B.nextId++, by: "bot", strat: strat.id, side, lev, entry, qty: notional / entry, margin: notional / lev, riskAmt,
+  const pos = { id: B.nextId++, by: "bot", coin, strat: strat.id, side, lev, entry, qty: notional / entry, margin: notional / lev, riskAmt,
     sl: entry - side * slD, tp: strat.ex.rr ? entry + side * slD * strat.ex.rr : 0, liq: entry * (1 - side * (1 / lev - o.mmr)),
     slD, best: entry, trD: (strat.ex.tr || 0) * atr, beDone: false, ex: strat.ex, opened: t, feeIn: notional * fIn };
   B.positions.push(pos);
@@ -1247,7 +1268,7 @@ function openManual(B, side, px, lev, margin, slPct, tpPct, t, o) {
   const entry = px * (1 + side * o.slip), liq = entry * (1 - side * Math.max(0.0005, 1 / lev - o.mmr));
   const sl = slPct > 0 ? entry * (1 - side * slPct / 100) : 0, tp = tpPct > 0 ? entry * (1 + side * tpPct / 100) : 0;
   const riskAmt = sl ? Math.abs(entry - sl) * notional / entry : margin;
-  const pos = { id: B.nextId++, by: "manuale", strat: "manuale", side, lev, entry, qty: notional / entry, margin, riskAmt,
+  const pos = { id: B.nextId++, by: "manuale", coin: o.coin || "BTC", strat: "manuale", side, lev, entry, qty: notional / entry, margin, riskAmt,
     sl: sl || (side > 0 ? -Infinity : Infinity), tp, liq, slD: Math.abs(entry - sl), best: entry, trD: 0, beDone: false, ex: {}, opened: t, feeIn: fIn };
   if (!sl) pos.sl = side > 0 ? 0 : 1e12;
   B.positions.push(pos);
@@ -1255,7 +1276,10 @@ function openManual(B, side, px, lev, margin, slPct, tpPct, t, o) {
 }
 
 function unrealized(pos, px) { return pos.qty * (px - pos.entry) * pos.side - pos.feeIn; }
-function equity(B, px) { return B.balance + B.positions.reduce((a, p) => a + unrealized(p, px), 0); }
+// px: numero (una moneta) oppure oggetto { BTC: prezzo, ETH: prezzo, ... }
+function equity(B, px) {
+  return B.balance + B.positions.reduce((a, p) => { const q = typeof px === "object" ? px[p.coin || "BTC"] : px; return a + (q ? unrealized(p, q) : 0); }, 0);
+}
 
 /* Prova sul passato con le stesse funzioni del vivo */
 function backtest(C, strats, opt, onProgress) {
@@ -1283,7 +1307,60 @@ function backtest(C, strats, opt, onProgress) {
 }
 
 
-const API = { closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
+/* Classifica di forza: per ogni finestra (giorni) ordina le monete per rendimento, somma le posizioni;
+   usa solo candele giornaliere già chiuse al tempo t. daily = { BTC: D, ... }. Restituisce { BTC: 0, ETH: 1, ... } (0 = la più forte) */
+function lastDay(D, t) { let lo = 0, hi = D.t.length - 1, r = -1; while (lo <= hi) { const m = (lo + hi) >> 1; if (D.t[m] + 86400000 <= t) { r = m; lo = m + 1; } else hi = m - 1; } return r; }
+function rsRanks(daily, t, lbs) {
+  const coins = Object.keys(daily).filter(c => daily[c]), sc = Object.fromEntries(coins.map(c => [c, 0])), J = Object.fromEntries(coins.map(c => [c, lastDay(daily[c], t)]));
+  for (const n of lbs || RS.lbs) {
+    const v = coins.map(c => { const D = daily[c], j = J[c]; return [c, j >= n ? D.c[j] / D.c[j - n] - 1 : NaN]; });
+    v.sort((a, b) => (isNaN(b[1]) ? -Infinity : b[1]) - (isNaN(a[1]) ? -Infinity : a[1]));
+    v.forEach(([c], i) => sc[c] += i);
+  }
+  const ord = coins.slice().sort((a, b) => sc[a] - sc[b]), out = {};
+  ord.forEach((c, i) => out[c] = i);
+  return out;
+}
+
+/* Prova sul passato su più monete: conto unico, una posizione per moneta.
+   data = { BTC: C, ETH: C, ... } (candele 15m), extras = { BTC: { volPct, daily }, ... } facoltativo */
+function backtestMulti(data, strats, opt, extras) {
+  const o = Object.assign({}, DEFAULTS, { feesOn: true, fundingOn: true }, opt || {});
+  const coins = Object.keys(data), S = {}, idx = {};
+  for (const c of coins) { S[c] = buildSignals(data[c], strats, extras && extras[c]); idx[c] = 0; }
+  const fromT = o.fromT || Math.max(...coins.map(c => data[c].t[Math.min(900, Math.floor(data[c].t.length / 4))]));
+  const toT = Math.max(...coins.map(c => data[c].t[data[c].t.length - 1]));
+  for (const c of coins) { const k = data[c].t.findIndex(t => t >= fromT); idx[c] = k < 0 ? data[c].t.length : k; }
+  const RM = o.volTarget ? Object.fromEntries(coins.map(c => [c, riskMult(data[c])])) : null;
+  const B = newBook(o.start || 100); let peak = B.balance, mdd = 0; const curve = [];
+  const sById = Object.fromEntries(strats.map(s => [s.id, s]));
+  const rsD = o.rs ? Object.fromEntries(coins.map(c => [c, (extras && extras[c] && extras[c].daily) || E.resample(data[c], 96).C])) : null;
+  let lastD = -1;
+  for (;;) {
+    let t = Infinity; for (const c of coins) if (idx[c] < data[c].t.length) t = Math.min(t, data[c].t[idx[c]]);
+    if (t === Infinity) break;
+    const here = coins.filter(c => idx[c] < data[c].t.length && data[c].t[idx[c]] === t);
+    for (const c of here) {
+      const C = data[c], i = idx[c], bar = { t: C.t[i], o: C.o[i], h: C.h[i], l: C.l[i], c: C.c[i] };
+      for (const pos of B.positions.filter(p => (p.coin || "BTC") === c)) manageOnBar(B, pos, bar, S[c][pos.strat] ? S[c][pos.strat].raw[i] : 0, o);
+    }
+    if (B.balance > peak) peak = B.balance; const dd = (peak - B.balance) / peak; if (dd > mdd) mdd = dd;
+    for (const c of here) {
+      const C = data[c], i = idx[c]; if (i + 1 >= C.t.length) continue;
+      let rk = null;
+      for (const s of strats) { const x = S[c][s.id]; if (!x.sig[i] || isNaN(x.A[i])) continue;
+        if (o.rs) { if (!rk) rk = rsRanks(rsD, C.t[i] + 900000, o.rs.lbs); if (rk[c] >= o.rs.top) continue; }
+        openAuto(B, sById[s.id], x.sig[i], C.o[i + 1], x.A[i], C.t[i + 1], Object.assign({}, o, { coin: c }, RM ? { risk: o.risk * RM[c][i] } : {})); }
+    }
+    for (const c of here) idx[c]++;
+    const day = Math.floor(t / 86400000); if (day !== lastD) { curve.push([t, B.balance]); lastD = day; }
+  }
+  for (const pos of [...B.positions]) { const C = data[pos.coin || "BTC"]; closePos(B, pos, C.c[C.c.length - 1], C.t[C.t.length - 1] + 900000, "Fine dati", o); }
+  curve.push([toT, B.balance]);
+  return { book: B, mdd, curve, from: fromT, to: toT };
+}
+
+const API = { RS, rsRanks, backtestMulti, closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
 if (typeof module !== "undefined") module.exports = API; else root.Core = API;
 })(typeof window !== "undefined" ? window : this);
 
@@ -1295,16 +1372,19 @@ const E = window.Engine, Core = window.Core, HLM = window.HL;
 const KEY = "qg_leva_v1", BAR = 900000;
 const HL = "https://api.hyperliquid.xyz/info";
 const BN = "https://api.binance.com/api/v3";
+const COINS = ["BTC", "ETH", "SOL", "XRP"];
+const COIN_NAME = { BTC: "Bitcoin", ETH: "Ethereum", SOL: "Solana", XRP: "XRP" };
 
 const TOGGLES = [
-  { id: "bot", t: "Bot automatico (come il pulsante AVVIA)", d: "Apre e chiude da solo con le strategie accese", def: false },
+  { id: "bot", t: "Bot automatico (come il pulsante AVVIA)", d: "Apre e chiude da solo con le monete e le strategie accese", def: false },
+  { id: "rsTop", t: "Solo le 2 monete più forti", d: "Classifica sui rendimenti di 3, 7 e 14 giorni tra le monete accese: il bot entra solo sulle prime 2. Meno operazioni e discese più piccole", def: true },
   { id: "wakeLock", t: "Schermo sempre acceso", d: "Mentre il bot è avviato lo schermo non si spegne (indispensabile sul telefono)", def: true },
-  { id: "manual", t: "Operazioni manuali", d: "Pulsanti Long / Short", def: true },
+  { id: "manual", t: "Operazioni manuali", d: "Pulsanti Long / Short sulla moneta scelta nel grafico", def: true },
   { id: "feesOn", t: "Commissioni", d: "0,045% del valore a ogni apertura e chiusura (Hyperliquid)", def: true },
   { id: "fundingOn", t: "Funding", d: "Stima: 0,01% ogni 8 ore sul valore della posizione", def: true },
   { id: "dailyLimit", t: "Blocco perdita giornaliera", d: "Ferma le nuove entrate del bot fino al giorno dopo (UTC)", def: true },
-  { id: "failsafe", t: "Blocco di sicurezza", d: "Niente nuove entrate se i dati mancano o arrivano vecchi", def: true },
-  { id: "fallback", t: "Prezzo di riserva (Binance)", d: "Se Hyperliquid non risponde usa Binance BTCUSDT", def: true },
+  { id: "failsafe", t: "Blocco di sicurezza", d: "Niente nuove entrate su una moneta se i suoi dati mancano o arrivano vecchi", def: true },
+  { id: "fallback", t: "Prezzo di riserva (Binance)", d: "Se Hyperliquid non risponde usa i prezzi di Binance", def: true },
   { id: "catchup", t: "Recupero alla riapertura", d: "Aggiorna stop e uscite con le candele perse a pagina chiusa", def: true },
   { id: "sound", t: "Suono a ogni operazione", d: "", def: false },
   { id: "save", t: "Salva nel browser", d: "Conserva conto, posizioni e impostazioni", def: true },
@@ -1313,43 +1393,49 @@ const TOGGLES = [
   { id: "askPw", t: "Password all'apertura", d: "Dati salvati cifrati: senza password l'app non si apre", def: true },
   { id: "autoLock", t: "Blocco automatico dopo 15 minuti", d: "Se non usi la pagina chiede di nuovo la password (il bot continua a lavorare)", def: false },
   { id: "steady", t: "Modalità costanza", d: "Chiude metà posizione quando guadagna 3 volte il rischio e porta lo stop a pareggio: guadagni minori, mesi più regolari", def: false },
-  { id: "saveCsv", t: "Salva il file CSV scaricato dal laboratorio", d: "Finisce nella cartella Download", def: true },
+  { id: "saveCsv", t: "Salva i file CSV scaricati dal laboratorio", d: "Finiscono nella cartella Download", def: true },
 ];
 const STR = Core.STRATEGIES, SBY = Object.fromEntries(STR.map(s => [s.id, s]));
-// strategia con le opzioni scelte dall'utente (solo long, solo volatilità bassa)
+// strategia con le opzioni scelte dall'utente (solo long, solo volatilità bassa, modalità costanza)
 const STEADY = { r: 3, frac: 0.5, be: 1 };
 const eff = s => { const o = (S.stratOpt && S.stratOpt[s.id]) || {}; return Object.assign({}, s, { dir: o.long ? "long" : "both", vol: o.lowVol ? "low" : "all", ex: S.tog.steady ? Object.assign({}, s.ex, { part: STEADY }) : s.ex }); };
 const ES = () => STR.map(eff);
-let daily = null, dailyAt = 0, volNow = NaN;
+const coinsOn = () => COINS.filter(c => S.coinOn[c]);
 function applyBest(auto) {
   S.stratOn = Object.fromEntries(STR.map(s => [s.id, s.def]));
   S.stratOpt = Object.fromEntries(STR.map(s => [s.id, { long: s.dir === "long", lowVol: s.vol === "low" }]));
-  Object.assign(S.cfg, Core.BEST.cfg); S.bestV = Core.BEST.version;
-  log(auto ? "Configurazione aggiornata alla strategia migliore trovata (Keltner 1h + Momentum 1h + Squeeze 4h, solo long, rischio 1%, una posizione alla volta)." : "Ripristinata la configurazione migliore.");
+  S.coinOn = Object.fromEntries(COINS.map(c => [c, true]));
+  Object.assign(S.cfg, Core.BEST.cfg); S.bestV = Core.BEST.version; S.tog.rsTop = true;
+  log(auto ? "Configurazione aggiornata alla migliore trovata: BTC, ETH, SOL e XRP · Keltner 1h + Momentum 1h + Squeeze 4h, solo long · solo le 2 monete più forti · rischio 0,75% · una posizione per moneta." : "Ripristinata la configurazione migliore.");
 }
 const TFN = { 1: "15 minuti", 4: "1 ora", 8: "2 ore", 16: "4 ore", 32: "8 ore" };
 
 /* ---------------- stato ---------------- */
 let S = {
-  v: 1, book: null, tf: 8, lastBarT: 0, log: [],
+  v: 1, book: null, tf: 8, chartCoin: "BTC", lastBarT: {}, log: [],
   tog: Object.fromEntries(TOGGLES.map(t => [t.id, t.def])),
+  coinOn: Object.fromEntries(COINS.map(c => [c, true])),
   stratOn: Object.fromEntries(STR.map(s => [s.id, s.def])),
   stratOpt: Object.fromEntries(STR.map(s => [s.id, { long: s.dir === "long", lowVol: s.vol === "low" }])),
   bestV: Core.BEST.version,
-  cfg: { risk: 1, maxPos: 1, maxLev: 40, daily: 5 },
+  cfg: { risk: 0.75, maxPos: 4, maxLev: 40, daily: 5 },
   manual: { lev: 10, margin: 20, sl: 1, tp: 2 },
   day: { key: "", startEq: 0, locked: "" },
   wallet: { net: "testnet", addr: "", key: "", verifiedFor: "" },
   sess: { since: 0, alive: 0, total: 0 },
-  real: { pos: null, history: [], day: { key: "", startEq: 0, locked: "" } },
+  real: { pos: {}, history: [], day: { key: "", startEq: 0, locked: "" } },
 };
-let memKey = "", HLC = null, W = { acc: null, orders: [], err: "", at: 0, busy: false, mid: 0 };
-let lastBotCandle = 0, candleErrLogged = false, needRender = false, sigT = [], candles = [], price = 0, priceAt = 0, src = null, lastCandleFetch = 0, SIG = {}, sigLen = 0, labC = null, booted = false;
+let memKey = "", HLC = null, W = { acc: null, orders: [], err: "", at: 0, busy: false, mids: {} };
+// dati di mercato per moneta
+const M = Object.fromEntries(COINS.map(c => [c, { candles: [], price: 0, priceAt: 0, fetchAt: 0, daily: null, volNow: NaN, SIG: {}, sigT: [], sigLen: 0, lastBot: 0, errLogged: false }]));
+let src = null, needRender = false, labD = {}, booted = false;
+const pxMap = () => Object.fromEntries(COINS.map(c => [c, M[c].price]));
 
 const $ = id => document.getElementById(id);
 const eur = v => (v < 0 ? "−" : "") + Math.abs(v).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 const eurS = v => (v >= 0 ? "+" : "") + eur(v);
-const usd = v => "$" + v.toLocaleString("it-IT", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+// prezzi: monete sotto 10 $ con più decimali (XRP)
+const usd = v => "$" + v.toLocaleString("it-IT", { minimumFractionDigits: v < 10 ? 4 : 0, maximumFractionDigits: v < 10 ? 4 : v < 1000 ? 2 : 0 });
 const pct = v => (v >= 0 ? "+" : "−") + Math.abs(v).toLocaleString("it-IT", { maximumFractionDigits: 1 }) + "%";
 const cls = v => v > 0.004 ? "pos" : v < -0.004 ? "neg" : "mut";
 const dt = t => new Date(t).toLocaleString("it-IT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
@@ -1357,9 +1443,18 @@ const hm = t => new Date(t).toLocaleTimeString("it-IT", { hour: "2-digit", minut
 const sideTxt = s => s > 0 ? '<b class="pos">LONG</b>' : '<b class="neg">SHORT</b>';
 const stratName = id => id === "manuale" ? "Manuale" : (SBY[id] ? SBY[id].title : id);
 const todayKey = () => new Date().toISOString().slice(0, 10);
+const coinOf = p => p.coin || "BTC";
 
-function opts() {
-  return Object.assign({}, Core.DEFAULTS, { risk: S.cfg.risk / 100, maxPos: S.cfg.maxPos, maxLev: S.cfg.maxLev, feesOn: S.tog.feesOn, fundingOn: S.tog.fundingOn });
+// classifica di forza tra le monete accese (0 = la più forte); null se mancano le candele giornaliere
+function ranks(t) { return Core.rsRanks(Object.fromEntries(coinsOn().map(c => [c, M[c].daily])), t || Date.now(), Core.RS.lbs); }
+function rsReason(coin, t) {
+  if (!S.tog.rsTop) return "";
+  if (!M[coin].daily) return "classifica non disponibile (mancano le candele giornaliere)";
+  const r = ranks(t)[coin];
+  return r >= Core.RS.top ? `${coin} è ${r + 1}ª in classifica, non tra le prime ${Core.RS.top}` : "";
+}
+function opts(coin) {
+  return Object.assign({}, Core.DEFAULTS, { coin: coin || "BTC", risk: S.cfg.risk / 100, maxPos: S.cfg.maxPos, maxLev: S.cfg.maxLev, feesOn: S.tog.feesOn, fundingOn: S.tog.fundingOn });
 }
 /* ---------------- password e cifratura (PBKDF2 + AES-GCM) ---------------- */
 const LOCK_KEY = "cashmkr_lock", DATA_KEY = "cashmkr_data", PLAIN_KEY = "cashmkr_plain", OLD_KEY = KEY;
@@ -1389,7 +1484,12 @@ function save() {
 }
 function apply(o) {
   if (!o || o.v !== 1) return;
-  S = Object.assign(S, o, { tog: Object.assign({}, S.tog, o.tog), stratOn: Object.assign({}, S.stratOn, o.stratOn), stratOpt: Object.assign({}, S.stratOpt, o.stratOpt), cfg: Object.assign({}, S.cfg, o.cfg), manual: Object.assign({}, S.manual, o.manual), wallet: Object.assign({}, S.wallet, o.wallet), sess: Object.assign({}, S.sess, o.sess), real: Object.assign({}, S.real, o.real) });
+  S = Object.assign(S, o, { tog: Object.assign({}, S.tog, o.tog), coinOn: Object.assign({}, S.coinOn, o.coinOn), stratOn: Object.assign({}, S.stratOn, o.stratOn), stratOpt: Object.assign({}, S.stratOpt, o.stratOpt), cfg: Object.assign({}, S.cfg, o.cfg), manual: Object.assign({}, S.manual, o.manual), wallet: Object.assign({}, S.wallet, o.wallet), sess: Object.assign({}, S.sess, o.sess), real: Object.assign({}, S.real, o.real) });
+  // dati delle versioni con solo BTC
+  if (typeof S.lastBarT !== "object" || !S.lastBarT) S.lastBarT = S.lastBarT ? { BTC: +S.lastBarT } : {};
+  const rp = S.real.pos; S.real.pos = !rp ? {} : rp.side ? { BTC: Object.assign({ coin: "BTC" }, rp) } : rp;
+  if (!COINS.includes(S.chartCoin)) S.chartCoin = "BTC";
+  delete S.tog.offline;
   S.tog.real = false; memKey = S.wallet.key || "";
   S.bestV = o.bestV || 0; // dati salvati da versioni precedenti: verranno portati alla configurazione migliore
 }
@@ -1459,20 +1559,20 @@ function beep(f) {
     g.gain.exponentialRampToValueAtTime(.001, a.currentTime + .3); o.start(); o.stop(a.currentTime + .3); } catch (e) {}
 }
 
-/* ---------------- dati di mercato ---------------- */
+/* ---------------- dati di mercato (per moneta) ---------------- */
 async function hl(body) {
   const r = await fetch(HL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!r.ok) throw new Error("HTTP " + r.status);
   return r.json();
 }
-async function candlesHL(start, end) {
-  const d = await hl({ type: "candleSnapshot", req: { coin: "BTC", interval: "15m", startTime: start, endTime: end } });
-  return d.map(c => ({ t: +c.t, o: +c.o, h: +c.h, l: +c.l, c: +c.c, v: +c.v }));
+const mapC = d => d.map(c => ({ t: +c.t, o: +c.o, h: +c.h, l: +c.l, c: +c.c, v: +c.v }));
+async function candlesHL(coin, start, end, iv) {
+  return mapC(await hl({ type: "candleSnapshot", req: { coin, interval: iv || "15m", startTime: start, endTime: end } }));
 }
-async function candlesBN(start, end, onp) {
+async function candlesBN(coin, start, end, onp) {
   const out = []; let t = start;
   while (t < end) {
-    const r = await fetch(`${BN}/klines?symbol=BTCUSDT&interval=15m&startTime=${t}&endTime=${end}&limit=1000`);
+    const r = await fetch(`${BN}/klines?symbol=${coin}USDT&interval=15m&startTime=${t}&endTime=${end}&limit=1000`);
     if (!r.ok) throw new Error("Binance HTTP " + r.status);
     const d = await r.json(); if (!d.length) break;
     for (const k of d) out.push({ t: k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5] });
@@ -1481,123 +1581,145 @@ async function candlesBN(start, end, onp) {
   }
   return out;
 }
-function merge(list) {
+function merge(coin, list) {
   if (!list.length) return;
-  const m = new Map(candles.map(c => [c.t, c]));
+  const m = new Map(M[coin].candles.map(c => [c.t, c]));
   for (const c of list) m.set(c.t, c);
-  candles = [...m.values()].sort((a, b) => a.t - b.t).slice(-5200);
+  M[coin].candles = [...m.values()].sort((a, b) => a.t - b.t).slice(-5200);
 }
-async function getCandles(start, end) {
-  try { const d = await candlesHL(start, end); if (d.length) { setSrc("hl"); return d; } throw new Error("vuoto"); }
+async function getCandles(coin, start, end) {
+  try { const d = await candlesHL(coin, start, end); if (d.length) { setSrc("hl"); return d; } throw new Error("vuoto"); }
   catch (e) {
     if (!S.tog.fallback) throw e;
-    const d = await candlesBN(start, end); setSrc("bn"); return d;
+    const d = await candlesBN(coin, start, end); setSrc("bn"); return d;
   }
 }
 function setSrc(s) { if (src !== s) { src = s; log(s === "hl" ? "Dati da Hyperliquid." : "Hyperliquid non risponde: uso il prezzo di riserva di Binance."); } }
 
-async function loadDaily() {
-  const end = Date.now(), start = end - 320 * 86400000;
+async function loadDaily(coin) {
+  const m = M[coin], end = Date.now(), start = end - 320 * 86400000;
   let arr = null;
-  try { const d = await hl({ type: "candleSnapshot", req: { coin: "BTC", interval: "1d", startTime: start, endTime: end } }); arr = d.map(c => ({ t: +c.t, o: +c.o, h: +c.h, l: +c.l, c: +c.c, v: +c.v })); } catch (e) {}
+  try { arr = await candlesHL(coin, start, end, "1d"); } catch (e) {}
   if ((!arr || arr.length < 200) && S.tog.fallback) {
-    try { const r = await fetch(`${BN}/klines?symbol=BTCUSDT&interval=1d&startTime=${start}&limit=400`); const d = await r.json(); arr = d.map(k => ({ t: k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5] })); } catch (e) {}
+    try { const r = await fetch(`${BN}/klines?symbol=${coin}USDT&interval=1d&startTime=${start}&limit=400`); const d = await r.json(); arr = d.map(k => ({ t: k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4], v: +k[5] })); } catch (e) {}
   }
   if (arr && arr.length >= 200) {
-    daily = toTyped(arr); dailyAt = Date.now();
-    const vp = Core.volPct({ t: Float64Array.of(Date.now() - 900000) }, daily); volNow = vp[0];
-  } else if (!daily) log("Candele giornaliere non disponibili: il filtro di volatilità blocca le entrate finché non arrivano.");
+    m.daily = toTyped(arr);
+    m.volNow = Core.volPct({ t: Float64Array.of(Date.now() - 900000) }, m.daily)[0];
+  } else if (!m.daily) log(`${coin}: candele giornaliere non disponibili, il filtro di volatilità blocca le entrate finché non arrivano.`);
 }
-async function loadHistory() {
-  const end = Date.now(), start = end - 5000 * BAR;
-  try { const d = await getCandles(start, end); candles = []; merge(d); lastCandleFetch = Date.now(); candleErrLogged = false; log(`Caricate ${candles.length} candele da 15 minuti (circa ${Math.round(candles.length / 96)} giorni).`); }
-  catch (e) { if (src !== null || !candleErrLogged) log("Impossibile scaricare le candele (" + e.message + "). Riprovo ogni 20 secondi."); candleErrLogged = true; src = null; }
+const loadDailyAll = () => Promise.all(COINS.map(loadDaily));
+async function loadHistory(coin) {
+  const m = M[coin], end = Date.now(), start = end - 5000 * BAR;
+  try { const d = await getCandles(coin, start, end); m.candles = []; merge(coin, d); m.fetchAt = Date.now(); m.errLogged = false; log(`${coin}: caricate ${m.candles.length} candele da 15 minuti (circa ${Math.round(m.candles.length / 96)} giorni).`); }
+  catch (e) { if (!m.errLogged) log(`${coin}: impossibile scaricare le candele (${e.message}). Riprovo ogni 20 secondi.`); m.errLogged = true; }
 }
-async function refreshCandles() {
-  if (!candles.length) { await loadHistory(); return; }
-  try { merge(await getCandles(candles[candles.length - 1].t - 2 * BAR, Date.now())); lastCandleFetch = Date.now(); }
-  catch (e) { if (Date.now() - lastCandleFetch > 120000) src = null; }
+async function refreshCandles(coin) {
+  const m = M[coin];
+  if (!m.candles.length) { await loadHistory(coin); return; }
+  try { merge(coin, await getCandles(coin, m.candles[m.candles.length - 1].t - 2 * BAR, Date.now())); m.fetchAt = Date.now(); }
+  catch (e) {}
 }
+const refreshAll = () => Promise.all(COINS.map(refreshCandles));
 async function pollPrice() {
-  let p = 0;
-  try { const d = await hl({ type: "allMids" }); p = parseFloat(d.BTC); if (p > 0) setSrc("hl"); }
-  catch (e) {
-    if (S.tog.fallback) { try { const r = await fetch(`${BN}/ticker/price?symbol=BTCUSDT`); const j = await r.json(); p = parseFloat(j.price); if (p > 0) setSrc("bn"); } catch (_) {} }
+  let got = 0;
+  try { const d = await hl({ type: "allMids" }); for (const c of COINS) { const p = parseFloat(d[c]); if (p > 0) { M[c].price = p; M[c].priceAt = Date.now(); got++; } } if (got) setSrc("hl"); }
+  catch (e) {}
+  if (!got && S.tog.fallback) {
+    try {
+      const r = await fetch(`${BN}/ticker/price?symbols=${encodeURIComponent(JSON.stringify(COINS.map(c => c + "USDT")))}`); const j = await r.json();
+      for (const x of j) { const c = x.symbol.replace("USDT", ""), p = parseFloat(x.price); if (M[c] && p > 0) { M[c].price = p; M[c].priceAt = Date.now(); got++; } }
+      if (got) setSrc("bn");
+    } catch (_) {}
   }
-  if (p > 0) { price = p; priceAt = Date.now(); onTick(); }
+  if (got) onTick();
+  else if (COINS.every(c => Date.now() - M[c].priceAt > 120000)) src = null;
 }
 
 /* ---------------- motore dal vivo ---------------- */
-function closedCandles() { const now = Date.now(); return candles.filter(c => c.t + BAR <= now); }
+function closedCandles(coin) { const now = Date.now(); return M[coin].candles.filter(c => c.t + BAR <= now); }
 function toTyped(arr) {
   const N = arr.length, C = { t: new Float64Array(N), o: new Float64Array(N), h: new Float64Array(N), l: new Float64Array(N), c: new Float64Array(N), v: new Float64Array(N) };
   arr.forEach((x, i) => { C.t[i] = x.t; C.o[i] = x.o; C.h[i] = x.h; C.l[i] = x.l; C.c[i] = x.c; C.v[i] = x.v; });
   return C;
 }
-function failReason() {
-  if (!src) return "Nessun dato di mercato: controlla la connessione a Internet.";
-  if (Date.now() - priceAt > 90000) return "Il prezzo non si aggiorna da più di 90 secondi.";
-  const cl = closedCandles(); if (!cl.length) return "Candele non disponibili.";
-  if (Date.now() - (cl[cl.length - 1].t + BAR) > 2 * BAR) return "L'ultima candela chiusa è troppo vecchia.";
+function failReason(coin) {
+  if (!src) return "nessun dato di mercato: controlla la connessione a Internet";
+  const m = M[coin];
+  if (Date.now() - m.priceAt > 90000) return "il prezzo non si aggiorna da più di 90 secondi";
+  const cl = closedCandles(coin); if (!cl.length) return "candele non disponibili";
+  if (Date.now() - (cl[cl.length - 1].t + BAR) > 2 * BAR) return "l'ultima candela chiusa è troppo vecchia";
   return "";
 }
-function blockedReason() {
+function blockedReason(coin) {
   if (!S.tog.bot) return "bot spento";
-  if (S.tog.failsafe && failReason()) return "blocco di sicurezza";
+  if (coin && !S.coinOn[coin]) return coin + " spenta";
+  if (coin && S.tog.failsafe && failReason(coin)) return "blocco di sicurezza (" + failReason(coin) + ")";
   if (S.tog.dailyLimit && S.day.locked === todayKey()) return "perdita giornaliera massima raggiunta";
   return "";
 }
 function afterClose(tr) {
   if (!tr) return;
-  log(`${tr.strat === "manuale" ? "" : "🤖 "}Chiuso ${tr.side > 0 ? "LONG" : "SHORT"} · ${stratName(tr.strat)} · ${tr.why} a ${usd(tr.exit)}: ${eurS(tr.pnl)}`);
+  log(`${tr.strat === "manuale" ? "" : "🤖 "}${coinOf(tr)} · chiuso ${tr.side > 0 ? "LONG" : "SHORT"} · ${stratName(tr.strat)} · ${tr.why} a ${usd(tr.exit)}: ${eurS(tr.pnl)}`);
   beep(tr.pnl >= 0 ? 880 : 330); save(); needRender = true;
 }
-function processClosed() {
-  const cl = closedCandles(); if (cl.length < 300) return;
+function processCoin(coin) {
+  const m = M[coin], cl = closedCandles(coin); if (cl.length < 300) return false;
   const last = cl[cl.length - 1];
-  if (!S.lastBarT) { S.lastBarT = last.t; save(); }
-  if (last.t === lastBotCandle && sigLen) return;
-  lastBotCandle = last.t;
-  const C = toTyped(cl); SIG = Core.buildSignals(C, ES(), daily ? { daily } : { volPct: new Float64Array(cl.length).fill(NaN) }); sigLen = cl.length; sigT = cl.map(c => c.t);
-  let i0 = cl.findIndex(c => c.t > S.lastBarT); if (i0 < 0) return;
+  if (!S.lastBarT[coin]) { S.lastBarT[coin] = last.t; save(); }
+  if (last.t === m.lastBot && m.sigLen) return false;
+  m.lastBot = last.t;
+  const C = toTyped(cl); m.SIG = Core.buildSignals(C, ES(), m.daily ? { daily: m.daily } : { volPct: new Float64Array(cl.length).fill(NaN) }); m.sigLen = cl.length; m.sigT = cl.map(c => c.t);
+  const SIG = m.SIG;
+  let i0 = cl.findIndex(c => c.t > S.lastBarT[coin]); if (i0 < 0) return true;
   if (!S.tog.catchup) i0 = cl.length - 1;
   const missed = cl.length - 1 - i0;
-  if (missed > 0 && booted === false) log(`Recupero ${missed} candele da 15 minuti mentre la pagina era chiusa.`);
-  const o = opts();
+  if (missed > 0 && !m.booted) log(`${coin}: recupero ${missed} candele da 15 minuti mentre la pagina era chiusa.`);
+  const o = opts(coin);
   for (let i = i0; i < cl.length; i++) {
     const bar = cl[i];
-    for (const pos of [...S.book.positions]) afterClose(Core.manageOnBar(S.book, pos, pos.opened > bar.t ? { t: bar.t, o: bar.c, h: bar.c, l: bar.c, c: bar.c } : bar, pos.by === "bot" && SIG[pos.strat] ? SIG[pos.strat].raw[i] : 0, o));
+    for (const pos of S.book.positions.filter(p => coinOf(p) === coin)) afterClose(Core.manageOnBar(S.book, pos, pos.opened > bar.t ? { t: bar.t, o: bar.c, h: bar.c, l: bar.c, c: bar.c } : bar, pos.by === "bot" && SIG[pos.strat] ? SIG[pos.strat].raw[i] : 0, o));
     const live = i === cl.length - 1 && Date.now() - (bar.t + BAR) < 10 * 60000;
-    const RP = S.real.pos;
-    if (RP && RP.strat !== "manuale" && SIG[RP.strat] && SIG[RP.strat].raw[i] === -RP.side && keyOk()) realClose(live ? "Segnale opposto" : "Segnale opposto (arrivato a pagina chiusa)");
+    const RP = S.real.pos[coin];
+    if (RP && RP.strat !== "manuale" && SIG[RP.strat] && SIG[RP.strat].raw[i] === -RP.side && keyOk()) realClose(coin, live ? "Segnale opposto" : "Segnale opposto (arrivato a pagina chiusa)");
     for (const s of ES()) {
       const x = SIG[s.id], d = x.sig[i]; if (!d || isNaN(x.A[i])) continue;
-      if (!S.stratOn[s.id] || !S.tog.bot) continue;
-      if (!live) { log(`Segnale ${d > 0 ? "LONG" : "SHORT"} di ${s.title} del ${dt(bar.t + BAR)} perso a pagina chiusa.`); continue; }
-      const why = blockedReason();
-      if (why) { log(`Segnale ${d > 0 ? "LONG" : "SHORT"} di ${s.title} ignorato: ${why}.`); continue; }
-      const r = Core.openAuto(S.book, s, d, price || bar.c, x.A[i], Date.now(), o);
-      if (typeof r === "string") log(`Segnale ${d > 0 ? "LONG" : "SHORT"} di ${s.title} non eseguito: ${r}.`);
-      else { log(`🤖 Aperto ${d > 0 ? "LONG" : "SHORT"} · ${s.title} · leva ${r.lev}x · valore ${eur(r.qty * r.entry)} · rischio ${eur(r.riskAmt)}`); beep(660); }
-      if (realOn()) { const slPct = s.ex.sl * x.A[i] / (price || bar.c); realOpen(s.id, d, slPct, 0, Math.floor(1 / (slPct * 1.5 + Core.DEFAULTS.mmr)), null, s.ex); }
+      if (!S.stratOn[s.id] || !S.tog.bot || !S.coinOn[coin]) continue;
+      const nm = `${coin} · segnale ${d > 0 ? "LONG" : "SHORT"} di ${s.title}`;
+      if (!live) { log(`${nm} del ${dt(bar.t + BAR)} perso a pagina chiusa.`); continue; }
+      const why = blockedReason(coin);
+      if (why) { log(`${nm} ignorato: ${why}.`); continue; }
+      const rw = rsReason(coin, bar.t + BAR);
+      if (rw) { log(`${nm} ignorato: ${rw}.`); continue; }
+      const px = m.price || bar.c;
+      const r = Core.openAuto(S.book, s, d, px, x.A[i], Date.now(), o);
+      if (typeof r === "string") log(`${nm} non eseguito: ${r}.`);
+      else { log(`🤖 ${coin} · aperto ${d > 0 ? "LONG" : "SHORT"} · ${s.title} · leva ${r.lev}x · valore ${eur(r.qty * r.entry)} · rischio ${eur(r.riskAmt)}`); beep(660); }
+      if (realOn()) { const slPct = s.ex.sl * x.A[i] / px; realOpen(coin, s.id, d, slPct, 0, Math.floor(1 / (slPct * 1.5 + Core.DEFAULTS.mmr)), null, s.ex); }
     }
-    S.lastBarT = bar.t;
+    S.lastBarT[coin] = bar.t;
   }
-  booted = true; save(); renderAll();
+  m.booted = true;
+  return true;
+}
+function processClosed() {
+  if (!S.book) return;
+  let any = false;
+  for (const c of COINS) if (processCoin(c)) any = true;
+  if (any) { booted = true; save(); renderAll(); }
 }
 function onTick() {
   if (!S.book) return;
-  const o = opts();
-  for (const pos of [...S.book.positions]) afterClose(Core.manageOnTick(S.book, pos, price, Date.now(), o));
-  const k = todayKey(), eq = Core.equity(S.book, price);
+  for (const pos of [...S.book.positions]) { const q = M[coinOf(pos)].price; if (q) afterClose(Core.manageOnTick(S.book, pos, q, Date.now(), opts(coinOf(pos)))); }
+  if (S.book.positions.some(p => !M[coinOf(p)].price)) return; // manca un prezzo: niente controllo giornaliero
+  const k = todayKey(), eq = Core.equity(S.book, pxMap());
   if (S.day.key !== k) S.day = { key: k, startEq: eq, locked: "" };
   if (S.tog.dailyLimit && S.day.locked !== k && eq < S.day.startEq * (1 - S.cfg.daily / 100)) {
     S.day.locked = k; log(`Perdita di oggi oltre il ${S.cfg.daily}%: nuove entrate del bot ferme fino a domani (UTC).`); save();
   }
 }
 
-
-/* ---------------- wallet e ordini veri ---------------- */
+/* ---------------- wallet e ordini veri (una posizione per moneta) ---------------- */
 const SLIP_REAL = 0.005;           // ordine a mercato = limite aggressivo con slittamento massimo 0,5%
 const usd2 = v => (v < 0 ? "−" : "") + "$" + Math.abs(v).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const walletSig = () => S.wallet.net + "|" + S.wallet.addr.toLowerCase() + "|" + (HLC ? HLC.agentAddress().toLowerCase() : "");
@@ -1605,6 +1727,9 @@ const keyOk = () => !!(HLC && HLC.key && HLC.agentAddress());
 const verified = () => keyOk() && S.wallet.verifiedFor === walletSig();
 const realOn = () => S.tog.real && verified();
 function rlog(msg) { log("💶 " + (S.wallet.net === "mainnet" ? "[MAINNET] " : "[TESTNET] ") + msg); }
+// gli ordini veri passano in fila uno alla volta (aperture e chiusure su più monete nello stesso momento)
+let realQ = Promise.resolve();
+const enqueue = fn => (realQ = realQ.then(async () => { W.busy = true; try { await fn(); } finally { W.busy = false; } }).catch(e => rlog("Errore: " + e.message)));
 
 async function connectWallet() {
   const addr = $("wAddr").value.trim(), key = $("wKey").value.trim();
@@ -1617,7 +1742,7 @@ async function connectWallet() {
   save(); await refreshWallet(true); renderWallet();
 }
 function forgetWallet() {
-  S.tog.real = false; HLC = null; memKey = ""; S.wallet.key = ""; S.wallet.verifiedFor = ""; W = { acc: null, orders: [], err: "", at: 0, busy: false, mid: 0 };
+  S.tog.real = false; HLC = null; memKey = ""; S.wallet.key = ""; S.wallet.verifiedFor = ""; W = { acc: null, orders: [], err: "", at: 0, busy: false, mids: {} };
   $("wKey").value = ""; save(); buildToggles(); renderAll(); log("Wallet scollegato.");
 }
 async function verifyWallet() {
@@ -1633,101 +1758,108 @@ async function verifyWallet() {
 async function refreshWallet(first) {
   if (!HLC || W.busy) return;
   try {
-    const [acc, orders, mid] = await Promise.all([HLC.account(), HLC.openOrders(), HLC.mid()]);
-    W.acc = acc; W.orders = orders; W.mid = mid; W.err = ""; W.at = Date.now();
+    const [acc, orders, mids] = await Promise.all([HLC.account(), HLC.openOrders(), HLC.mids()]);
+    W.acc = acc; W.orders = orders; W.mids = mids || {}; W.err = ""; W.at = Date.now();
     if (first) log(`Wallet collegato (${S.wallet.net}): valore ${usd2(acc.equity)}.`);
     const k = todayKey(), D = S.real.day;
     if (D.key !== k) S.real.day = { key: k, startEq: acc.equity, locked: "" };
     if (S.tog.dailyLimit && S.real.day.locked !== k && S.real.day.startEq > 0 && acc.equity < S.real.day.startEq * (1 - S.cfg.daily / 100)) { S.real.day.locked = k; rlog(`Perdita di oggi oltre il ${S.cfg.daily}%: niente nuovi ordini veri fino a domani (UTC).`); }
-    if (keyOk()) await manageReal();
+    if (keyOk()) { W.busy = true; try { await manageReal(); } finally { W.busy = false; } }
   } catch (e) { W.err = e.message; }
   renderWallet();
 }
-function stopOrders() { return W.orders.filter(o => o.isTrigger && o.reduceOnly); }
-async function realPnlSince(t) {
-  try { const f = await HLC.fills(t - 60000); let p = 0, fee = 0; for (const x of f) if (x.coin === "BTC") { p += +x.closedPnl || 0; fee += +x.fee || 0; } return p - fee; } catch (e) { return NaN; }
+const stopOrders = coin => W.orders.filter(o => o.coin === coin && o.isTrigger && o.reduceOnly);
+const midOf = coin => parseFloat(W.mids[coin]) || M[coin].price || 0;
+async function realPnlSince(coin, t) {
+  try { const f = await HLC.fills(t - 60000); let p = 0, fee = 0; for (const x of f) if (x.coin === coin) { p += +x.closedPnl || 0; fee += +x.fee || 0; } return p - fee; } catch (e) { return NaN; }
 }
-async function recordRealClose(why) {
-  const P = S.real.pos; if (!P) return;
-  const pnl = await realPnlSince(P.opened);
-  S.real.history.push({ strat: P.strat, side: P.side, lev: P.lev, entry: P.entry, size: P.size, opened: P.opened, closed: Date.now(), why, pnl });
-  S.real.pos = null; save();
-  rlog(`Chiuso ${P.side > 0 ? "LONG" : "SHORT"} vero · ${stratName(P.strat)} · ${why}${isNaN(pnl) ? "" : ": " + (pnl >= 0 ? "+" : "") + usd2(pnl)}`);
+async function recordRealClose(coin, why) {
+  const P = S.real.pos[coin]; if (!P) return;
+  const pnl = await realPnlSince(coin, P.opened);
+  S.real.history.push({ coin, strat: P.strat, side: P.side, lev: P.lev, entry: P.entry, size: P.size, opened: P.opened, closed: Date.now(), why, pnl });
+  delete S.real.pos[coin]; save();
+  rlog(`${coin} · chiuso ${P.side > 0 ? "LONG" : "SHORT"} vero · ${stratName(P.strat)} · ${why}${isNaN(pnl) ? "" : ": " + (pnl >= 0 ? "+" : "") + usd2(pnl)}`);
   beep(pnl >= 0 ? 880 : 330);
 }
-// Allinea lo stato con il conto e protegge la posizione
-async function manageReal() {
-  const P = S.real.pos, pos = W.acc.position;
-  if (P && !pos) { await recordRealClose("chiusa dall'exchange (stop o obiettivo)"); try { await HLC.cancelAllTriggers(); } catch (e) {} return; }
+async function manageReal() { for (const c of Object.keys(S.real.pos)) await manageRealCoin(c); }
+// Allinea lo stato con il conto e protegge la posizione di una moneta
+async function manageRealCoin(coin) {
+  const P = S.real.pos[coin], pos = W.acc.positions[coin];
+  if (P && !pos) { await recordRealClose(coin, "chiusa dall'exchange (stop o obiettivo)"); try { await HLC.cancelTriggers(coin); } catch (e) {} return; }
   if (!P) return;
   const side = +pos.szi > 0 ? 1 : -1;
-  if (side !== P.side) { rlog("La posizione sul conto non corrisponde a quella del bot: non la gestisco."); return; }
+  if (side !== P.side) { rlog(`${coin}: la posizione sul conto non corrisponde a quella del bot, non la gestisco.`); return; }
+  const meta = await HLC.coinMeta(coin), mid = midOf(coin);
   P.size = Math.abs(+pos.szi);
   // protezione: deve esserci uno stop sull'exchange
-  if (!stopOrders().length && Date.now() - P.opened > 4000) {
-    try { await HLC.placeStop(P.side < 0, P.size, P.sl); rlog("Stop mancante: rimesso sull'exchange."); }
-    catch (e) { rlog("Stop non impostabile (" + e.message + "): chiudo la posizione per sicurezza."); await realClose("sicurezza: stop non attivo"); return; }
+  if (!stopOrders(coin).length && Date.now() - P.opened > 4000) {
+    try { await HLC.placeStop(coin, P.side < 0, P.size, P.sl); rlog(`${coin}: stop mancante, rimesso sull'exchange.`); }
+    catch (e) { rlog(`${coin}: stop non impostabile (${e.message}), chiudo la posizione per sicurezza.`); await doRealClose(coin, "sicurezza: stop non attivo"); return; }
   }
   // modalità costanza: chiude metà a +3R e porta lo stop a pareggio
-  if (P.ex && P.ex.part && !P.partDone && W.mid && (P.side > 0 ? W.mid >= P.entry + P.ex.part.r * P.slD : W.mid <= P.entry - P.ex.part.r * P.slD)) {
-    const meta = await HLC.btc(), sz = HLM.roundSz(P.size * P.ex.part.frac, meta.szDecimals);
+  if (P.ex && P.ex.part && !P.partDone && mid && (P.side > 0 ? mid >= P.entry + P.ex.part.r * P.slD : mid <= P.entry - P.ex.part.r * P.slD)) {
+    const sz = HLM.roundSz(P.size * P.ex.part.frac, meta.szDecimals);
     try {
-      if (sz * W.mid >= 10.5 && P.size - sz > 0) { const f = await HLC.reduceMarket(P.side < 0, sz, SLIP_REAL); rlog(`Uscita parziale: chiusi ${sz} BTC${f ? " a " + usd(+f.avgPx) : ""}.`); P.size = +(P.size - sz).toFixed(meta.szDecimals); }
-      else rlog("Uscita parziale saltata: la metà della posizione sarebbe sotto l'ordine minimo di 10 $.");
+      if (sz * mid >= 10.5 && P.size - sz > 0) { const f = await HLC.reduceMarket(coin, P.side < 0, sz, SLIP_REAL); rlog(`${coin}: uscita parziale, chiusi ${sz} ${coin}${f ? " a " + usd(+f.avgPx) : ""}.`); P.size = +(P.size - sz).toFixed(meta.szDecimals); }
+      else rlog(`${coin}: uscita parziale saltata, la metà della posizione sarebbe sotto l'ordine minimo di 10 $.`);
       P.partDone = true;
-      const be = P.entry * (1 + P.side * 2 * Core.DEFAULTS.fee), old = stopOrders();
-      await HLC.placeStop(P.side < 0, P.size, be);
-      for (const o of old) { try { await HLC.cancel(o.oid); } catch (e) {} }
-      P.beDone = true; P.sl = be; save(); rlog("Stop della parte rimasta spostato a pareggio sull'exchange.");
-    } catch (e) { rlog("Uscita parziale non riuscita, riprovo: " + e.message); }
+      const be = P.entry * (1 + P.side * 2 * Core.DEFAULTS.fee), old = stopOrders(coin);
+      await HLC.placeStop(coin, P.side < 0, P.size, be);
+      for (const o of old) { try { await HLC.cancel(coin, o.oid); } catch (e) {} }
+      P.beDone = true; P.sl = be; save(); rlog(`${coin}: stop della parte rimasta spostato a pareggio sull'exchange.`);
+    } catch (e) { rlog(`${coin}: uscita parziale non riuscita, riprovo: ${e.message}`); }
     return;
   }
-  // stop a pareggio dopo +1R
-  if (P.ex && P.ex.be && !P.beDone && W.mid && (P.side > 0 ? W.mid >= P.entry + P.ex.be * P.slD : W.mid <= P.entry - P.ex.be * P.slD)) {
-    const be = P.entry * (1 + P.side * 2 * Core.DEFAULTS.fee), old = stopOrders();
+  // stop a pareggio dopo +1R (se la strategia lo prevede)
+  if (P.ex && P.ex.be && !P.beDone && mid && (P.side > 0 ? mid >= P.entry + P.ex.be * P.slD : mid <= P.entry - P.ex.be * P.slD)) {
+    const be = P.entry * (1 + P.side * 2 * Core.DEFAULTS.fee), old = stopOrders(coin);
     try {
-      await HLC.placeStop(P.side < 0, P.size, be);
-      for (const o of old) { try { await HLC.cancel(o.oid); } catch (e) {} }
-      P.beDone = true; P.sl = be; save(); rlog("Stop spostato a pareggio sull'exchange.");
-    } catch (e) { rlog("Spostamento dello stop non riuscito, riprovo: " + e.message); }
+      await HLC.placeStop(coin, P.side < 0, P.size, be);
+      for (const o of old) { try { await HLC.cancel(coin, o.oid); } catch (e) {} }
+      P.beDone = true; P.sl = be; save(); rlog(`${coin}: stop spostato a pareggio sull'exchange.`);
+    } catch (e) { rlog(`${coin}: spostamento dello stop non riuscito, riprovo: ${e.message}`); }
   }
 }
-async function realClose(why) {
-  if (!keyOk() || W.busy) return;
-  W.busy = true;
-  try { await HLC.closeMarket(SLIP_REAL); await new Promise(r => setTimeout(r, 1500)); await recordRealClose(why); }
-  catch (e) { rlog("Chiusura non riuscita: " + e.message); }
-  W.busy = false; refreshWallet();
+async function doRealClose(coin, why) {
+  try { await HLC.closeMarket(coin, SLIP_REAL); await new Promise(r => setTimeout(r, 1500)); await recordRealClose(coin, why); }
+  catch (e) { rlog(`${coin}: chiusura non riuscita: ${e.message}`); }
+}
+function realClose(coin, why) {
+  if (!keyOk()) return Promise.resolve();
+  return enqueue(() => doRealClose(coin, why)).then(() => refreshWallet());
 }
 // Apertura vera: stessa logica di rischio della simulazione, sul valore del conto in USDC
-async function realOpen(stratId, side, slPct, tpPct, lev, notionalWanted, ex) {
-  if (!realOn() || W.busy) return;
-  if (blockedReason() && stratId !== "manuale") { rlog("Ordine vero non inviato: " + blockedReason() + "."); return; }
-  if (S.tog.dailyLimit && S.real.day.locked === todayKey()) { rlog("Ordine vero non inviato: perdita giornaliera massima raggiunta."); return; }
-  W.busy = true;
+function realOpen(coin, stratId, side, slPct, tpPct, lev, notionalWanted, ex) {
+  if (!realOn()) return Promise.resolve();
+  return enqueue(() => doRealOpen(coin, stratId, side, slPct, tpPct, lev, notionalWanted, ex)).then(() => setTimeout(() => refreshWallet(), 4500)); // controllo che lo stop risulti attivo
+}
+async function doRealOpen(coin, stratId, side, slPct, tpPct, lev, notionalWanted, ex) {
+  const bot = stratId !== "manuale";
+  if (bot && blockedReason(coin)) { rlog(`${coin}: ordine vero non inviato, ${blockedReason(coin)}.`); return; }
+  if (S.tog.dailyLimit && S.real.day.locked === todayKey()) { rlog(`${coin}: ordine vero non inviato, perdita giornaliera massima raggiunta.`); return; }
   try {
-    const [acc, mid, meta] = await Promise.all([HLC.account(), HLC.mid(), HLC.btc()]);
-    if (acc.position || S.real.pos) { rlog("Ordine vero non inviato: c'è già una posizione BTC sul conto (Hyperliquid ne consente una sola)."); return; }
+    const [acc, mid, meta] = await Promise.all([HLC.account(), HLC.mid(coin), HLC.coinMeta(coin)]);
+    if (acc.positions[coin] || S.real.pos[coin]) { rlog(`${coin}: ordine vero non inviato, c'è già una posizione ${coin} sul conto (Hyperliquid ne consente una per moneta).`); return; }
+    const nBot = Object.values(S.real.pos).filter(p => p.strat !== "manuale").length;
+    if (bot && nBot >= S.cfg.maxPos) { rlog(`${coin}: ordine vero non inviato, già ${nBot} posizioni vere del bot (limite ${S.cfg.maxPos}).`); return; }
     lev = Math.max(1, Math.min(lev, meta.maxLeverage, S.cfg.maxLev));
     let notional = notionalWanted != null ? notionalWanted : acc.equity * S.cfg.risk / 100 / (slPct + 2 * Core.DEFAULTS.fee + 0.0005);
     if (notional / lev > acc.available * 0.95) notional = acc.available * 0.95 * lev;
     const sz = HLM.roundSz(notional / mid, meta.szDecimals);
-    if (sz * mid < 10.5) { rlog(`Ordine vero non inviato: valore ${usd2(sz * mid)} sotto il minimo di 10 $ (conto ${usd2(acc.equity)}).`); return; }
+    if (sz * mid < 10.5) { rlog(`${coin}: ordine vero non inviato, valore ${usd2(sz * mid)} sotto il minimo di 10 $ (conto ${usd2(acc.equity)}).`); return; }
     const sl = mid * (1 - side * slPct), tp = tpPct ? mid * (1 + side * tpPct) : 0;
-    await HLC.setLeverage(lev);
-    const st = await HLC.openProtected(side > 0, sz, mid, sl, tp, SLIP_REAL);
+    await HLC.setLeverage(coin, lev);
+    const st = await HLC.openProtected(coin, side > 0, sz, mid, sl, tp, SLIP_REAL);
     const f = st[0] && st[0].filled;
-    if (!f) { rlog("Ordine vero rifiutato: " + ((st[0] && st[0].error) || JSON.stringify(st[0]))); return; }
+    if (!f) { rlog(`${coin}: ordine vero rifiutato: ` + ((st[0] && st[0].error) || JSON.stringify(st[0]))); return; }
     const entry = +f.avgPx, size = +f.totalSz;
-    S.real.pos = { strat: stratId, side, size, entry, sl, slD: Math.abs(entry - sl), tp, lev, beDone: false, ex: ex || {}, opened: Date.now() };
+    S.real.pos[coin] = { coin, strat: stratId, side, size, entry, sl, slD: Math.abs(entry - sl), tp, lev, beDone: false, ex: ex || {}, opened: Date.now() };
     save();
-    rlog(`Aperto ${side > 0 ? "LONG" : "SHORT"} vero · ${stratName(stratId)} · ${size} BTC a ${usd(entry)} · leva ${lev}x · stop ${usd(sl)}`);
+    rlog(`${coin} · aperto ${side > 0 ? "LONG" : "SHORT"} vero · ${stratName(stratId)} · ${size} ${coin} a ${usd(entry)} · leva ${lev}x · stop ${usd(sl)}`);
     const errs = st.slice(1).filter(x => x && x.error).map(x => x.error);
-    if (errs.length) rlog("Avviso dall'exchange sugli ordini di protezione: " + errs.join("; "));
+    if (errs.length) rlog(`${coin}: avviso dall'exchange sugli ordini di protezione: ` + errs.join("; "));
     beep(660);
-  } catch (e) { rlog("Errore nell'invio dell'ordine vero: " + e.message); }
-  finally { W.busy = false; }
-  setTimeout(() => refreshWallet(), 4500); // controllo che lo stop risulti attivo
+  } catch (e) { rlog(`${coin}: errore nell'invio dell'ordine vero: ${e.message}`); }
 }
 function renderWallet() {
   const net = S.wallet.net;
@@ -1741,21 +1873,21 @@ function renderWallet() {
   else if (HLC) { np.className = "pill"; np.textContent = `wallet ${net} · ${verified() ? "verificato" : keyOk() ? "da verificare" : "sola lettura"}`; }
   else np.className = "pill hidden";
   $("realBanner").classList.toggle("hidden", !realOn());
-  $("realText").textContent = `Soldi veri attivi su ${net === "mainnet" ? "MAINNET" : "TESTNET"}: il bot e i pulsanti manuali inviano ordini veri. Ogni ordine parte con il suo stop già sull'exchange. Una sola posizione BTC alla volta.`;
+  $("realText").textContent = `Soldi veri attivi su ${net === "mainnet" ? "MAINNET" : "TESTNET"}: il bot e i pulsanti manuali inviano ordini veri su ${coinsOn().join(", ") || "nessuna moneta"}. Ogni ordine parte con il suo stop già sull'exchange. Una posizione per moneta.`;
   if (!HLC) return;
   const a = W.acc;
   $("wEq").textContent = a ? usd2(a.equity) : "—";
   $("wAv").textContent = a ? usd2(a.available) : "—";
   $("wState").innerHTML = W.err ? `<span class="neg">${W.err}</span>` : realOn() ? '<span class="pos">ordini veri attivi</span>' : verified() ? '<span class="blue">verificato, ordini spenti</span>' : keyOk() ? '<span class="warnc">da verificare</span>' : '<span class="mut">sola lettura</span>';
-  const p = a && a.position;
-  $("wPos").innerHTML = p ? `Posizione BTC: ${+p.szi > 0 ? '<b class="pos">LONG</b>' : '<b class="neg">SHORT</b>'} ${Math.abs(+p.szi)} BTC · entrata ${usd(+p.entryPx)} · leva ${p.leverage && p.leverage.value}x · liquidazione ${p.liquidationPx ? usd(+p.liquidationPx) : "—"} · G/P <b class="${cls(+p.unrealizedPnl)}">${usd2(+p.unrealizedPnl)}</b>${S.real.pos ? ` · gestita dal bot (${stratName(S.real.pos.strat)}${S.real.pos.beDone ? ", stop a pareggio" : ""})` : " · <span class='warnc'>non aperta dal bot</span>"}` : "Nessuna posizione BTC sul conto.";
-  const so = stopOrders();
-  $("wOrders").innerHTML = so.length ? "Protezioni sull'exchange: " + so.map(o => `${o.orderType || "trigger"} a ${usd(+o.triggerPx)}`).join(" · ") : (p ? '<span class="neg">Nessuno stop attivo sull\'exchange!</span>' : "");
-  $("bWClose").disabled = !(p && keyOk());
+  const ps = a ? Object.entries(a.positions) : [];
+  $("wPos").innerHTML = ps.length ? ps.map(([c, p]) => { const R = S.real.pos[c];
+    return `<div><b>${c}</b>: ${+p.szi > 0 ? '<b class="pos">LONG</b>' : '<b class="neg">SHORT</b>'} ${Math.abs(+p.szi)} ${c} · entrata ${usd(+p.entryPx)} · leva ${p.leverage && p.leverage.value}x · liquidazione ${p.liquidationPx ? usd(+p.liquidationPx) : "—"} · G/P <b class="${cls(+p.unrealizedPnl)}">${usd2(+p.unrealizedPnl)}</b>${R ? ` · gestita dal bot (${stratName(R.strat)}${R.beDone ? ", stop a pareggio" : ""})` : " · <span class='warnc'>non aperta dal bot</span>"}</div>`; }).join("") : "Nessuna posizione sul conto.";
+  const prot = ps.map(([c]) => { const so = stopOrders(c); return so.length ? `${c}: ` + so.map(o => `${o.orderType || "trigger"} a ${usd(+o.triggerPx)}`).join(", ") : `<span class="neg">${c}: nessuno stop attivo sull'exchange!</span>`; });
+  $("wOrders").innerHTML = prot.length ? "Protezioni sull'exchange: " + prot.join(" · ") : "";
+  $("bWClose").disabled = !(ps.length && keyOk());
   const H = S.real.history;
   if (H.length) { const tot = H.reduce((s, h) => s + (isNaN(h.pnl) ? 0 : h.pnl), 0); $("wOrders").innerHTML += `<br>Operazioni vere chiuse: ${H.length} · totale <b class="${cls(tot)}">${(tot >= 0 ? "+" : "") + usd2(tot)}</b>`; }
 }
-
 
 /* ---------------- avvio / arresto, timer, schermo acceso ---------------- */
 let wake = null, wakeErr = "";
@@ -1768,27 +1900,33 @@ async function wakeOn() {
 function wakeOff() { if (wake) { try { wake.release(); } catch (e) {} wake = null; } }
 function setRunning(on, why) {
   S.tog.bot = on;
-  if (on) { S.sess.since = Date.now(); S.sess.alive = Date.now(); log(why || "▶ Bot avviato."); wakeOn(); lastBotCandle = 0; }
+  if (on) { S.sess.since = Date.now(); S.sess.alive = Date.now(); log(why || "▶ Bot avviato."); wakeOn(); for (const c of COINS) M[c].lastBot = 0; }
   else { if (S.sess.since) S.sess.total += Date.now() - S.sess.since; S.sess.since = 0; log(why || "■ Bot fermato."); wakeOff(); }
   save(); buildToggles(); renderAll();
 }
-document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { wakeOn(); refreshCandles().then(processClosed); } });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { wakeOn(); refreshAll().then(processClosed); } });
+const lastPriceAt = () => Math.max(...COINS.filter(c => S.coinOn[c]).map(c => M[c].priceAt), 0);
 function renderRun() {
-  const on = S.tog.bot, why = blockedReason(), fresh = priceAt && Date.now() - priceAt < 30000;
+  const on = S.tog.bot, why = blockedReason(), pa = lastPriceAt(), fresh = pa && Date.now() - pa < 30000;
+  const bad = coinsOn().filter(c => S.tog.failsafe && failReason(c));
   $("bRun").classList.toggle("stop", on);
   $("bRunIcon").textContent = on ? "■" : "▶"; $("bRunTxt").textContent = on ? "FERMA" : "AVVIA";
   const dot = $("runDot"); dot.className = "dot";
   let st, sub;
   if (!on) { st = "FERMO"; sub = "Il bot non apre nuove posizioni. Premi AVVIA per farlo lavorare."; }
-  else if (!fresh) { st = "OFFLINE"; dot.classList.add("bad"); sub = "Nessun prezzo da " + (priceAt ? hms(Date.now() - priceAt) : "l'apertura") + ": controlla la connessione."; }
+  else if (!coinsOn().length) { st = "IN PAUSA"; dot.classList.add("warn"); sub = "Avviato, ma tutte le monete sono spente."; }
+  else if (!fresh) { st = "OFFLINE"; dot.classList.add("bad"); sub = "Nessun prezzo da " + (pa ? hms(Date.now() - pa) : "l'apertura") + ": controlla la connessione."; }
   else if (why) { st = "IN PAUSA"; dot.classList.add("warn"); sub = "Avviato, ma " + why + "."; }
-  else { st = "ONLINE · IN FUNZIONE"; dot.classList.add("on"); sub = "Sta controllando il mercato: entra da solo quando arriva un segnale."; }
+  else if (bad.length) { st = "ONLINE · IN FUNZIONE"; dot.classList.add("warn"); sub = `In funzione, ma ${bad.join(", ")} in blocco di sicurezza (dati mancanti o vecchi).`; }
+  else { st = "ONLINE · IN FUNZIONE"; dot.classList.add("on"); const rk = S.tog.rsTop ? ranks() : null, top = rk ? coinsOn().filter(c => rk[c] < Core.RS.top) : [];
+    sub = `Sta controllando ${coinsOn().join(", ")}: entra da solo quando arriva un segnale` + (rk && top.length ? ` (adesso solo su ${top.join(" e ")}, le più forti).` : "."); }
   $("runState").textContent = st; $("runSub").textContent = sub;
   $("runTimer").textContent = on && S.sess.since ? hms(Date.now() - S.sess.since) : "00:00:00";
   const nextBar = Math.ceil(Date.now() / BAR) * BAR, act = ES().filter(x => S.stratOn[x.id]);
   const nextEval = act.length ? Math.min(...act.map(x => Math.ceil(Date.now() / (x.f * BAR)) * x.f * BAR)) : 0;
   const ws = !S.tog.wakeLock ? '<b class="mut">spento</b>' : wake ? '<b class="pos">attivo</b>' : on ? `<b class="warnc">${wakeErr || "in attesa"}</b>` : '<b class="mut">si attiva all\'avvio</b>';
-  $("runChecks").innerHTML = `<span>Prezzo: ${fresh ? `<b class="pos">aggiornato ${Math.round((Date.now() - priceAt) / 1000)} s fa</b>` : '<b class="neg">non aggiornato</b>'}</span>
+  $("runChecks").innerHTML = `<span>Prezzi: ${fresh ? `<b class="pos">aggiornati ${Math.round((Date.now() - pa) / 1000)} s fa</b>` : '<b class="neg">non aggiornati</b>'}</span>
+    <span>Monete accese: <b>${coinsOn().join(" · ") || "nessuna"}</b></span>
     <span>Prossima candela 15m: <b>${hms(nextBar - Date.now()).slice(3)}</b></span>
     <span>Prossima valutazione strategie: <b>${nextEval ? hm(nextEval) : "—"}</b></span>
     <span>Schermo sempre acceso: ${ws}</span>`;
@@ -1799,40 +1937,66 @@ function renderRun() {
 
 /* ---------------- interfaccia ---------------- */
 function renderHeader() {
-  $("price").textContent = price ? usd(price) : "—";
-  const fp = $("feedPill");
-  if (src === "hl" && Date.now() - priceAt < 30000) { fp.className = "pill ok"; fp.textContent = "● Hyperliquid"; }
-  else if (src === "bn" && Date.now() - priceAt < 30000) { fp.className = "pill warn"; fp.textContent = "● Binance (riserva)"; }
+  const cc = S.chartCoin, m = M[cc];
+  $("priceCoin").textContent = cc; $("price").textContent = m.price ? usd(m.price) : "—";
+  const fp = $("feedPill"), pa = lastPriceAt() || M[cc].priceAt;
+  if (src === "hl" && Date.now() - pa < 30000) { fp.className = "pill ok"; fp.textContent = "● Hyperliquid"; }
+  else if (src === "bn" && Date.now() - pa < 30000) { fp.className = "pill warn"; fp.textContent = "● Binance (riserva)"; }
   else { fp.className = "pill bad"; fp.textContent = "○ nessun dato"; }
   const why = blockedReason(), bp = $("botPill");
   if (!S.tog.bot) { bp.className = "pill"; bp.textContent = "bot spento"; }
-  else if (why) { bp.className = "pill warn"; bp.textContent = "bot in pausa"; }
-  else { bp.className = "pill ok"; bp.textContent = "bot attivo"; }
+  else if (why || !coinsOn().length) { bp.className = "pill warn"; bp.textContent = "bot in pausa"; }
+  else { bp.className = "pill ok"; bp.textContent = "bot attivo · " + coinsOn().length + " monete"; }
   const nb = Math.ceil(Date.now() / BAR) * BAR - Date.now();
   $("nextBar").textContent = `prossima candela 15m tra ${Math.floor(nb / 60000)}:${String(Math.floor(nb / 1000) % 60).padStart(2, "0")}`;
-  const fr = S.tog.failsafe ? failReason() : "";
-  $("failBanner").classList.toggle("hidden", !fr || !booted && !candles.length && Date.now() - startAt < 15000);
-  $("failText").textContent = "Blocco di sicurezza: " + fr;
+  const frs = S.tog.failsafe ? coinsOn().map(c => [c, failReason(c)]).filter(x => x[1]) : [];
+  const early = !booted && Date.now() - startAt < 15000;
+  $("failBanner").classList.toggle("hidden", !frs.length || early);
+  $("failText").textContent = "Blocco di sicurezza: " + frs.map(([c, r]) => `${c}: ${r}`).join(" · ") + ". Niente nuove entrate su " + (frs.length > 1 ? "queste monete" : "questa moneta") + " finché i dati non tornano.";
   const dl = S.tog.dailyLimit && S.day.locked === todayKey();
   $("dailyBanner").classList.toggle("hidden", !dl);
   $("dailyText").textContent = `Perdita di oggi oltre il ${S.cfg.daily}%: il bot non apre nuove posizioni fino a domani (UTC). Le posizioni aperte restano gestite.`;
 }
 function renderAccount() {
   if (!S.book) return;
-  const B = S.book, eq = price ? Core.equity(B, price) : B.balance, g = eq - B.start;
+  const B = S.book, eq = Core.equity(B, pxMap()), g = eq - B.start;
   $("sStart").textContent = eur(B.start);
   $("sEquity").textContent = eur(eq);
   $("sPnl").innerHTML = `${eurS(g)} <span class="note">${pct(g / B.start * 100)}</span>`; $("sPnl").className = "val " + cls(g);
   const w = B.history.filter(h => h.pnl > 0).length;
   $("sTrades").textContent = B.history.length + " · " + (B.history.length ? Math.round(w / B.history.length * 100) + "%" : "—");
 }
+function volTxt(c) {
+  const v = M[c].volNow;
+  return isNaN(v) ? '<span class="warnc">volatilità: in attesa</span>' : v < 0.5 ? `<span class="blue">volatilità bassa (${Math.round(v * 100)}°)</span>` : `<span class="mut">volatilità alta (${Math.round(v * 100)}°)</span>`;
+}
+function renderCoins() {
+  const box = $("coins");
+  if (box.children.length !== COINS.length) box.innerHTML = COINS.map(c => `<div class="ccard" id="cc_${c}"><div class="top"><b class="name">${c}</b>
+      <label class="sw" title="Accendi o spegni ${COIN_NAME[c]}"><input type="checkbox" data-coin="${c}"><span></span></label></div>
+      <div class="cpx" id="cp_${c}">—</div><div class="cst" id="cs_${c}"></div></div>`).join("");
+  for (const c of COINS) {
+    const on = !!S.coinOn[c], m = M[c];
+    $("cc_" + c).classList.toggle("on", on);
+    const cb = $("cc_" + c).querySelector("input"); if (cb.checked !== on) cb.checked = on;
+    $("cp_" + c).textContent = m.price ? usd(m.price) : "—";
+    const p = S.book && S.book.positions.find(x => coinOf(x) === c), R = S.real.pos[c];
+    const fr = on && S.tog.failsafe ? failReason(c) : "";
+    const rk = S.tog.rsTop && on && m.daily ? ranks()[c] : null;
+    const rkTxt = rk == null ? "" : rk < Core.RS.top ? `<br><b class="pos">${rk + 1}ª più forte: può entrare</b>` : `<br><span class="mut">${rk + 1}ª più forte: aspetta</span>`;
+    $("cs_" + c).innerHTML = (on ? "" : '<span class="mut">spenta: nessuna nuova entrata</span><br>')
+      + (p ? `${sideTxt(p.side)} ${stratName(p.strat)} · <b class="${cls(Core.unrealized(p, m.price || p.entry))}">${eurS(m.price ? Core.unrealized(p, m.price) : 0)}</b>` : '<span class="mut">nessuna posizione</span>')
+      + (R ? '<br><b class="warnc">posizione vera aperta</b>' : "")
+      + rkTxt + "<br>" + volTxt(c) + (fr ? `<br><span class="neg">${fr}</span>` : "");
+  }
+}
 function renderOpen() {
   const B = S.book; if (!B) return;
   $("noOpen").classList.toggle("hidden", B.positions.length > 0);
   $("openBody").innerHTML = B.positions.map(p => {
-    const g = price ? Core.unrealized(p, price) : 0;
+    const q = M[coinOf(p)].price, g = q ? Core.unrealized(p, q) : 0;
     const sl = p.sl > 0 && p.sl < 1e11 ? usd(p.sl) + (p.beDone ? " <span class='note'>pareggio</span>" : "") : "—";
-    return `<tr><td>${stratName(p.strat)}</td><td>${sideTxt(p.side)}</td><td>${p.lev}x</td><td class="blue">${eur(p.margin)}</td><td>${usd(p.entry)}</td>
+    return `<tr><td><b>${coinOf(p)}</b></td><td>${stratName(p.strat)}</td><td>${sideTxt(p.side)}</td><td>${p.lev}x</td><td class="blue">${eur(p.margin)}</td><td>${usd(p.entry)}</td>
       <td class="neg">${sl}</td><td class="pos">${p.tp ? usd(p.tp) : "—"}</td><td class="warnc">${usd(p.liq)}</td>
       <td class="${cls(g)}"><b>${eurS(g)}</b></td><td><button class="btn sm" data-close="${p.id}">Chiudi</button></td></tr>`;
   }).join("");
@@ -1841,30 +2005,29 @@ function renderHist() {
   const H = S.book ? S.book.history : [];
   $("noHist").classList.toggle("hidden", H.length > 0);
   $("histInfo").textContent = H.length ? `${H.length} operazioni` : "";
-  $("histBody").innerHTML = H.slice(-80).reverse().map(h => `<tr><td>${dt(h.closed)}</td><td>${stratName(h.strat)}</td><td>${sideTxt(h.side)}</td><td>${h.lev}x</td>
+  $("histBody").innerHTML = H.slice(-80).reverse().map(h => `<tr><td>${dt(h.closed)}</td><td><b>${coinOf(h)}</b></td><td>${stratName(h.strat)}</td><td>${sideTxt(h.side)}</td><td>${h.lev}x</td>
     <td>${usd(h.entry)}</td><td>${usd(h.exit)}</td><td>${h.why}</td><td class="${cls(h.pnl)}"><b>${eurS(h.pnl)}</b></td></tr>`).join("");
 }
-function squeezeState(s) {
-  const cl = closedCandles(); if (cl.length < 400) return "";
+function squeezeState(s, coin) {
+  const cl = closedCandles(coin); if (cl.length < 400) return "";
   const X = E.makeTF(toTyped(cl), s.f), m = X.K.sma(s.p.n), sd = X.K.std(s.p.n), n = m.length;
   const w = i => sd[i] / m[i], ref = w(n - 1); let below = 0, tot = 0;
   for (let j = n - 1 - s.p.look; j < n - 1; j += 4) { if (j < 0) continue; tot++; if (w(j) < ref) below++; }
   const q = tot ? below / tot : 1;
-  return q <= s.p.q ? `<span class="blue">Bande strette (${Math.round(q * 100)}° percentile): pronto a scattare se il prezzo esce</span>` : `<span class="mut">Bande larghe (${Math.round(q * 100)}° percentile): serve una fase più calma</span>`;
+  return q <= s.p.q ? `<span class="blue">${coin}: bande strette (${Math.round(q * 100)}°), pronto a scattare</span>` : `<span class="mut">${coin}: bande larghe (${Math.round(q * 100)}°)</span>`;
 }
 function stratStatus(s) {
-  const pos = S.book && S.book.positions.find(p => p.strat === s.id);
   if (!S.stratOn[s.id]) return '<span class="mut">Spenta</span>';
-  if (pos) return `${sideTxt(pos.side)} aperta dal ${dt(pos.opened)} · <span class="${cls(Core.unrealized(pos, price))}">${eurS(Core.unrealized(pos, price))}</span>`;
-  let last = "";
-  const x = SIG[s.id]; if (x) for (let i = sigLen - 1; i >= 0; i--) if (x.sig[i]) { last = `Ultimo segnale ${x.sig[i] > 0 ? "LONG" : "SHORT"} il ${dt(sigT[i] + BAR)}`; break; }
+  const out = [];
+  const pos = S.book ? S.book.positions.filter(p => p.strat === s.id) : [];
+  for (const p of pos) { const q = M[coinOf(p)].price, g = q ? Core.unrealized(p, q) : 0; out.push(`<b>${coinOf(p)}</b> ${sideTxt(p.side)} aperta dal ${dt(p.opened)} · <span class="${cls(g)}">${eurS(g)}</span>`); }
+  let last = null;
+  for (const c of coinsOn()) { const m = M[c], x = m.SIG[s.id]; if (x) for (let i = m.sigLen - 1; i >= 0; i--) if (x.sig[i]) { if (!last || m.sigT[i] > last.t) last = { t: m.sigT[i], c, d: x.sig[i] }; break; } }
   const nx = Math.ceil(Date.now() / (s.f * BAR)) * s.f * BAR;
-  let st = `${last || "Nessun segnale negli ultimi giorni"} · prossima valutazione alle ${hm(nx)}`;
-  if (s.key === "squeeze") st += "<br>" + squeezeState(s);
-  if (eff(s).vol === "low") st += "<br>" + (isNaN(volNow) ? '<span class="warnc">Volatilità: in attesa delle candele giornaliere</span>'
-    : volNow < 0.5 ? `<span class="blue">Volatilità bassa oggi (${Math.round(volNow * 100)}° percentile): il bot può entrare</span>`
-    : `<span class="mut">Volatilità alta oggi (${Math.round(volNow * 100)}° percentile): niente nuove entrate</span>`);
-  return st;
+  out.push(`${last ? `Ultimo segnale: ${last.c} ${last.d > 0 ? "LONG" : "SHORT"} il ${dt(last.t + BAR)}` : "Nessun segnale negli ultimi giorni"} · prossima valutazione alle ${hm(nx)}`);
+  if (s.key === "squeeze") out.push(coinsOn().map(c => squeezeState(s, c)).filter(Boolean).join(" · "));
+  if (eff(s).vol === "low") out.push("Entra solo con volatilità bassa: " + (coinsOn().map(c => `${c} ${volTxt(c)}`).join(" · ") || "nessuna moneta accesa"));
+  return out.filter(Boolean).join("<br>");
 }
 function renderStrats() {
   const box = $("strats");
@@ -1884,23 +2047,28 @@ function renderStrats() {
 }
 function renderManual() {
   const on = S.tog.manual; $("manualBody").classList.toggle("hidden", !on); $("manualOff").classList.toggle("hidden", on);
+  $("mCoin").textContent = S.chartCoin;
   const m = S.manual, notional = m.margin * m.lev, liqD = Math.max(0.05, (1 / m.lev - Core.DEFAULTS.mmr) * 100);
   $("mLevVal").textContent = m.lev + "x";
-  $("mPreview").innerHTML = `Posizione da <b>${eur(notional)}</b> · ogni 1% di prezzo = <b>${eur(notional / 100)}</b> · liquidazione a circa <b class="warnc">${liqD.toFixed(1).replace(".", ",")}%</b> contro di te`
+  const busy = S.book && S.book.positions.some(p => coinOf(p) === S.chartCoin);
+  $("mPreview").innerHTML = `Moneta: <b>${S.chartCoin}</b> (si cambia dal grafico) · posizione da <b>${eur(notional)}</b> · ogni 1% di prezzo = <b>${eur(notional / 100)}</b> · liquidazione a circa <b class="warnc">${liqD.toFixed(1).replace(".", ",")}%</b> contro di te`
+    + (busy ? `<br><b class="warnc">C'è già una posizione su ${S.chartCoin}: una sola per moneta.</b>` : "")
     + (m.sl > 0 && m.sl >= liqD ? `<br><b class="neg">Lo stop loss è oltre la liquidazione: abbassa la leva o lo stop.</b>` : "")
     + (notional < Core.DEFAULTS.minNotional ? `<br><b class="neg">Sotto l'ordine minimo di 10 $.</b>` : "");
 }
 function renderLog() { $("log").innerHTML = S.log.slice(0, 120).map(l => `<div>${l.replace(/</g, "&lt;")}</div>`).join(""); }
-function renderAll() { renderRun(); renderHeader(); renderAccount(); renderOpen(); renderHist(); renderStrats(); renderManual(); drawChart(); }
+function renderAll() { renderRun(); renderHeader(); renderAccount(); renderCoins(); renderOpen(); renderHist(); renderStrats(); renderManual(); renderWallet(); drawChart(); }
 
 /* grafico */
 const cv = $("chart"), cx = cv.getContext("2d");
+const axisFmt = v => v < 10 ? v.toLocaleString("it-IT", { maximumFractionDigits: 4 }) : v < 1000 ? v.toLocaleString("it-IT", { maximumFractionDigits: 2 }) : Math.round(v).toLocaleString("it-IT");
 function drawChart() {
   const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
   if (!W) return;
   if (cv.width !== W * dpr || cv.height !== H * dpr) { cv.width = W * dpr; cv.height = H * dpr; }
   cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, W, H);
-  if (candles.length < 10) { cx.fillStyle = "#71717A"; cx.font = "13px JBMono, monospace"; cx.fillText("In attesa dei dati di mercato…", 16, 30); return; }
+  const coin = S.chartCoin, candles = M[coin].candles, price = M[coin].price;
+  if (candles.length < 10) { cx.fillStyle = "#71717A"; cx.font = "13px JBMono, monospace"; cx.fillText(`In attesa dei dati di ${coin}…`, 16, 30); return; }
   const R = E.resample(toTyped(candles), S.tf).C, n = R.c.length, show = Math.max(30, Math.min(n, Math.floor((W - 64) / 7)));
   const a = n - show;
   let bU = null, bD = null;
@@ -1908,14 +2076,14 @@ function drawChart() {
   let hi = -Infinity, lo = Infinity;
   for (let i = a; i < n; i++) { hi = Math.max(hi, R.h[i]); lo = Math.min(lo, R.l[i]); if (bU && !isNaN(bU(i))) { hi = Math.max(hi, bU(i)); lo = Math.min(lo, bD(i)); } }
   const lines = [];
-  for (const p of (S.book ? S.book.positions : [])) {
+  for (const p of (S.book ? S.book.positions.filter(p => coinOf(p) === coin) : [])) {
     lines.push([p.entry, "#3B82F6"]); if (p.sl > 0 && p.sl < 1e11) lines.push([p.sl, "#F87171"]); if (p.tp) lines.push([p.tp, "#4ADE80"]); lines.push([p.liq, "#FBBF24"]);
   }
   for (const [v] of lines) { if (v > lo - (hi - lo) && v < hi + (hi - lo)) { hi = Math.max(hi, v); lo = Math.min(lo, v); } }
-  const pad = (hi - lo) * .05 || 1; hi += pad; lo -= pad;
+  const pad = (hi - lo) * .05 || 1e-6; hi += pad; lo -= pad;
   const RP = 64, w = (W - RP) / show, y = v => H - (v - lo) / (hi - lo) * H;
   cx.font = "11px JBMono, monospace"; cx.lineWidth = 1;
-  for (let k = 0; k <= 4; k++) { const v = lo + (hi - lo) * k / 4, yy = y(v); cx.strokeStyle = "#1C2130"; cx.beginPath(); cx.moveTo(0, yy); cx.lineTo(W - RP, yy); cx.stroke(); cx.fillStyle = "#71717A"; cx.fillText(Math.round(v).toLocaleString("it-IT"), W - RP + 6, Math.min(H - 3, Math.max(11, yy + 4))); }
+  for (let k = 0; k <= 4; k++) { const v = lo + (hi - lo) * k / 4, yy = y(v); cx.strokeStyle = "#1C2130"; cx.beginPath(); cx.moveTo(0, yy); cx.lineTo(W - RP, yy); cx.stroke(); cx.fillStyle = "#71717A"; cx.fillText(axisFmt(v), W - RP + 6, Math.min(H - 3, Math.max(11, yy + 4))); }
   if (bU) {
     for (const f of [bU, bD]) { cx.strokeStyle = "rgba(59,130,246,.55)"; cx.beginPath(); let st = false; for (let i = a; i < n; i++) { const v = f(i); if (isNaN(v)) continue; const xx = (i - a) * w + w / 2; st ? cx.lineTo(xx, y(v)) : cx.moveTo(xx, y(v)); st = true; } cx.stroke(); }
   }
@@ -1927,7 +2095,7 @@ function drawChart() {
   cx.setLineDash([5, 4]);
   for (const [v, c] of lines) { if (v < lo || v > hi) continue; cx.strokeStyle = c; cx.beginPath(); cx.moveTo(0, y(v)); cx.lineTo(W - RP, y(v)); cx.stroke(); }
   cx.setLineDash([]);
-  if (price) { const py = y(price); cx.fillStyle = "#3B82F6"; cx.fillRect(W - RP, py - 9, RP, 18); cx.fillStyle = "#fff"; cx.fillText(Math.round(price).toLocaleString("it-IT"), W - RP + 6, py + 4); }
+  if (price) { const py = y(price); cx.fillStyle = "#3B82F6"; cx.fillRect(W - RP, py - 9, RP, 18); cx.fillStyle = "#fff"; cx.fillText(axisFmt(price), W - RP + 6, py + 4); }
 }
 
 /* interruttori */
@@ -1936,16 +2104,21 @@ function buildToggles() {
     <label class="sw"><input type="checkbox" data-tog="${t.id}" ${S.tog[t.id] ? "checked" : ""} ${t.locked ? "disabled" : ""}><span></span></label></div>`).join("");
 }
 
-/* ---------------- laboratorio ---------------- */
+/* ---------------- laboratorio (più monete) ---------------- */
 function idb() { return new Promise((res, rej) => { try { const r = indexedDB.open("qg_leva", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); } }); }
 async function idbPut(k, v) { try { const db = await idb(); await new Promise((res, rej) => { const tx = db.transaction("kv", "readwrite"); tx.objectStore("kv").put(v, k); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); } catch (e) {} }
 async function idbGet(k) { try { const db = await idb(); return await new Promise((res) => { const r = db.transaction("kv").objectStore("kv").get(k); r.onsuccess = () => res(r.result); r.onerror = () => res(null); }); } catch (e) { return null; } }
-let labFromT = 0, labDays = 0;
-function setLab(arr, how, fromT, days) {
-  labC = toTyped(arr); labFromT = fromT || 0; labDays = days || 0;
-  const n = arr.length, d0 = fromT || arr[Math.min(900, Math.floor(n / 4))].t;
-  $("labData").innerHTML = `<b class="mono">${n.toLocaleString("it-IT")}</b> candele da 15 minuti · periodo di prova dal ${new Date(d0).toLocaleDateString("it-IT")} al ${new Date(arr[n - 1].t).toLocaleDateString("it-IT")} ${how ? "· " + how : ""}`;
-  $("bLabRun").disabled = n < 1200;
+const dIt = t => new Date(t).toLocaleDateString("it-IT");
+function setLab(coin, arr, how, fromT, days) {
+  labD[coin] = { arr, how, fromT: fromT || 0, days: days || 0 };
+  showLabData();
+}
+function showLabData(extra) {
+  const ks = COINS.filter(c => labD[c]);
+  $("labData").innerHTML = ks.length ? ks.map(c => { const d = labD[c], n = d.arr.length;
+    return `<b>${c}</b> <span class="mono">${n.toLocaleString("it-IT")}</span> candele dal ${dIt(d.arr[0].t)} al ${dIt(d.arr[n - 1].t)}${d.how ? " (" + d.how + ")" : ""}${S.coinOn[c] ? "" : ' <span class="mut">· moneta spenta, non entra nella prova</span>'}`; }).join("<br>") + (extra ? "<br>" + extra : "")
+    : "Nessun dato caricato." + (extra ? " " + extra : "");
+  $("bLabRun").disabled = !ks.some(c => S.coinOn[c] && labD[c].arr.length >= 1200);
 }
 function saveCsv(arr, name) {
   const lines = ["time,open,high,low,close,volume"]; for (const x of arr) lines.push([x.t, x.o, x.h, x.l, x.c, x.v].join(","));
@@ -1956,54 +2129,68 @@ const WARM_DAYS = 200; // giorni in più prima del periodo: servono a indicatori
 $("bLabDl").onclick = async () => {
   const days = Math.round(Math.min(1500, Math.max(7, +$("labDays").value || 360)));
   $("labDays").value = days;
+  const coins = coinsOn();
+  if (!coins.length) { showLabData('<b class="neg">Accendi almeno una moneta.</b>'); return; }
   const b = $("bLabDl"); b.disabled = true; $("labBarWrap").classList.remove("hidden"); $("labBar").style.width = "0";
   const end = Math.floor(Date.now() / BAR) * BAR - BAR, fromT = end - days * 86400000, start = fromT - WARM_DAYS * 86400000;
-  let arr = null, srcName = "Binance";
-  try {
-    $("labData").textContent = `Scarico ${days} giorni di candele BTC da 15 minuti…`;
-    arr = await candlesBN(start, end, p => $("labBar").style.width = Math.round(p * 100) + "%");
-  } catch (e) {
-    if (days + WARM_DAYS <= 52) { try { arr = await candlesHL(start, end); srcName = "Hyperliquid"; } catch (_) {} }
-    if (!arr) { $("labData").innerHTML = `<span class="neg">Download non riuscito (${e.message}). Puoi usare "Carica file CSV".</span>`; }
+  const errs = []; let ok = 0;
+  for (let k = 0; k < coins.length; k++) {
+    const c = coins[k]; let arr = null, srcName = "Binance";
+    showLabData(`Scarico ${days} giorni di candele ${c} da 15 minuti (${k + 1} di ${coins.length})…`);
+    try { arr = await candlesBN(c, start, end, p => $("labBar").style.width = Math.round((k + p) / coins.length * 100) + "%"); }
+    catch (e) {
+      if (days + WARM_DAYS <= 52) { try { arr = await candlesHL(c, start, end); srcName = "Hyperliquid"; } catch (_) {} }
+      if (!arr) errs.push(`${c}: ${e.message}`);
+    }
+    if (arr && arr.length > 1200) {
+      setLab(c, arr, `${days} giorni scaricati ora da ${srcName}`, fromT, days); ok++;
+      idbPut("lab_" + c, { arr, fromT, days, how: "salvate in questo browser" });
+      if (S.tog.saveCsv) saveCsv(arr, `${c.toLowerCase()}_15m_${days}g_${new Date(end).toISOString().slice(0, 10)}.csv`);
+    } else if (arr) errs.push(`${c}: dati insufficienti`);
   }
-  if (arr && arr.length > 1200) {
-    setLab(arr, `${days} giorni scaricati ora da ${srcName}`, fromT, days);
-    idbPut("lab", { arr, fromT, days });
-    if (S.tog.saveCsv) saveCsv(arr, `btc_15m_${days}g_${new Date(end).toISOString().slice(0, 10)}.csv`);
-    log(`Laboratorio: scaricati ${days} giorni (${arr.length} candele) da ${srcName}.`);
-    runLab();
-  } else if (arr) $("labData").innerHTML = '<span class="neg">Dati insufficienti per la prova.</span>';
+  log(`Laboratorio: scaricati ${days} giorni per ${ok} monete${errs.length ? " (problemi: " + errs.join("; ") + ")" : ""}.`);
+  showLabData(errs.length ? `<span class="neg">Download non riuscito per ${errs.join(" · ")}. Puoi usare "Carica file CSV".</span>` : "");
   b.disabled = false; setTimeout(() => $("labBarWrap").classList.add("hidden"), 800);
+  if (ok) runLab();
 };
 $("labFile").onchange = async e => {
-  const f = e.target.files[0]; if (!f) return;
-  try {
-    const C = E.loadCSV(await f.text()); const arr = Array.from(C.t, (t, i) => ({ t, o: C.o[i], h: C.h[i], l: C.l[i], c: C.c[i], v: C.v[i] })).filter(x => x.t > 0 && x.c > 0);
-    if (arr.length < 1200) throw new Error("file troppo corto o non valido");
-    setLab(arr, "dal file " + f.name, 0, 0); idbPut("lab", { arr, fromT: 0, days: 0 }); runLab();
-  } catch (err) { $("labData").innerHTML = `<span class="neg">File non valido: ${err.message}</span>`; }
+  const files = [...e.target.files]; if (!files.length) return;
+  const msgs = []; let ok = 0;
+  for (const f of files) {
+    const mm = f.name.toLowerCase().match(/^(btc|eth|sol|xrp)/), coin = mm ? mm[1].toUpperCase() : (files.length === 1 ? "BTC" : "");
+    if (!coin) { msgs.push(`${f.name}: dal nome non si capisce la moneta (deve iniziare con btc_, eth_, sol_ o xrp_)`); continue; }
+    try {
+      const C = E.loadCSV(await f.text()); const arr = Array.from(C.t, (t, i) => ({ t, o: C.o[i], h: C.h[i], l: C.l[i], c: C.c[i], v: C.v[i] })).filter(x => x.t > 0 && x.c > 0);
+      if (arr.length < 1200) throw new Error("file troppo corto o non valido");
+      setLab(coin, arr, "dal file " + f.name + (mm ? "" : ", considerato BTC"), 0, 0); idbPut("lab_" + coin, { arr, fromT: 0, days: 0, how: "dal file " + f.name }); ok++;
+    } catch (err) { msgs.push(`${f.name}: ${err.message}`); }
+  }
+  showLabData(msgs.length ? `<span class="neg">${msgs.join(" · ")}</span>` : "");
   e.target.value = "";
+  if (ok) runLab();
 };
 function runLab() {
-  if (!labC) return;
   const strats = ES().filter(s => S.stratOn[s.id]);
-  if (!strats.length) { $("labData").innerHTML += ' · <b class="neg">accendi almeno una strategia</b>'; return; }
-  let fromT = labFromT || 0;
-  if (!fromT && strats.some(s => s.vol === "low")) {
-    fromT = labC.t[0] + 200 * 86400000;
-    if (fromT >= labC.t[labC.t.length - 1] - 30 * 86400000) { $("labData").innerHTML += ' · <b class="neg">il file è troppo corto per il filtro di volatilità (servono almeno 230 giorni)</b>'; return; }
-  }
+  const coins = coinsOn().filter(c => labD[c] && labD[c].arr.length >= 1200);
+  if (!coins.length) { showLabData('<b class="neg">Nessuna moneta accesa con dati caricati.</b>'); return; }
+  if (!strats.length) { showLabData('<b class="neg">Accendi almeno una strategia.</b>'); return; }
+  const data = Object.fromEntries(coins.map(c => [c, toTyped(labD[c].arr)]));
+  // inizio della prova: il periodo scelto, oppure (file) dopo 200 giorni di riscaldamento per il filtro di volatilità
+  const needWarm = strats.some(s => s.vol === "low");
+  let fromT = Math.max(...coins.map(c => labD[c].fromT || (needWarm ? data[c].t[0] + WARM_DAYS * 86400000 : data[c].t[Math.min(900, Math.floor(data[c].t.length / 4))])));
+  const lastT = Math.max(...coins.map(c => data[c].t[data[c].t.length - 1]));
+  if (fromT >= lastT - 30 * 86400000) { showLabData('<b class="neg">Dati troppo corti per il filtro di volatilità: servono almeno 230 giorni per ogni moneta.</b>'); return; }
   const start = Math.max(10, +$("labStart").value || 100);
   $("bLabRun").disabled = true; $("bLabRun").textContent = "Calcolo…";
   setTimeout(() => {
-    const t0 = performance.now(), r = Core.backtest(labC, strats, Object.assign(opts(), { start, fromT }));
-    showLab(r, start, strats, performance.now() - t0);
+    const t0 = performance.now(), r = Core.backtestMulti(data, strats, Object.assign(opts(), { start, fromT, rs: S.tog.rsTop ? Core.RS : null }));
+    showLab(r, start, strats, coins, data, performance.now() - t0);
     $("bLabRun").disabled = false; $("bLabRun").textContent = "Rifai la prova sui dati caricati";
     $("labOut").scrollIntoView({ behavior: "smooth", block: "start" });
   }, 30);
 }
 $("bLabRun").onclick = runLab;
-function showLab(r, start, strats, ms) {
+function showLab(r, start, strats, coins, data, ms) {
   $("labOut").classList.remove("hidden");
   const H = r.book.history, fin = r.book.balance, weeks = (r.to - r.from) / (7 * 86400000);
   const wins = H.filter(h => h.pnl > 0), loss = H.filter(h => h.pnl <= 0);
@@ -2011,22 +2198,23 @@ function showLab(r, start, strats, ms) {
   $("lDd").innerHTML = `<span class="neg">−${(r.mdd * 100).toFixed(1).replace(".", ",")}%</span>`;
   $("lN").textContent = `${H.length} · ${(H.length / weeks).toFixed(1).replace(".", ",")}`;
   $("lWin").innerHTML = `${H.length ? Math.round(wins.length / H.length * 100) : 0}% · <span class="pos">${wins.length ? eur(wins.reduce((a, h) => a + h.pnl, 0) / wins.length) : "—"}</span> / <span class="neg">${loss.length ? eur(loss.reduce((a, h) => a + h.pnl, 0) / loss.length) : "—"}</span>`;
-  let streak = 0, mx = 0; for (const h of H) { if (h.pnl <= 0) { streak++; mx = Math.max(mx, streak); } else streak = 0; }
-  const i0 = labC.t.findIndex(t => t >= r.from), hold = (labC.c[labC.c.length - 1] / labC.c[i0] - 1) * 100;
-  $("lCompare").innerHTML = `Periodo: dal ${new Date(r.from).toLocaleDateString("it-IT")} al ${new Date(r.to).toLocaleDateString("it-IT")} · perdite di fila al massimo: <b>${mx}</b> · tenere BTC fermo nello stesso periodo: <b class="${cls(hold)}">${pct(hold)}</b> · calcolato in ${Math.round(ms)} ms.
+  let streak = 0, mx = 0; for (const h of [...H].sort((a, b) => a.closed - b.closed)) { if (h.pnl <= 0) { streak++; mx = Math.max(mx, streak); } else streak = 0; }
+  const hold = coins.map(c => { const C = data[c], i0 = C.t.findIndex(t => t >= r.from); const v = i0 < 0 ? 0 : (C.c[C.c.length - 1] / C.c[i0] - 1) * 100; return `${c} <b class="${cls(v)}">${pct(v)}</b>`; }).join(" · ");
+  $("lCompare").innerHTML = `Periodo: dal ${dIt(r.from)} al ${dIt(r.to)} · perdite di fila al massimo: <b>${mx}</b> · tenere le monete ferme nello stesso periodo: ${hold} · calcolato in ${Math.round(ms)} ms.
     <br>I risultati passati non garantiscono quelli futuri: servono a capire come si comporta la strategia, compresi i mesi negativi.`;
   const mon = new Map(); let bal = start;
   for (const h of [...H].sort((a, b) => a.closed - b.closed)) { const d = new Date(h.closed), k = d.getUTCFullYear() * 12 + d.getUTCMonth(); bal += h.pnl; const m = mon.get(k) || { n: 0, pnl: 0, bal: 0 }; m.n++; m.pnl += h.pnl; m.bal = bal; mon.set(k, m); }
   $("lMonths").innerHTML = [...mon.entries()].map(([k, m]) => `<tr><td>${new Date(Date.UTC(Math.floor(k / 12), k % 12, 1)).toLocaleDateString("it-IT", { month: "long", year: "numeric" })}</td><td>${m.n}</td><td class="${cls(m.pnl)}">${eurS(m.pnl)}</td><td class="blue">${eur(m.bal)}</td></tr>`).join("");
-  $("lStrats").innerHTML = strats.map(s => { const x = H.filter(h => h.strat === s.id), g = x.reduce((a, h) => a + h.pnl, 0);
-    return `<tr><td>${s.title}</td><td>${x.length}</td><td>${x.length ? Math.round(x.filter(h => h.pnl > 0).length / x.length * 100) + "%" : "—"}</td><td class="${cls(g)}">${eurS(g)}</td></tr>`; }).join("");
+  const row = (name, x) => { const g = x.reduce((a, h) => a + h.pnl, 0); return `<tr><td>${name}</td><td>${x.length}</td><td>${x.length ? Math.round(x.filter(h => h.pnl > 0).length / x.length * 100) + "%" : "—"}</td><td class="${cls(g)}">${eurS(g)}</td></tr>`; };
+  $("lCoins").innerHTML = coins.map(c => row(c, H.filter(h => coinOf(h) === c))).join("");
+  $("lStrats").innerHTML = strats.map(s => row(s.title, H.filter(h => h.strat === s.id))).join("");
   const gw = wins.reduce((a, h) => a + h.pnl, 0), gl = -loss.reduce((a, h) => a + h.pnl, 0);
-  const days = (r.to - r.from) / 86400000, monthly = (Math.pow(fin / start, 30 / Math.max(1, days)) - 1) * 100;
+  const days = (r.to - r.from) / 86400000, monthly = (Math.pow(fin / start, 30 / Math.max(1, days)) - 1) * 100, yearly = (Math.pow(fin / start, 365 / Math.max(1, days)) - 1) * 100;
   const on = strats.map(s => s.title + (s.dir === "long" ? " (solo long" : " (long+short") + (s.vol === "low" ? ", vol bassa)" : ")")).join(", "), rk = S.cfg.risk.toLocaleString("it-IT");
   $("lSummary").innerHTML = `<div><b>Risultato finale: ${eur(start)} → <span class="${cls(fin - start)}">${eur(fin)}</span></b> · guadagno <b class="${cls(fin - start)}">${eurS(fin - start)} (${pct((fin / start - 1) * 100)})</b> in ${Math.round(days)} giorni
-    <br>${H.length} operazioni: <span class="pos">${wins.length} vinte</span> e <span class="neg">${loss.length} perse</span> (${H.length ? Math.round(wins.length / H.length * 100) : 0}% vinte) · guadagno medio per operazione ${H.length ? eurS((fin - start) / H.length) : "—"}
-    · fattore di profitto ${gl > 0 ? (gw / gl).toFixed(2).replace(".", ",") : "—"} · resa media mensile ${pct(monthly)} · discesa massima −${(r.mdd * 100).toFixed(1).replace(".", ",")}%
-    <br><span class="note">Strategie accese: ${on} · rischio ${rk}% · max ${S.cfg.maxPos} posizioni · commissioni ${S.tog.feesOn ? "sì" : "no"} · funding ${S.tog.fundingOn ? "sì" : "no"}</span></div>`;
+    <br>${H.length} operazioni su ${coins.join(", ")}: <span class="pos">${wins.length} vinte</span> e <span class="neg">${loss.length} perse</span> (${H.length ? Math.round(wins.length / H.length * 100) : 0}% vinte) · guadagno medio per operazione ${H.length ? eurS((fin - start) / H.length) : "—"}
+    · fattore di profitto ${gl > 0 ? (gw / gl).toFixed(2).replace(".", ",") : "—"} · resa media mensile ${pct(monthly)}${days >= 300 ? " · annua " + pct(yearly) : ""} · discesa massima −${(r.mdd * 100).toFixed(1).replace(".", ",")}%
+    <br><span class="note">Monete: ${coins.join(", ")}${S.tog.rsTop ? " (solo le 2 più forti)" : ""} · strategie accese: ${on} · rischio ${rk}% · max ${S.cfg.maxPos} posizioni (una per moneta) · commissioni ${S.tog.feesOn ? "sì" : "no"} · funding ${S.tog.fundingOn ? "sì" : "no"}</span></div>`;
   drawCurve(r.curve, start);
 }
 
@@ -2054,36 +2242,44 @@ function bind() {
   $("mLev").addEventListener("input", () => { if (m.lev > c.maxLev) { m.lev = c.maxLev; $("mLev").value = m.lev; } });
   const manual = side => {
     if (!S.tog.manual || !S.book) return;
-    if (!price) { log("Prezzo non ancora disponibile."); return; }
-    const r = Core.openManual(S.book, side, price, Math.min(m.lev, c.maxLev), m.margin, m.sl, m.tp, Date.now(), opts());
-    if (typeof r === "string") log("Operazione manuale non eseguita: " + r + ".");
-    else { log(`Aperto ${side > 0 ? "LONG" : "SHORT"} manuale · leva ${r.lev}x · margine ${eur(r.margin)} a ${usd(r.entry)}`); beep(660); save(); renderAll(); }
+    const coin = S.chartCoin, price = M[coin].price;
+    if (!price) { log(`Prezzo di ${coin} non ancora disponibile.`); return; }
+    const r = Core.openManual(S.book, side, price, Math.min(m.lev, c.maxLev), m.margin, m.sl, m.tp, Date.now(), opts(coin));
+    if (typeof r === "string") log(`Operazione manuale su ${coin} non eseguita: ${r}.`);
+    else { log(`${coin} · aperto ${side > 0 ? "LONG" : "SHORT"} manuale · leva ${r.lev}x · margine ${eur(r.margin)} a ${usd(r.entry)}`); beep(660); save(); renderAll(); }
     if (realOn()) {
       if (!(m.sl > 0)) { rlog("Ordine manuale vero non inviato: con i soldi veri lo stop loss è obbligatorio."); return; }
       const lev = Math.min(m.lev, c.maxLev);
       if (m.sl / 100 >= 1 / lev - Core.DEFAULTS.mmr) { rlog("Ordine manuale vero non inviato: lo stop è oltre la liquidazione, abbassa la leva o lo stop."); return; }
-      if (!confirm(`Inviare un ordine VERO ${side > 0 ? "LONG" : "SHORT"} su ${S.wallet.net.toUpperCase()}?\nValore circa ${usd2(m.margin * lev)} · leva ${lev}x · stop ${m.sl}%${m.tp ? " · obiettivo " + m.tp + "%" : ""}`)) return;
-      realOpen("manuale", side, m.sl / 100, m.tp / 100, lev, m.margin * lev, {});
+      if (!confirm(`Inviare un ordine VERO ${side > 0 ? "LONG" : "SHORT"} su ${coin} (${S.wallet.net.toUpperCase()})?\nValore circa ${usd2(m.margin * lev)} · leva ${lev}x · stop ${m.sl}%${m.tp ? " · obiettivo " + m.tp + "%" : ""}`)) return;
+      realOpen(coin, "manuale", side, m.sl / 100, m.tp / 100, lev, m.margin * lev, {});
     }
   };
   $("bLong").onclick = () => manual(1); $("bShort").onclick = () => manual(-1);
-  $("openBody").addEventListener("click", e => { const id = +e.target.dataset.close; if (!id) return; const p = S.book.positions.find(x => x.id === id); if (p && price) { afterClose(Core.closePos(S.book, p, price * (1 - p.side * Core.DEFAULTS.slip), Date.now(), "Chiusa a mano", opts())); renderAll(); } });
+  $("openBody").addEventListener("click", e => { const id = +e.target.dataset.close; if (!id) return; const p = S.book.positions.find(x => x.id === id); const q = p && M[coinOf(p)].price; if (p && q) { afterClose(Core.closePos(S.book, p, q * (1 - p.side * Core.DEFAULTS.slip), Date.now(), "Chiusa a mano", opts(coinOf(p)))); renderAll(); } });
   $("strats").addEventListener("change", e => {
     const sid = e.target.dataset.sid, opt = e.target.dataset.opt;
-    if (sid && opt) { S.stratOpt[sid] = Object.assign({}, S.stratOpt[sid], { [opt]: e.target.checked }); log(`${SBY[sid].title}: "${opt === "long" ? "Solo long" : "Solo con volatilità bassa"}" ${e.target.checked ? "acceso" : "spento"}.`); save(); renderStrats(); return; }
+    if (sid && opt) { S.stratOpt[sid] = Object.assign({}, S.stratOpt[sid], { [opt]: e.target.checked }); log(`${SBY[sid].title}: "${opt === "long" ? "Solo long" : "Solo con volatilità bassa"}" ${e.target.checked ? "acceso" : "spento"}.`); for (const k of COINS) M[k].lastBot = 0; save(); renderStrats(); return; }
+    const id = e.target.dataset.strat; if (!id) return; S.stratOn[id] = e.target.checked; log(`Strategia ${SBY[id].title}: ${e.target.checked ? "accesa" : "spenta"}.`); save(); renderStrats();
   });
+  $("coins").addEventListener("change", e => {
+    const k = e.target.dataset.coin; if (!k) return;
+    S.coinOn[k] = e.target.checked;
+    log(`Moneta ${k}: ${e.target.checked ? "accesa" : "spenta"}${e.target.checked ? "" : " (le posizioni già aperte restano gestite fino alla chiusura)"}.`);
+    save(); renderAll(); if (Object.keys(labD).length) showLabData();
+  });
+  $("coinChips").addEventListener("click", e => { const k = e.target.dataset.coin; if (!k) return; S.chartCoin = k; save(); renderCoinChips(); renderHeader(); renderManual(); drawChart(); });
   $("bRun").onclick = () => setRunning(!S.tog.bot);
   $("bBest").onclick = () => {
-    if (!confirm("Riportare strategie, filtri e rischio alla configurazione migliore trovata?\n(Keltner 1h + Momentum 1h, solo long, volatilità bassa, rischio 1%, una posizione alla volta)")) return;
+    if (!confirm("Riportare monete, strategie, filtri e rischio alla configurazione migliore trovata?\n(BTC, ETH, SOL e XRP · Keltner 1h + Momentum 1h + Squeeze 4h, solo long · solo le 2 monete più forti · rischio 0,75% · una posizione per moneta)")) return;
     applyBest(false); $("cRisk").value = S.cfg.risk; $("cMaxPos").value = S.cfg.maxPos; $("cMaxLev").value = S.cfg.maxLev; save(); renderAll();
   };
-  $("strats").addEventListener("change", e => { const id = e.target.dataset.strat; if (!id) return; S.stratOn[id] = e.target.checked; log(`Strategia ${SBY[id].title}: ${e.target.checked ? "accesa" : "spenta"}.`); save(); renderStrats(); });
   $("toggles").addEventListener("change", e => {
     const id = e.target.dataset.tog; if (!id) return;
     if (id === "real" && e.target.checked) {
       if (!verified()) { e.target.checked = false; alert("Prima collega il wallet con la chiave dell'API wallet e premi \"Verifica permessi trading\"."); return; }
       const eq = W.acc ? usd2(W.acc.equity) : "?";
-      const ans = prompt(`Stai per attivare ORDINI VERI su ${S.wallet.net.toUpperCase()} (valore del conto ${eq}).\nIl bot userà il ${S.cfg.risk}% del conto per operazione, con lo stop sempre sull'exchange.\n\nScrivi CONFERMO per continuare.`);
+      const ans = prompt(`Stai per attivare ORDINI VERI su ${S.wallet.net.toUpperCase()} (valore del conto ${eq}).\nMonete: ${coinsOn().join(", ")}. Il bot userà il ${S.cfg.risk}% del conto per operazione, fino a ${S.cfg.maxPos} posizioni insieme, con lo stop sempre sull'exchange.\n\nScrivi CONFERMO per continuare.`);
       if ((ans || "").trim().toUpperCase() !== "CONFERMO") { e.target.checked = false; return; }
     }
     if (id === "bot") { setRunning(e.target.checked); return; }
@@ -2097,9 +2293,11 @@ function bind() {
     }
     if (id === "rememberKey") { S.tog.rememberKey = e.target.checked; S.wallet.key = memKey; save(); }
     S.tog[id] = e.target.checked;
+    if (id === "steady") for (const k of COINS) M[k].lastBot = 0;
+    if (id === "rsTop" && Object.keys(labD).length) showLabData();
     log(`Interruttore "${TOGGLES.find(t => t.id === id).t}": ${S.tog[id] ? "acceso" : "spento"}.`);
     if (id === "save" && !S.tog.save) { try { localStorage.removeItem(KEY); } catch (_) {} } else save();
-    renderAll(); renderWallet();
+    renderAll();
   });
   $("tfChips").addEventListener("click", e => { const f = +e.target.dataset.f; if (!f) return; S.tf = f; save(); renderTF(); drawChart(); });
   $("bReset").onclick = () => { if (S.book && S.book.positions.length && !confirm("Ci sono posizioni aperte: verranno cancellate. Ricominciare?")) return; $("setup").classList.remove("hidden"); };
@@ -2107,13 +2305,15 @@ function bind() {
   $("capChips").addEventListener("click", e => { const v = +e.target.dataset.c; if (!v) return; cap = v; $("capCustom").value = ""; document.querySelectorAll("#capChips .chip").forEach(x => x.classList.toggle("on", +x.dataset.c === v)); });
   $("capGo").onclick = () => {
     const cu = parseFloat($("capCustom").value), v = cu >= 20 ? cu : cap;
-    S.book = Core.newBook(v); S.day = { key: "", startEq: 0, locked: "" }; S.lastBarT = 0; S.sess = { since: 0, alive: 0, total: 0 };
+    S.book = Core.newBook(v); S.day = { key: "", startEq: 0, locked: "" }; S.lastBarT = {}; S.sess = { since: 0, alive: 0, total: 0 };
+    for (const k of COINS) M[k].lastBot = 0;
     $("setup").classList.add("hidden"); log(`Nuovo TEST FREE con ${eur(v)} finti.`); save(); processClosed(); renderAll();
   };
   window.addEventListener("resize", () => drawChart());
   $("netChips").addEventListener("click", e => {
     const n = e.target.dataset.net; if (!n || n === S.wallet.net) return;
-    if (S.real.pos && !confirm("C'è una posizione vera gestita dal bot su " + S.wallet.net + ". Cambiando rete il bot smette di seguirla. Continuare?")) return;
+    const nr = Object.keys(S.real.pos).length;
+    if (nr && !confirm(`Ci sono ${nr} posizioni vere gestite dal bot su ${S.wallet.net}. Cambiando rete il bot smette di seguirle. Continuare?`)) return;
     S.wallet.net = n; S.tog.real = false; buildToggles(); save();
     if (HLC) { HLC = new HLM.Client(n, S.wallet.addr, memKey); W.acc = null; refreshWallet(true); }
     renderWallet(); log("Rete del wallet: " + n + ".");
@@ -2121,9 +2321,14 @@ function bind() {
   $("bWConnect").onclick = () => connectWallet();
   $("bWVerify").onclick = () => verifyWallet();
   $("bWForget").onclick = () => forgetWallet();
-  $("bWClose").onclick = () => { if (confirm("Chiudere ADESSO a mercato la posizione BTC vera e annullare i suoi stop?")) realClose("chiusa a mano"); };
+  $("bWClose").onclick = async () => {
+    const cs = W.acc ? Object.keys(W.acc.positions) : [];
+    if (!cs.length || !confirm(`Chiudere ADESSO a mercato tutte le posizioni vere (${cs.join(", ")}) e annullare i loro stop?`)) return;
+    for (const k of cs) await realClose(k, "chiusa a mano");
+  };
 }
 function renderTF() { document.querySelectorAll("#tfChips .chip").forEach(c => c.classList.toggle("on", +c.dataset.f === S.tf)); $("tfLabel").textContent = TFN[S.tf]; }
+function renderCoinChips() { document.querySelectorAll("#coinChips .chip").forEach(c => c.classList.toggle("on", c.dataset.coin === S.chartCoin)); $("chartCoinLbl").textContent = S.chartCoin; }
 
 /* ---------------- avvio ---------------- */
 const startAt = Date.now();
@@ -2138,20 +2343,22 @@ function start() {
   } else if (S.tog.bot) S.sess.since = Date.now();
   setTimeout(wakeOn, 500);
   if (S.bestV !== Core.BEST.version) applyBest(true);
-  buildToggles(); bind(); renderTF(); renderLog();
+  buildToggles(); bind(); renderTF(); renderCoinChips(); renderLog();
   if (!S.book) $("setup").classList.remove("hidden");
   renderAll(); save();
   (async () => {
-    const cached = await idbGet("lab");
-    if (cached && cached.arr && cached.arr.length) setLab(cached.arr, "salvate in questo browser", cached.fromT, cached.days);
-    else if (Array.isArray(cached) && cached.length) setLab(cached, "salvate in questo browser", 0, 0);
-    await loadHistory(); await loadDaily(); await pollPrice(); processClosed(); renderAll();
-    setInterval(() => loadDaily(), 3600000);
+    for (const c of COINS) {
+      let cached = await idbGet("lab_" + c);
+      if (!cached && c === "BTC") { const old = await idbGet("lab"); cached = old && old.arr ? old : Array.isArray(old) ? { arr: old } : null; }
+      if (cached && cached.arr && cached.arr.length) setLab(c, cached.arr, cached.how || "salvate in questo browser", cached.fromT, cached.days);
+    }
+    await Promise.all(COINS.map(loadHistory)); await loadDailyAll(); await pollPrice(); processClosed(); renderAll();
+    setInterval(() => loadDailyAll(), 3600000);
     setInterval(pollPrice, 4000);
     if (S.wallet.addr) { HLC = new HLM.Client(S.wallet.net, S.wallet.addr, memKey); $("wAddr").value = S.wallet.addr; if (memKey) $("wKey").value = memKey; refreshWallet(true); }
     setInterval(() => refreshWallet(), 10000);
-    setInterval(async () => { await refreshCandles(); processClosed(); }, 20000);
-    setInterval(() => { if (needRender) { needRender = false; renderAll(); } else { renderRun(); renderHeader(); renderAccount(); renderOpen(); } }, 1000);
+    setInterval(async () => { await refreshAll(); processClosed(); }, 20000);
+    setInterval(() => { if (needRender) { needRender = false; renderAll(); } else { renderRun(); renderHeader(); renderAccount(); renderOpen(); renderCoins(); } }, 1000);
     setInterval(() => save(), 60000);
     setInterval(() => { renderStrats(); drawChart(); }, 15000);
   })();
@@ -2164,7 +2371,9 @@ $("bLockNow").onclick = () => { if (!unlocked) return; if (!S.tog.askPw) { alert
   if (!readJSON(DATA_KEY) && readJSON(PLAIN_KEY) && readJSON(PLAIN_KEY).tog && readJSON(PLAIN_KEY).tog.askPw === false) { $("lock").classList.add("hidden"); apply(readJSON(PLAIN_KEY)); start(); return; } // password spenta dall'utente
   showLock();
 })();
-window.__qg = { get S() { return S; }, get W() { return W; }, get candles() { return candles; }, Core, setPrice: p => { price = p; priceAt = Date.now(); onTick(); }, inject: arr => { candles = arr; src = "hl"; priceAt = Date.now(); }, processClosed };
+window.__qg = { get S() { return S; }, get W() { return W; }, M, get candles() { return M.BTC.candles; }, Core, COINS,
+  setPrice: (p, coin) => { if (typeof p === "object") { for (const k in p) { M[k].price = p[k]; M[k].priceAt = Date.now(); } } else { const k = coin || "BTC"; M[k].price = p; M[k].priceAt = Date.now(); } onTick(); },
+  inject: (arr, coin) => { const k = coin || "BTC"; M[k].candles = arr; src = "hl"; M[k].priceAt = Date.now(); }, processClosed };
 })();
 
 </script>
