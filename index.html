@@ -267,6 +267,19 @@ body.casa #realBanner { display: none !important; }
 .cstage, .cbody { overscroll-behavior: contain; }
 .cbody table { font-size: 11.5px; }
 .cbody th, .cbody td { padding: 6px 5px; }
+.hudw.hl { cursor: pointer; }
+.hudw .mono.gold { color: #f5c96a; text-shadow: 0 0 8px #d8b25a66; }
+.hudw .hsub { font: 500 10px var(--sans); color: #a9a3c4; margin-top: 1px; }
+.hudw .hsub b { font-weight: 600; }
+
+/* panorama intorno alla casa */
+.cland { position: absolute; left: -150%; width: 400%; top: -31.25%; height: 162.5%; pointer-events: none; transition: opacity .6s; }
+.cland canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.cland canvas[data-l=lb] { filter: blur(1px) saturate(1.1); }
+.cland canvas[data-l=lg] { mix-blend-mode: screen; filter: blur(3px); }
+
+.chouse .vign { background: none; }
+.zoomed .chouse .vign { background: radial-gradient(130% 90% at 50% 40%, transparent 60%, #05061a99 100%); }
 
 </style>
 </head>
@@ -1508,6 +1521,7 @@ const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x | 0, y | 0, w | 
 
 /* ---------- livello 1: cielo e paesaggio (verrà sfocato) ---------- */
 function drawBack(g, t) {
+  if (root.Scene && root.Scene.landOn) { g.clearRect(0, 0, W, H); return; }
   const sky = g.createLinearGradient(0, 0, 0, 270);
   sky.addColorStop(0, P.night0); sky.addColorStop(0.45, P.night1); sky.addColorStop(0.8, P.dusk); sky.addColorStop(1, P.glow);
   g.fillStyle = sky; g.fillRect(0, 0, W, 270);
@@ -1680,7 +1694,102 @@ function mount(box, getState) {
   });
   return { setFps: v => fps = v };
 }
-root.Scene = { mount, ROOMS, W, H };
+
+/* ---------- panorama intorno alla casa (vista da lontano) ----------
+   Tela larga 3 volte la casa: x da -200 a 400, y da -120 a 504 (coordinate della casa). Terreno alla stessa altezza (y 254). */
+const LW = 800, LH = 624, OX = 300, OY = 120, GY = 254 + OY, X0 = -100, X1 = 700; // disegno in coordinate 0..600 spostate di 100: si estende da -100 a 700
+const CRY = [[176, GY + 80, "#7dd3fc"], [420, GY + 120, "#c084fc"], [398, GY + 40, "#86efac"], [190, GY + 190, "#fde68a"], [60, GY + 120, "#c084fc"], [520, GY + 70, "#7dd3fc"], [300, GY + 175, "#86efac"]];
+function drawLand(g, t) {
+  const r = rng(21);
+  g.setTransform(1, 0, 0, 1, 100, 0);
+  // cielo (stessi colori della casa)
+  const sky = g.createLinearGradient(0, OY, 0, OY + 270);
+  sky.addColorStop(0, P.night0); sky.addColorStop(0.45, P.night1); sky.addColorStop(0.8, P.dusk); sky.addColorStop(1, P.glow);
+  g.fillStyle = P.night0; g.fillRect(X0, 0, LW, OY); g.fillStyle = sky; g.fillRect(X0, OY, LW, 270);
+  for (let i = 0; i < 200; i++) { const x = X0 + r() * LW, y = r() * (OY + 170), tw = 0.5 + 0.5 * Math.sin(t / 700 + i * 1.7); g.fillStyle = `rgba(255,255,240,${0.25 + 0.6 * tw * r()})`; g.fillRect(x | 0, y | 0, 1, 1); }
+  // stella cadente ogni tanto
+  const sp = (t / 9000) % 1; if (sp < 0.08) { const k = sp / 0.08, x = 80 + k * 160, y = 30 + k * 40; for (let i = 0; i < 8; i++) { g.fillStyle = `rgba(255,255,255,${(1 - i / 8) * (1 - k)})`; g.fillRect(x - i * 2, y - i, 2, 1); } }
+  // montagne lontane
+  g.fillStyle = "#4b356f"; g.beginPath(); g.moveTo(X0, GY); for (let x = X0; x <= X1; x += 10) g.lineTo(x, GY - 52 - 26 * Math.abs(Math.sin(x / 41)) - 12 * Math.sin(x / 15)); g.lineTo(X1, GY); g.fill();
+  g.fillStyle = "#35285a"; g.beginPath(); g.moveTo(X0, GY); for (let x = X0; x <= X1; x += 8) g.lineTo(x, GY - 26 - 14 * Math.abs(Math.sin(x / 27 + 1))); g.lineTo(X1, GY); g.fill();
+  // mulino a vento in lontananza (a sinistra)
+  const mx = 168, my = GY - 62; R(g, mx - 3, my, 6, 40, "#2a2048"); g.fillStyle = "#2a2048"; g.beginPath(); g.moveTo(mx - 5, my + 2); g.lineTo(mx, my - 5); g.lineTo(mx + 5, my + 2); g.fill();
+  const a0 = t / 1500; g.strokeStyle = "#3a2e66"; g.lineWidth = 2; for (let k = 0; k < 4; k++) { const a = a0 + k * Math.PI / 2; g.beginPath(); g.moveTo(mx, my); g.lineTo(mx + Math.cos(a) * 16, my + Math.sin(a) * 16); g.stroke(); }
+  // nuvole che passano
+  for (let k = 0; k < 10; k++) {
+    const w = 26 + (k * 13) % 30, y = 20 + (k * 37) % 150, sp = 0.004 + (k % 3) * 0.003, x = X0 + ((k * 97 + t * sp) % (LW + 80)) - 60;
+    g.fillStyle = k % 2 ? "rgba(214,190,230,.55)" : "rgba(250,215,200,.45)";
+    g.fillRect(x | 0, y | 0, w, 4); g.fillRect((x + 4) | 0, (y - 3) | 0, w - 10, 3); g.fillRect((x + 9) | 0, (y - 5) | 0, w / 3 | 0, 2); g.fillStyle = "rgba(90,60,120,.35)"; g.fillRect((x + 2) | 0, (y + 4) | 0, w - 4, 1);
+  }
+  // uccellini
+  for (let k = 0; k < 3; k++) { const x = X0 + ((t * 0.012 + k * 140) % (LW + 40)) - 20, y = 70 + k * 18 + Math.sin(t / 500 + k) * 4, f = Math.floor(t / 180 + k) % 2; g.fillStyle = "#1a1230"; g.fillRect(x | 0, y | 0, 1, 1); g.fillRect((x - 1) | 0, (y - f) | 0, 1, 1); g.fillRect((x + 1) | 0, (y - f) | 0, 1, 1); }
+  // terra in sezione
+  R(g, X0, GY, LW, LH - GY, P.earth);
+  for (let i = 0; i < 700; i++) { const x = X0 + r() * LW, y = GY + 6 + r() * (LH - GY), c = r(); R(g, x, y, 2 + r() * 4, 1 + r() * 2, c < .5 ? P.earthD : "#5a3f2e"); }
+  // rocce e cristalli sottoterra
+  for (const [x, y, c] of CRY) {
+    R(g, x - 6, y + 2, 16, 8, "#4a4452"); R(g, x - 4, y, 12, 3, "#5d5a66");
+    g.fillStyle = c; g.beginPath(); g.moveTo(x, y + 2); g.lineTo(x + 2, y - 7); g.lineTo(x + 4, y + 2); g.fill(); g.beginPath(); g.moveTo(x + 4, y + 2); g.lineTo(x + 7, y - 4); g.lineTo(x + 9, y + 2); g.fill();
+  }
+  // fossile
+  g.fillStyle = "#cbbf9a"; for (let i = 0; i < 6; i++) g.fillRect(430 - i * 4, GY + 200 + Math.round(Math.sin(i) * 2), 3, 1); g.fillRect(432, GY + 198, 3, 3);
+  // prato
+  R(g, X0, GY, LW, 6, P.grass); for (let x = X0; x < X1; x += 3) R(g, x, GY - 3 + ((x * 7) % 4 === 0 ? 0 : 2), 1, 3, P.grassL);
+  // campo arato con file di grano (sinistra)
+  for (let i = 0; i < 6; i++) R(g, 40, GY - 2 - i * 3, 172, 2, i % 2 ? "#6b4a2b" : "#7a5a33");
+  for (let x = 42; x < 150; x += 4) { const h = 3 + Math.round(Math.sin(x / 7 + t / 900)); R(g, x, GY - 18 - h, 1, h, "#d6b24c"); }
+  // balle di fieno
+  for (const x of [20, 32, 26]) { R(g, x, GY - 8, 10, 8, "#c9a24a"); R(g, x, GY - 8, 10, 1, "#e1bf62"); R(g, x + 4, GY - 8, 1, 8, "#a78334"); }
+  // trattore rosso che va avanti e indietro nel campo
+  const tp = (Math.sin(t / 6000) + 1) / 2, tx = 166 + tp * 30 | 0, dir = Math.cos(t / 6000) > 0 ? 1 : -1, ty = GY - 15;
+  const bump = Math.floor(t / 150) % 2;
+  g.save(); g.translate(tx + 10, 0); g.scale(dir, 1); g.translate(-10, 0);
+  R(g, 0, ty + 3 - bump, 14, 6, "#c0392b"); R(g, 9, ty - 4 - bump, 7, 8, "#a93226"); R(g, 10, ty - 3 - bump, 5, 4, "#9fd3ff"); R(g, 2, ty - 1 - bump, 2, 4, "#555"); // corpo, cabina, finestrino, marmitta
+  if (Math.floor(t / 300) % 3 === 0) R(g, 2, ty - 4 - bump, 2, 2, "rgba(200,200,200,.6)");
+  R(g, 10, ty + 5, 8, 8, "#222"); R(g, 12, ty + 7, 4, 4, "#e5c76b"); R(g, 0, ty + 8, 5, 5, "#222"); R(g, 1, ty + 9, 3, 3, "#e5c76b");
+  g.restore();
+  // recinto
+  for (let x = 40; x < 152; x += 8) R(g, x, GY - 9, 2, 9, "#8b6a45"); R(g, 40, GY - 7, 112, 1, "#a07b51"); R(g, 40, GY - 4, 112, 1, "#a07b51");
+  // spaventapasseri
+  R(g, 132, GY - 30, 2, 22, "#6b4a33"); R(g, 126, GY - 25, 14, 2, "#6b4a33"); R(g, 129, GY - 33, 8, 6, "#e0c48a"); R(g, 127, GY - 35, 12, 2, "#5b3a24"); R(g, 128, GY - 25, 10, 8, "#3b6fb6");
+  // cassetta della posta e sentiero (destra della casa)
+  R(g, 392, GY - 14, 2, 14, "#6b4a33"); R(g, 388, GY - 19, 10, 6, "#2563eb"); R(g, 396, GY - 22, 1, 4, "#ef4444"); R(g, 396, GY - 22, 3, 1, "#ef4444");
+  for (let i = 0; i < 10; i++) R(g, 384 + i * 6, GY + 1, 4, 2, "#c9b08a");
+  // laghetto con riflessi
+  g.fillStyle = "#1e3a6e"; g.beginPath(); g.ellipse(430, GY + 3, 22, 3, 0, 0, 7); g.fill();
+  for (let i = 0; i < 3; i++) { const x = 414 + i * 12 + Math.sin(t / 600 + i) * 2; R(g, x, GY + 2, 5, 1, "rgba(255,217,138,.6)"); }
+  R(g, 426, GY, 6, 1, "#fff3cf");
+  // anatra nel laghetto
+  const dx = 420 + Math.round(Math.sin(t / 2500) * 8); R(g, dx, GY - 2, 5, 3, "#f5f5f4"); R(g, dx + 4, GY - 4, 2, 2, "#f5f5f4"); R(g, dx + 6, GY - 3, 2, 1, "#f59e0b");
+  // alberi (davanti alle montagne)
+  const tree = (x, h, c1, c2) => { R(g, x - 1, GY - h / 3, 3, h / 3, "#4a3020"); g.fillStyle = c1; g.beginPath(); g.ellipse(x, GY - h / 3 - h / 3, h / 3.2, h / 2.6, 0, 0, 7); g.fill(); g.fillStyle = c2; g.beginPath(); g.ellipse(x - 2, GY - h / 3 - h / 2.5, h / 6, h / 5, 0, 0, 7); g.fill(); };
+  const pine = (x, h, c) => { R(g, x, GY - 5, 2, 5, "#4a3020"); g.fillStyle = c; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(x + 1, GY - h + k * h / 4); g.lineTo(x - 7 + k, GY - 4 - (2 - k) * h / 5); g.lineTo(x + 9 - k, GY - 4 - (2 - k) * h / 5); g.fill(); } };
+  tree(458, 46, "#2f6b3a", "#4c9a52"); tree(540, 52, "#2a5e35", "#3f8a49"); pine(444, 30, "#235232"); pine(575, 44, "#1f4a2d"); pine(505, 36, "#275a36");
+  tree(30, 40, "#2f6b3a", "#4c9a52"); pine(8, 40, "#1f4a2d"); pine(398, 22, "#2a5e35");
+  pine(-40, 46, "#1f4a2d"); tree(-70, 50, "#2a5e35", "#3f8a49"); pine(-88, 36, "#235232"); tree(620, 44, "#2f6b3a", "#4c9a52"); pine(650, 50, "#1f4a2d"); pine(682, 34, "#275a36");
+  // fiori nel prato
+  for (let i = 0; i < 60; i++) { const x = X0 + r() * LW; if (x > 185 && x < 415) continue; R(g, x, GY - 1 - (r() * 2 | 0), 1, 1, ["#f9a8d4", "#fde68a", "#fff", "#c4b5fd"][i % 4]); }
+  // lampione accanto al sentiero (si accende)
+  R(g, 410, GY - 30, 2, 30, "#2b2b35"); R(g, 407, GY - 33, 8, 3, "#3a3a46"); R(g, 408, GY - 30, 6, 2, "#ffd98a");
+  // lucciole
+  for (let i = 0; i < 18; i++) { const x = X0 + (i * 43 + t / 50) % LW, y = GY - 10 - 14 * Math.abs(Math.sin(t / 1100 + i * 1.3)); if (x > 190 && x < 410) continue; g.fillStyle = `rgba(253,224,71,${0.35 + 0.45 * Math.sin(t / 300 + i)})`; g.fillRect(x | 0, y | 0, 1, 1); }
+}
+function drawLandLights(g, t) {
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, LW, LH); g.setTransform(1, 0, 0, 1, 100, 0);
+  glow(g, 411, GY - 30, 26, "rgb(255,217,138)", 0.55);
+  for (const [x, y, c] of [[40, GY + 115, "rgb(125,211,252)"], [520, GY + 145, "rgb(192,132,252)"], [470, GY + 55, "rgb(134,239,172)"], [110, GY + 195, "rgb(253,230,138)"]]) glow(g, x + 4, y, 14, c, 0.35 + 0.15 * Math.sin(t / 700 + x));
+  glow(g, 430, GY + 2, 22, "rgb(255,217,138)", 0.12);
+}
+function mountLand(el, getState) {
+  root.Scene.landOn = true;
+  el.innerHTML = '<canvas data-l="lb"></canvas><canvas data-l="lg"></canvas>';
+  const [a, b] = [...el.querySelectorAll("canvas")]; a.width = b.width = LW; a.height = b.height = LH;
+  const ga = a.getContext("2d"), gb = b.getContext("2d"); let last = -1e9;
+  function frame(t) { const st = getState(); if (!st.off && !st.zoomed && t - last >= (st.still ? 3000 : 1000 / 8)) { last = t; const tt = st.still ? 0 : t; drawLand(ga, tt); drawLandLights(gb, tt); } requestAnimationFrame(frame); }
+  requestAnimationFrame(frame);
+}
+root.Scene = { mount, mountLand, ROOMS, W, H, LAND: { LW, LH, OX, OY } };
+
 })(window);
 
 </script>
@@ -1733,7 +1842,7 @@ const TFN = { 1: "15 minuti", 4: "1 ora", 8: "2 ore", 16: "4 ore", 32: "8 ore" }
 
 /* ---------------- stato ---------------- */
 let S = {
-  v: 1, book: null, tf: 8, chartCoin: "BTC", lastBarT: {}, log: [],
+  v: 1, book: null, tf: 8, chartCoin: "BTC", hud: "real", lastBarT: {}, log: [],
   tog: Object.fromEntries(TOGGLES.map(t => [t.id, t.def])),
   coinOn: Object.fromEntries(COINS.map(c => [c, true])),
   stratOn: Object.fromEntries(STR.map(s => [s.id, s.def])),
@@ -2475,14 +2584,15 @@ const Casa = (() => {
   };
   function build() {
     if (built) return; built = true;
-    box.innerHTML = `<div class="cstage" id="cStage"><div class="ccam" id="cCam"><div class="chouse" id="cHouse"></div></div>
-      <div class="hudw hl"><div class="pix">Saldo finto</div><div class="mono blue" id="hudSim">—</div></div>
+    box.innerHTML = `<div class="cstage" id="cStage"><div class="ccam" id="cCam"><div class="cland" id="cLand"></div><div class="chouse" id="cHouse"></div></div>
+      <div class="hudw hl" id="hudL" title="Tocca per passare da conto vero a saldo finto"><div class="pix" id="hudLL">Saldo finto</div><div class="mono blue" id="hudSim">—</div><div class="hsub" id="hudSub"></div></div>
       <div class="hudw hr"><div class="pix" id="hudRunL">Bot</div><div class="mono" id="hudRun">—</div></div>
       <button class="cwin cback pix" id="cBack">◂ Casa</button>
       <div class="cwin chint pix" id="cHint">Tocca una stanza</div>
       <div class="cwin csheet" id="cSheet"><button class="cx pix" id="cX" title="Chiudi">✕</button><button class="cup pix hidden" id="cUp">◂ Stanza</button><div class="cttl pix" id="cTitle"></div><div class="cbody" id="cBody"></div></div></div>`;
     const house = $("cHouse");
     Scene.mount(house, state);
+    Scene.mountLand($("cLand"), () => Object.assign(state(), { zoomed: !!cur }));
     const tag = (k, t, s) => { const r = R[k], d = document.createElement("div"); d.className = "ctag pix"; d.style.top = pc(r.y + 1) + "%"; d.style.left = px(r.x + 1) + "%"; d.innerHTML = t + "<small>" + s + "</small>"; house.appendChild(d); };
     tag("games", "Sala giochi", "TEST FREE"); tag("ops", "Sala operativa", "il bot vero"); tag("lab", "Laboratorio", "prova sul passato");
     const ne = document.createElement("div"); ne.className = "cneon pix"; ne.textContent = "TEST FREE"; ne.style.cssText = `top:${pc(G.y + 5)}%;left:${px(G.x + 50)}%;width:${px(56)}%`; house.appendChild(ne);
@@ -2494,6 +2604,7 @@ const Casa = (() => {
     }
     const stg = $("cStage"); stg.addEventListener("scroll", () => { if (stg.scrollTop || stg.scrollLeft) { stg.scrollTop = 0; stg.scrollLeft = 0; } });
     house.addEventListener("room", e => { if (!cur) zoomTo(e.detail); });
+    $("hudL").onclick = () => { if (!(HLC && W.acc)) return; S.hud = S.hud === "sim" ? "real" : "sim"; save(); tick(); };
     $("cBack").onclick = home; $("cX").onclick = () => { if (openW) menu(cur); else home(); };
     $("cUp").onclick = () => menu(cur);
     $("cBody").addEventListener("click", e => { const b = e.target.closest("button[data-w]"); if (b) open(b.dataset.w); });
@@ -2513,8 +2624,8 @@ const Casa = (() => {
   function home() {
     restore(); cur = null; const st = stage(); if (!st) return;
     $("cSheet").classList.remove("open", "tall"); st.classList.remove("zoomed");
-    const hh = house().clientHeight, hw = house().clientWidth, sc = Math.min(1, (st.clientHeight - 30) / hh) * 0.86;
-    cam().style.transform = `translate(${(st.clientWidth - hw * sc) / 2}px,${(st.clientHeight - hh * sc) / 2 - 18}px) scale(${sc})`;
+    const hh = house().clientHeight, hw = house().clientWidth, sc = Math.min(1, (st.clientHeight - 30) / hh, st.clientWidth / hw) * 0.72;
+    cam().style.transform = `translate(${(st.clientWidth - hw * sc) / 2}px,${(st.clientHeight - hh * sc) / 2 - 6}px) scale(${sc})`;
   }
   function menu(k) {
     restore(); const [t, items] = MENU[k]; $("cTitle").textContent = t; $("cUp").classList.add("hidden");
@@ -2544,7 +2655,17 @@ const Casa = (() => {
   }
   function tick() {
     if (!S.tog.house || !built) return;
-    $("hudSim").textContent = $("sEquity").textContent;
+    // riquadro in alto a sinistra: conto vero (se il wallet è collegato) oppure saldo finto; si cambia toccandolo
+    const hasReal = !!(HLC && W.acc), showReal = hasReal && S.hud !== "sim";
+    if (showReal) {
+      const eq = W.acc.equity, d0 = S.real.day && S.real.day.key === todayKey() ? S.real.day.startEq : 0, g = d0 > 0 ? eq - d0 : null;
+      $("hudLL").textContent = "Conto vero" + (S.wallet.net === "mainnet" ? "" : " · testnet");
+      $("hudSim").textContent = usd2(eq); $("hudSim").className = "mono gold";
+      $("hudSub").innerHTML = g == null ? "" : `oggi <b class="${cls(g)}">${(g >= 0 ? "+" : "") + usd2(g)}</b>`;
+    } else {
+      $("hudLL").textContent = "Saldo finto"; $("hudSim").textContent = $("sEquity").textContent; $("hudSim").className = "mono blue";
+      $("hudSub").textContent = hasReal ? "tocca: conto vero" : "";
+    }
     $("hudRun").textContent = S.tog.bot ? $("runTimer").textContent : "fermo"; $("hudRun").className = "mono " + (S.tog.bot ? "pos" : "neg");
     $("hudRunL").textContent = S.tog.bot ? "In funzione" : "Bot";
     // etichette dei cabinati con prezzo e posizione in classifica
