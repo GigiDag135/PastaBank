@@ -175,6 +175,89 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
 .ccard .cst { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
 #coinChips { margin-right: 6px; }
 
+/* ================= grafica casa HD-2D (interruttore "Grafica casa") ================= */
+@font-face { font-family: "CashPix"; src: url("data:font/ttf;base64,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MxUxNTMVMTUzFTE1MxUFNTMVBzUzFQc1MxUxNTMVMTUzFTE1MxUxNTMVZGRkZGT+DGRkZGRkZGRk/nBkZGRkZGRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAOAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3AAARNTMVMTUzFTE1MxUxNTMVMTUzFQU1MxUHNTMVBzUzFTE1MxUxNTMVMTUzFQU1MxUHNTMVBzUzFWRkZGRk/gxkZGRkZGRkZP5wZGRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAEQAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwAAEzUzFTE1MxUxNTMVMTUzFQU1MxUHNTMVBzUzFTM1MxUxNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUxNTMVMTUzFTE1MxVkZGRkZP4MZGRkZGTIZGT+DGQBLGT+DGQBLGT+cGRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAABEAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAOwA/AEMAABE1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUxNTMVMTUzFTE1MxUxNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVZAEsZP4MZAEsZP4MZAEsZP4MZGRkZGT+DGQBLGT+DGQBLGT+DGQBLGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAAA8AAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAOwAAETUzFTE1MxUxNTMVMTUzFTE1MxUFNTMVBzUzFQc1MxUHNTMVBzUzFQU1MxUxNTMVMTUzFTE1MxUxNTMVZGRkZGT+1GRkZGRkZGRkZP7UZGRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAADQAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMAABM1MxUxNTMVMTUzFQc1MxUHNTMVBzUzFQU1MxUhNTMVBTUzFSE1MxUFNTMVMTUzFTE1MxXIZGRkZGRkZGRk/gxkASxk/gxkASxk/nBkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAAOAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3AAARNTMVITUzFQU1MxUzNTMVBTUzFTM1MxUFNTMVMTUzFQc1MxUzNTMVBTUzFTM1MxUFNTMVITUzFWQBLGT+DGTIZP5wZGRk/tRkZMhkZGT+1GTIZP5wZAEsZAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAACwAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAAETUzFQc1MxUHNTMVBzUzFQc1MxUHNTMVBzUzFTE1MxUxNTMVMTUzFTE1MxVkZGRkZGRkZGRkZGRkZGRkZAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAAEgAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwBHAAARNTMVITUzFQU1MxUxNTMVMzUzFTE1MxUFNTMVMzUzFTM1MxUFNTMVMzUzFTM1MxUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxVkASxk/gxkZGRkZP4MZGRkZGT+DGRkZGRk/gxkASxk/gxkASxk/gxkASxkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAABEAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAOwA/AEMAABE1MxUhNTMVBTUzFTE1MxUzNTMVBTUzFTM1MxUzNTMVBTUzFTM1MxUxNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVZAEsZP4MZGTIZP4MZGRkZGT+DGTIZGT+DGQBLGT+DGQBLGT+DGQBLGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAABAAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAOwA/AAATNTMVMTUzFTE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFTE1MxUxNTMVZGRkZP5wZAEsZP4MZAEsZP4MZAEsZP4MZAEsZP4MZAEsZP5wZGRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAADwAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AAARNTMVMTUzFTE1MxUxNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUxNTMVMTUzFTE1MxUFNTMVBzUzFQc1MxVkZGRk/nBkASxk/gxkASxk/gxkZGRk/nBkZGRkZAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAARAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3ADsAPwBDAAATNTMVMTUzFTE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxUFNTMVMzUzFTM1MxUFNTMVMzUzFQU1MxUxNTMVMzUzFWRkZGT+cGQBLGT+DGQBLGT+DGQBLGT+DGRkZGRk/gxkyGT+1GRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAEgAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwBHAAARNTMVMTUzFTE1MxUxNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUxNTMVMTUzFTE1MxUFNTMVMzUzFQU1MxUzNTMVBTUzFSE1MxVkZGRk/nBkASxk/gxkASxk/gxkZGRk/nBkZGT+1GTIZP5wZAEsZAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAA8AAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAOwAAEzUzFTE1MxUxNTMVMTUzFQU1MxUHNTMVFTUzFTE1MxUxNTMVFTUzFQc1MxUFNTMVMTUzFTE1MxUxNTMVZGRkZGT+DGRkZGRkZGRkZP4MZGRkZAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAsAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsAABE1MxUxNTMVMTUzFTE1MxUxNTMVBTUzFQc1MxUHNTMVBzUzFQc1MxUHNTMVZGRkZGT+1GRkZGRkZGRkZGRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAA8AAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAOwAAETUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFTE1MxUxNTMVZAEsZP4MZAEsZP4MZAEsZP4MZAEsZP4MZAEsZP4MZAEsZP5wZGRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAAA0AAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzAAARNTMVITUzFQU1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFTM1MxUHNTMVZAEsZP4MZAEsZP4MZAEsZP4MZAEsZP4MZAEsZP5wZGRkyGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAASAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3ADsAPwBDAEcAABE1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUzNTMVMzUzFQU1MxUzNTMVMzUzFQU1MxUxNTMVMzUzFTE1MxUFNTMVITUzFWQBLGT+DGQBLGT+DGQBLGT+DGRkZGRk/gxkZGRkZP4MZGRkZGT+DGQBLGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAADQAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMAABE1MxUhNTMVBTUzFSE1MxUFNTMVMzUzFQc1MxUHNTMVMzUzFQU1MxUhNTMVBTUzFSE1MxVkASxk/gxkASxk/nBkZGTIZMhkZGT+cGQBLGT+DGQBLGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAAKAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwAAETUzFSE1MxUFNTMVITUzFQU1MxUzNTMVBzUzFQc1MxUHNTMVBzUzFWQBLGT+DGQBLGT+cGRkZMhkZGRkZGRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAADwAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AAARNTMVMTUzFTE1MxUxNTMVMTUzFQc1MxUHNTMVBzUzFQc1MxUHNTMVBzUzFTE1MxUxNTMVMTUzFTE1MxVkZGRkZGRkyGTIZMhkyGRkZGRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAAEwAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwBHAEsAABM1MxUxNTMVMTUzFQU1MxUhNTMVBTUzFTM1MxUxNTMVBTUzFTM1MxUzNTMVBTUzFTE1MxUzNTMVBTUzFSE1MxUFNTMVMTUzFTE1MxVkZGRk/nBkASxk/gxkyGRk/gxkZGRkZP4MZGTIZP4MZAEsZP5wZGRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAKAGQAAAGQArwAAwAHAAsADwATABcAGwAfACMAJwAAEzUzFQc1MxUxNTMVBzUzFQc1MxUHNTMVBzUzFQc1MxUxNTMVMTUzFchkyGRkZGRkZGRkZGTIZGRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAADgAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwAAEzUzFTE1MxUxNTMVBTUzFSE1MxUHNTMVBzUzFQc1MxUHNTMVBzUzFTE1MxUxNTMVMTUzFTE1MxVkZGRk/nBkASxkZGTIZMhkyGTIZGRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQADwAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AAARNTMVMTUzFTE1MxUxNTMVFTUzFQc1MxUFNTMVMTUzFTE1MxUVNTMVBzUzFQU1MxUxNTMVMTUzFTE1MxVkZGRkZGRk/nBkZGRkZGT+DGRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAADgAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwAAATUzFQc1MxUxNTMVBTUzFTM1MxUFNTMVMzUzFQU1MxUxNTMVMTUzFTE1MxUxNTMVBzUzFQc1MxUBLGTIZGT+1GRkZP5wZMhk/nBkZGRkZMhkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRk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ZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAyBkZGRkZAAAEQAAAAAB9AOEAAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwAAETUzFTE1MxUxNTMVMTUzFTE1MxUFNTMVBzUzFQc1MxUHNTMVBzUzFQU1MxUxNTMVMTUzFTE1MxUxNTMVATUzFRU1MxVkZGRkZP7UZGRkZGRkZGRk/tRkZGRkZP5wZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAMgZGRkZGQAEgAAAAAB9AOEAAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwBHAAATNTMVMTUzFTE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFTE1MxUxNTMVATUzFRU1MxVkZGRk/nBkASxk/gxkASxk/gxkASxk/gxkASxk/gxkASxk/nBkZGT+1GRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAMgZGRkZGQAEQAAAAAB9AOEAAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwAAETUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFTE1MxUxNTMVATUzFRU1MxVkASxk/gxkASxk/gxkASxk/gxkASxk/gxkASxk/gxkASxk/nBkZGT+1GRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQDIGRkZGRkAAAABAA2AAEAAAAAAAEABwAAAAEAAAAAAAIABwAHAAMAAQQJAAEADgAOAAMAAQQJAAIADgAcQ2FzaFBpeFJlZ3VsYXIAQwBhAHMAaABQAGkAeABSAGUAZwB1AGwAYQByAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQgAAAAMBAgEDAQQBBQEGAQcBCAEJAQoBCwEMAQ0BDgEPARABEQESARMBFAEVARYBFwEYARkBGgEbARwBHQEeAR8BIAEhASIBIwEkASUBJgEnASgBKQEqASsBLAEtAS4BLwEwATEBMgEzATQBNQE2ATcBOAE5AToBOwE8AT0BPgE/AUABQQVnMDA0MQVnMDA0MgVnMDA0MwVnMDA0NAVnMDA0NQVnMDA0NgVnMDA0NwVnMDA0OAVnMDA0OQVnMDA0QQVnMDA0QgVnMDA0QwVnMDA0RAVnMDA0RQVnMDA0RgVnMDA1MAVnMDA1MQVnMDA1MgVnMDA1MwVnMDA1NAVnMDA1NQVnMDA1NgVnMDA1NwVnMDA1OAVnMDA1OQVnMDA1QQVnMDAzMAVnMDAzMQVnMDAzMgVnMDAzMwVnMDAzNAVnMDAzNQVnMDAzNgVnMDAzNwVnMDAzOAVnMDAzOQVnMDAyRQVnMDAyQwVnMDAzQQVnMDAyRAVnMjIxMgVnMDAyQgVnMDAyNQVnMDAyRgVnMDAyMQVnMDAzRgVnMDBCNwVnMjBBQwVnMDAyNAVnMDAyOAVnMDAyOQVnMDAyNwVnMDBBQQVnMDBCMAVnMDAyMwVnMDAzRQVnMDAzQwVnMDA1RgVnMDBDMAVnMDBDOAVnMDBDOQVnMDBDQwVnMDBEMgVnMDBEOQAA") format("truetype"); }
+body.casa { --gold: #d8b25a; --win: #121a3d; --win2: #0b1029; overflow: hidden; background: #07091a; }
+body.casa main { display: none; }
+.pix { font-family: "CashPix", var(--mono); letter-spacing: 1px; text-transform: uppercase; }
+body.casa .hdr { background: linear-gradient(#07091a, #07091aee); border-bottom: 1px solid #2a2f55; gap: 8px; padding: 8px 12px; z-index: 30; }
+body.casa .brand { font: 17px "CashPix"; letter-spacing: 1px; color: var(--gold); text-shadow: 0 0 8px #d8b25a66, 1px 1px 0 #3b2a10; text-transform: uppercase; }
+body.casa .brand img { width: 22px; height: 22px; }
+body.casa .hdr .px { font-size: 15px; }
+body.casa #nextBar { display: none; }
+body.casa .hdr .pill { border: 1px solid #33407a; }
+/* avvisi importanti come fumetti sopra la casa */
+body.casa .banner { position: fixed; z-index: 25; left: 10px; right: 10px; margin: 0; top: calc(var(--hdrh, 56px) + 54px); background: #0b1029f2 !important; border: 2px solid var(--gold) !important; border-radius: 6px; box-shadow: 0 6px 18px #000a; font-size: 12.5px; }
+body.casa .banner:after { content: ""; position: absolute; bottom: -8px; left: 50%; border: 7px solid transparent; border-top-color: var(--gold); border-bottom: 0; }
+body.casa #realBanner { top: calc(var(--hdrh, 56px) + 110px); }
+body.casa #dailyBanner { top: calc(var(--hdrh, 56px) + 166px); }
+.cstage { position: fixed; left: 0; right: 0; bottom: 0; top: var(--hdrh, 56px); overflow: hidden; z-index: 5;
+  background: radial-gradient(60% 30% at 50% 62%, #ffb35c55, transparent), linear-gradient(#1a1440, #3a2a6e 40%, #b4537a 63%, #2c1d16 63.5%, #1d130d); }
+.ccam { position: absolute; left: 0; top: 0; width: min(100%, 560px); transform-origin: 0 0; transition: transform .9s cubic-bezier(.65,0,.35,1); }
+.ccam:after { content: ""; position: absolute; left: -50%; right: -50%; top: 99.5%; height: 150%; background: linear-gradient(#36241a, #1d130d 30%); opacity: 0; transition: opacity .3s; }
+.zoomed .ccam:after { opacity: 1; }
+.chouse { position: relative; width: 100%; aspect-ratio: 200 / 384; overflow: hidden; cursor: pointer;
+  -webkit-mask-image: radial-gradient(75% 62% at 50% 52%, #000 78%, transparent 100%); mask-image: radial-gradient(75% 62% at 50% 52%, #000 78%, transparent 100%); }
+.zoomed .chouse { -webkit-mask-image: none; mask-image: none; }
+.chouse canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.chouse canvas[data-l=b] { filter: blur(2.2px) saturate(1.15); transform: scale(1.03); }
+.chouse canvas[data-l=g] { mix-blend-mode: screen; filter: blur(3px); opacity: .95; }
+.chouse canvas[data-l=f] { filter: blur(3.5px); }
+.chouse .vign { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 80% at 50% 45%, transparent 55%, #05061acc 100%), linear-gradient(transparent 85%, #07091a); }
+.zoomed .chouse .vign { background: radial-gradient(130% 90% at 50% 40%, transparent 60%, #05061a99 100%); }
+.ctag { position: absolute; font-size: 9px; color: #fff6dc; padding: 4px 7px 3px; background: #0b1029cc; border: 1px solid var(--gold); box-shadow: 0 0 0 1px #0b1029, 0 0 12px #d8b25a55; white-space: nowrap; pointer-events: none; transition: opacity .4s; }
+.ctag small { display: block; font: 500 9px/1.2 var(--sans); letter-spacing: 0; text-transform: none; color: #cfd4f3; margin-top: 1px; }
+.cneon { position: absolute; font-size: 10px; color: #ffd6f0; text-shadow: 0 0 4px #ec4899, 0 0 10px #ec4899, 0 0 18px #db2777; text-align: center; transition: opacity .4s; }
+.csign { position: absolute; left: 35%; width: 30%; top: 18.6%; text-align: center; font-size: 11px; color: #ffd98a; text-shadow: 0 0 6px #ffb35c; }
+.zoomed .ctag, .zoomed .cneon { opacity: 0; }
+.chot { position: absolute; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .4s .6s; }
+.zoomed .chot.cur { opacity: 1; pointer-events: auto; }
+.chot:after { content: ""; position: absolute; inset: -1px; border: 1px solid #ffd98a; box-shadow: 0 0 6px #ffd98a, inset 0 0 6px #ffd98a88; animation: cpulse 1.6s infinite; }
+.chot span { position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, -2px); font: 6px "CashPix"; letter-spacing: .3px; white-space: nowrap; color: #fff6dc; background: #0b1029e6; border: .5px solid var(--gold); padding: 1px 2px .5px; text-transform: uppercase; }
+.chot.r span { left: auto; right: 0; transform: translateY(-2px); }
+@keyframes cpulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+.cwin, .hudw { position: absolute; background: linear-gradient(180deg, var(--win), var(--win2)); border: 2px solid var(--gold); box-shadow: inset 0 0 0 1px #000a, inset 0 0 0 3px #3c2f14, 0 6px 18px #000a; border-radius: 3px; color: var(--text); }
+.hudw { top: 8px; padding: 5px 9px; z-index: 3; transition: opacity .4s; }
+.hudw .pix { font-size: 9px; color: #a9a3c4; } .hudw .mono { font-weight: 600; font-size: 15px; }
+.hudw.hl { left: 8px; } .hudw.hr { right: 8px; text-align: right; }
+.zoomed .hudw { opacity: 0; pointer-events: none; }
+.cback { left: 10px; top: 10px; z-index: 3; font-size: 11px; padding: 8px 11px 7px; opacity: 0; pointer-events: none; transition: opacity .4s; cursor: pointer; }
+.zoomed .cback { opacity: 1; pointer-events: auto; }
+.chint { left: 50%; transform: translateX(-50%); bottom: 18px; z-index: 3; font-size: 10px; padding: 8px 12px 7px; transition: opacity .4s; }
+.zoomed .chint { opacity: 0; }
+.csheet { left: 8px; right: 8px; bottom: 8px; z-index: 4; padding: 12px 12px 10px; max-height: 46%; display: flex; flex-direction: column; transform: translateY(125%); transition: transform .5s cubic-bezier(.2,.8,.2,1), max-height .4s; max-width: 760px; margin: 0 auto; }
+.csheet.open { transform: none; }
+.csheet.tall { max-height: 72%; }
+.csheet:before, .csheet:after, .hudw:before, .cback:before { content: ""; position: absolute; width: 6px; height: 6px; background: var(--gold); top: -4px; left: -4px; }
+.csheet:after { left: auto; right: -4px; }
+.cx { position: absolute; right: 6px; top: 4px; font-size: 13px; color: #a9a3c4; background: none; border: 0; padding: 6px 8px; cursor: pointer; z-index: 2; }
+.cup { align-self: flex-start; font-size: 10px; color: var(--gold); background: none; border: 1px solid #3c2f14; padding: 5px 8px 4px; margin-bottom: 8px; cursor: pointer; }
+.cttl { font-size: 13px; color: var(--gold); margin: 0 30px 10px 0; text-shadow: 1px 1px 0 #3b2a10; }
+.cbody { overflow: auto; -webkit-overflow-scrolling: touch; min-height: 0; }
+.copts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.copts button { font-size: 10px; color: var(--text); background: #0b1029; border: 1px solid #2c3566; padding: 11px 8px; border-radius: 3px; text-align: left; cursor: pointer; }
+.copts button b { display: block; font: 500 11px var(--sans); letter-spacing: 0; text-transform: none; color: #a9a3c4; margin-top: 3px; }
+/* pannelli dell'app dentro le finestre della casa */
+.cbody .panel { background: transparent; border: 0; box-shadow: none; padding: 0; margin: 0 0 16px; border-radius: 0; }
+.cbody .panel + .panel { border-top: 1px solid #2c3566; padding-top: 14px; }
+.cbody .ph h2 { font: 12px "CashPix"; letter-spacing: 1px; color: var(--gold); }
+.cbody .stat, .cbody .scard, .cbody .ccard { background: #0b1029; border: 1px solid #2c3566; border-radius: 3px; }
+.cbody .full { grid-column: auto; }
+body.casa .modal .panel { background: linear-gradient(180deg, #121a3d, #0b1029); border: 2px solid #d8b25a; border-radius: 3px; box-shadow: inset 0 0 0 3px #3c2f14, 0 10px 30px #000c; }
+body.casa .modal .ph h2 { font: 13px "CashPix"; letter-spacing: 1px; color: #d8b25a; }
+/* ritocchi grafica casa */
+body.casa .hdr .px, body.casa .hdr .pill.sim { display: none; }
+body.casa .hdr .pill { font-size: 10px; padding: 3px 8px; }
+body.casa .banner { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; padding: 8px 12px; font-size: 11.5px; line-height: 1.35; }
+body.casa .banner .note { display: none; }
+body.casa .banner.hidden { display: none !important; }
+body.casa .runbtn { border: 2px solid #5a1010; border-radius: 6px; background: linear-gradient(#22c55e, #15803d); box-shadow: inset 0 2px 0 #86efac, inset 0 -4px 0 #14532d, 0 4px 0 #052e16, 0 0 22px #22c55e77; color: #fff; font: 18px "CashPix"; letter-spacing: 2px; text-shadow: 1px 1px 0 #14532d; border-color: #0f3d22; }
+body.casa .runbtn.stop { border-color: #5a1010; background: linear-gradient(#ef4444, #991b1b); box-shadow: inset 0 2px 0 #fca5a5, inset 0 -4px 0 #7f1d1d, 0 4px 0 #3b0a0a, 0 0 18px #ef444466; text-shadow: 1px 1px 0 #7f1d1d; }
+body.casa .runtimer { color: #e9ffe9; text-shadow: 0 0 10px #22c55e88; }
+body.casa .runstate b { font: 12px "CashPix"; letter-spacing: 1px; }
+.cbody .btn.blue, .cbody .btn.primary { box-shadow: 0 0 12px #3b82f655; }
+body.casa #realBanner { display: none !important; }
+
 </style>
 </head>
 <body>
@@ -194,6 +277,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
 <div class="banner bad hidden" id="realBanner"><span class="grow" id="realText"></span></div>
 <div class="banner warn hidden" id="dailyBanner"><span class="grow" id="dailyText"></span></div>
 
+<div id="casa" class="hidden"></div>
 <main>
   <div class="col">
     <section class="panel sim" id="runPanel">
@@ -206,7 +290,10 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
         </div>
       </div>
       <div class="runchecks" id="runChecks"></div>
-      <div class="ph" style="margin-top:12px"><h2>Conto di simulazione</h2><button class="btn sm" id="bReset">Ricomincia</button></div>
+    </section>
+
+    <section class="panel sim" id="simPanel">
+      <div class="ph"><h2>Conto di simulazione</h2><button class="btn sm" id="bReset">Ricomincia</button></div>
       <div class="stats">
         <div class="stat"><div class="lbl">Capitale iniziale</div><div class="val blue" id="sStart">—</div></div>
         <div class="stat"><div class="lbl">Saldo + aperte</div><div class="val blue" id="sEquity">—</div></div>
@@ -216,12 +303,12 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
       <div class="note" id="sSession" style="margin-top:8px"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="coinsPanel">
       <div class="ph"><h2>Monete</h2><span class="note">ognuna con il suo interruttore · una posizione per moneta</span></div>
       <div class="coins" id="coins"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="chartPanel">
       <div class="ph">
         <h2><span id="chartCoinLbl">BTC</span>-USD · <span id="tfLabel">2 ore</span></h2>
         <div class="chips" id="coinChips"><span class="chip" data-coin="BTC">BTC</span><span class="chip" data-coin="ETH">ETH</span><span class="chip" data-coin="SOL">SOL</span><span class="chip" data-coin="XRP">XRP</span></div>
@@ -233,12 +320,12 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
       <div class="note" style="margin-top:6px">Linee: <span class="blue">entrata</span> · <span class="neg">stop</span> · <span class="pos">obiettivo</span> · <span class="warnc">liquidazione</span>. Sul grafico a 2 ore: bande di Bollinger usate dallo squeeze.</div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="stratPanel">
       <div class="ph"><h2>Strategie del bot</h2><button class="btn sm" id="bBest">Ripristina la configurazione migliore</button></div>
       <div class="strats" id="strats"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="openPanel">
       <div class="ph"><h2>Posizioni aperte</h2></div>
       <div class="tbl"><table>
         <thead><tr><th>Moneta</th><th>Strategia</th><th>Lato</th><th>Leva</th><th>Margine</th><th>Entrata</th><th>Stop</th><th>Obiettivo</th><th>Liquid.</th><th>G/P</th><th></th></tr></thead>
@@ -247,7 +334,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
       <div class="note" id="noOpen">Nessuna posizione aperta.</div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="histPanel">
       <div class="ph"><h2>Storico operazioni</h2><span class="note" id="histInfo"></span></div>
       <div class="tbl"><table>
         <thead><tr><th>Chiusa</th><th>Moneta</th><th>Strategia</th><th>Lato</th><th>Leva</th><th>Entrata</th><th>Uscita</th><th>Motivo</th><th>G/P</th></tr></thead>
@@ -258,7 +345,7 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
   </div>
 
   <div class="col">
-    <section class="panel">
+    <section class="panel" id="riskPanel">
       <div class="ph"><h2>Rischio</h2></div>
       <div class="row"><label>Rischio per operazione (% del saldo)</label><input type="number" id="cRisk" min="0.1" max="10" step="0.1"></div>
       <div class="row"><label>Posizioni del bot aperte insieme, al massimo</label><input type="number" id="cMaxPos" min="1" max="4" step="1"></div>
@@ -314,12 +401,12 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
       <div class="note hidden" id="manualOff">Operazioni manuali spente dagli interruttori.</div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="togPanel">
       <div class="ph"><h2>Interruttori</h2></div>
       <div id="toggles"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="logPanel">
       <div class="ph"><h2>Registro</h2></div>
       <div class="log" id="log"></div>
     </section>
@@ -338,8 +425,8 @@ input.wide { width: 100%; background: var(--card); border: 1px solid var(--line2
     </div>
     <div class="row">
       <button class="btn" id="bLabRun" disabled>Rifai la prova sui dati caricati</button>
-      <label class="btn" style="flex:none;min-width:0;color:var(--text)">Carica file CSV<input type="file" id="labFile" accept=".csv,text/csv" multiple class="hidden"></label>
-      <span class="note">Usa le monete e le strategie accese, il rischio, il limite di posizioni, commissioni e funding attuali. Per i file CSV il nome deve iniziare con btc_, eth_, sol_ o xrp_ (si possono caricare più file insieme).</span>
+      <label class="btn" style="flex:none;min-width:0;color:var(--text)">Carica CSV o pacchetto .zip<input type="file" id="labFile" accept=".csv,.zip,text/csv,application/zip" multiple class="hidden"></label>
+      <span class="note">Usa le monete e le strategie accese, il rischio, il limite di posizioni, commissioni e funding attuali. Per i file CSV il nome deve iniziare con btc_, eth_, sol_ o xrp_ (si possono caricare più file insieme); il pacchetto .zip salvato dal laboratorio si carica con un solo file.</span>
     </div>
     <div id="labOut" class="hidden">
       <div class="banner" id="lSummary" style="margin:10px 0 0;border:1px solid rgba(59,130,246,.45);background:rgba(59,130,246,.08)"></div>
@@ -1091,7 +1178,12 @@ const STRATEGIES = [
     title: "Squeeze di volatilità · 4 ore",
     what: "Aspetta che BTC resti calmo (bande di Bollinger strette) e compra quando il prezzo esce con forza verso l'alto.",
     exit: "Stop a 2× ATR; chiude al segnale opposto (uscita dalle bande verso il basso).",
-    research: "Ricerca su 4 anni: in attivo in ogni anno 2023-2026 (100% delle varianti). Aggiunta a Keltner 1h + Momentum 1h: 100 € → 300 € invece di 284 €, discesa massima -13% invece di -16%. Le tre strategie insieme su BTC, ETH, SOL e XRP (una posizione per moneta, rischio 0,5%): 100 € → circa 640 € da aprile 2023, anni +85% / +112% / +28% / +28%, discesa massima -23%. Entrando solo sulle 2 monete più forti (3, 7 e 14 giorni): 636 € con discesa -15% allo stesso rischio, 1.286 € (-19%) con rischio 0,75%." },
+    research: "Ricerca su 4 anni: in attivo in ogni anno 2023-2026 (100% delle varianti). Aggiunta a Keltner 1h + Momentum 1h: 100 € → 300 € invece di 284 €, discesa massima -13% invece di -16%. Le tre strategie insieme su BTC, ETH, SOL e XRP (una posizione per moneta, rischio 0,5%): 100 € → circa 640 € da aprile 2023, anni +85% / +112% / +28% / +28%, discesa massima -23%. Entrando solo sulle 2 monete più forti (3, 7 e 14 giorni): 636 € con discesa -15% allo stesso rischio, 1.286 € (-19%) con rischio 0,75%; con gli short intelligenti 1.546 € (-18%)." },
+  { id: "kelS", f: 4, key: "keltner", p: { n: 20, k: 2, tf: 0 }, ex: { sl: 2, opp: 1 }, dir: "short", vol: "low", def: true, smart: true,
+    title: "Short intelligenti · Keltner 1 ora",
+    what: "Short solo quando servono: il prezzo esce verso il basso dal canale media ± 2× ATR, ma solo sulla moneta più debole della classifica (3, 7 e 14 giorni) e solo se BTC è sotto la sua media di 100 giorni (mercato in discesa).",
+    exit: "Stop a 2× ATR; chiude al segnale opposto (uscita dal canale verso l'alto).",
+    research: "Short sulle monete forti o su tutte: in perdita nel 2024-2025. Solo sulla più debole e con BTC in discesa: +1 / +3 / -4 / +28 R negli anni 2023-2026, quasi nessuna operazione negli anni di salita. Insieme ai long sulle 2 più forti, rischio 0,75%, 100 €: 1.546 € dal 2023 invece di 1.286 €, discesa massima -18% invece di -20%, ultimi 360 giorni +54% invece di +31%. In 10 varianti della classifica migliora sempre gli ultimi 360 giorni." },
   { id: "sq2h", f: 8, key: "squeeze", p: { n: 30, k: 2, q: 0.15, look: 200, tf: 0 }, ex: { sl: 2, opp: 1, be: 1 }, dir: "both", vol: "all", def: false,
     title: "Squeeze di volatilità · 2 ore",
     what: "Aspetta che BTC resti calmo (bande di Bollinger strette) e entra quando il prezzo esce con forza da una parte.",
@@ -1114,7 +1206,7 @@ const STRATEGIES = [
     research: "Provata solo sull'ultimo anno: meno affidabile." },
 ];
 // configurazione migliore trovata (si applica al primo avvio e con "Ripristina la configurazione migliore")
-const BEST = { version: 5, cfg: { risk: 0.75, maxPos: 4, maxLev: 40 } };
+const BEST = { version: 6, cfg: { risk: 0.75, maxPos: 4, maxLev: 40 } };
 // "Solo le monete più forti": classifica sui rendimenti di 3, 7 e 14 giorni, entra solo sulle prime 2
 const RS = { lbs: [3, 7, 14], top: 2 };
 
@@ -1156,13 +1248,14 @@ function buildSignals(C, strats, extra) {
     const p = Object.assign({}, s.p); if (s.f > 1 && p.tf) p.tf = Math.max(50, Math.round(p.tf / s.f));
     const raw = X.expandSig(E.STRATS[s.key].signal(X.K, p));
     let sig = raw;
-    if (s.dir === "long" || s.dir === "regime" || s.vol === "low" || s.vol === "lowLong") {
+    if (s.dir === "long" || s.dir === "short" || s.dir === "regime" || s.vol === "low" || s.vol === "lowLong") {
       if ((s.vol === "low" || s.vol === "lowLong") && !VP) VP = volPct(C, extra && extra.daily);
       if (s.dir === "regime" && !TR) TR = dailyTrend(C, extra && extra.daily, 200);
       sig = new Int8Array(raw.length);
       for (let i = 0; i < raw.length; i++) {
         const d = raw[i]; if (!d) continue;
         if (s.dir === "long" && d < 0) continue;
+        if (s.dir === "short" && d > 0) continue;
         if (s.dir === "regime" && d !== TR[i]) continue;                       // a favore del trend di fondo
         if (s.vol === "low" && !(VP[i] < (s.volMax || 0.5))) continue;
         if (s.vol === "lowLong" && d > 0 && !(VP[i] < (s.volMax || 0.5))) continue; // filtro solo sui long
@@ -1310,6 +1403,21 @@ function backtest(C, strats, opt, onProgress) {
 /* Classifica di forza: per ogni finestra (giorni) ordina le monete per rendimento, somma le posizioni;
    usa solo candele giornaliere già chiuse al tempo t. daily = { BTC: D, ... }. Restituisce { BTC: 0, ETH: 1, ... } (0 = la più forte) */
 function lastDay(D, t) { let lo = 0, hi = D.t.length - 1, r = -1; while (lo <= hi) { const m = (lo + hi) >> 1; if (D.t[m] + 86400000 <= t) { r = m; lo = m + 1; } else hi = m - 1; } return r; }
+/* Mercato in discesa: ultima chiusura giornaliera di BTC sotto la sua media esponenziale di n giorni */
+function btcDown(D, t, n) {
+  if (!D) return false; n = n || 100;
+  const k = "_ema" + n; if (!D[k] || D[k].length !== D.c.length) D[k] = E.ema(D.c, n);
+  const j = lastDay(D, t); return j >= n && D.c[j] < D[k][j];
+}
+/* Short intelligente: la moneta è l'ultima della classifica e BTC è in discesa. Restituisce "" se può entrare, altrimenti il motivo */
+function smartShortReason(ranks, coin, btcD, t) {
+  const n = Object.keys(ranks).length;
+  if (ranks[coin] == null) return "classifica non disponibile";
+  if (ranks[coin] !== n - 1) return `${coin} non è la più debole (è ${ranks[coin] + 1}ª di ${n})`;
+  if (!btcD) return "mancano le candele giornaliere di BTC";
+  if (!btcDown(btcD, t, 100)) return "BTC è sopra la media di 100 giorni (mercato non in discesa)";
+  return "";
+}
 function rsRanks(daily, t, lbs) {
   const coins = Object.keys(daily).filter(c => daily[c]), sc = Object.fromEntries(coins.map(c => [c, 0])), J = Object.fromEntries(coins.map(c => [c, lastDay(daily[c], t)]));
   for (const n of lbs || RS.lbs) {
@@ -1334,7 +1442,9 @@ function backtestMulti(data, strats, opt, extras) {
   const RM = o.volTarget ? Object.fromEntries(coins.map(c => [c, riskMult(data[c])])) : null;
   const B = newBook(o.start || 100); let peak = B.balance, mdd = 0; const curve = [];
   const sById = Object.fromEntries(strats.map(s => [s.id, s]));
-  const rsD = o.rs ? Object.fromEntries(coins.map(c => [c, (extras && extras[c] && extras[c].daily) || E.resample(data[c], 96).C])) : null;
+  const needR = o.rs || strats.some(s => s.smart);
+  const rsD = needR ? Object.fromEntries(coins.map(c => [c, (extras && extras[c] && extras[c].daily) || E.resample(data[c], 96).C])) : null;
+  const btcD = (rsD && rsD.BTC) || o.btcDaily || (extras && extras.BTC && extras.BTC.daily) || null;
   let lastD = -1;
   for (;;) {
     let t = Infinity; for (const c of coins) if (idx[c] < data[c].t.length) t = Math.min(t, data[c].t[idx[c]]);
@@ -1349,7 +1459,8 @@ function backtestMulti(data, strats, opt, extras) {
       const C = data[c], i = idx[c]; if (i + 1 >= C.t.length) continue;
       let rk = null;
       for (const s of strats) { const x = S[c][s.id]; if (!x.sig[i] || isNaN(x.A[i])) continue;
-        if (o.rs) { if (!rk) rk = rsRanks(rsD, C.t[i] + 900000, o.rs.lbs); if (rk[c] >= o.rs.top) continue; }
+        if (s.smart) { if (!rk) rk = rsRanks(rsD, C.t[i] + 900000, RS.lbs); if (smartShortReason(rk, c, btcD, C.t[i] + 900000)) continue; }
+        else if (o.rs) { if (!rk) rk = rsRanks(rsD, C.t[i] + 900000, o.rs.lbs); if (rk[c] >= o.rs.top) continue; }
         openAuto(B, sById[s.id], x.sig[i], C.o[i + 1], x.A[i], C.t[i + 1], Object.assign({}, o, { coin: c }, RM ? { risk: o.risk * RM[c][i] } : {})); }
     }
     for (const c of here) idx[c]++;
@@ -1360,9 +1471,207 @@ function backtestMulti(data, strats, opt, extras) {
   return { book: B, mdd, curve, from: fromT, to: toT };
 }
 
-const API = { RS, rsRanks, backtestMulti, closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
+const API = { RS, rsRanks, btcDown, smartShortReason, backtestMulti, closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
 if (typeof module !== "undefined") module.exports = API; else root.Core = API;
 })(typeof window !== "undefined" ? window : this);
+
+</script>
+<script>
+// Casa CashMkr in stile HD-2D: pixel art disegnata a mano nel codice, su 4 livelli
+// (sfondo sfocato, casa nitida, luci in "screen", primo piano sfocato). Nessuna immagine esterna.
+(function (root) {
+"use strict";
+const W = 200, H = 384;
+// piani della casa (coordinate in pixel logici)
+const ROOMS = {
+  games: { x: 22, y: 92, w: 156, h: 64, name: "SALA GIOCHI" },
+  ops:   { x: 22, y: 164, w: 156, h: 84, name: "SALA OPERATIVA" },
+  lab:   { x: 22, y: 274, w: 156, h: 78, name: "LABORATORIO" },
+};
+const P = { // tavolozza
+  night0: "#1a1440", night1: "#3a2a6e", dusk: "#b4537a", glow: "#ffb35c",
+  wallOut: "#c9a77a", wallOutD: "#a3845c", beam: "#5b3a24", beamL: "#7a5233", roof: "#7c2f3a", roofD: "#5a1f2a", roofL: "#9e4450",
+  win: "#ffd98a", grass: "#3f7d3a", grassL: "#5fa64f", earth: "#4a3326", earthD: "#36241a", stone: "#5d5a66", stoneD: "#45424d", stoneL: "#77737f",
+};
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x | 0, y | 0, w | 0, h | 0); };
+
+/* ---------- livello 1: cielo e paesaggio (verrà sfocato) ---------- */
+function drawBack(g, t) {
+  const sky = g.createLinearGradient(0, 0, 0, 270);
+  sky.addColorStop(0, P.night0); sky.addColorStop(0.45, P.night1); sky.addColorStop(0.8, P.dusk); sky.addColorStop(1, P.glow);
+  g.fillStyle = sky; g.fillRect(0, 0, W, 270);
+  const r = rng(7);
+  for (let i = 0; i < 60; i++) { const x = r() * W, y = r() * 150, tw = 0.5 + 0.5 * Math.sin(t / 700 + i); g.fillStyle = `rgba(255,255,240,${0.35 + 0.6 * tw * r()})`; g.fillRect(x | 0, y | 0, 1, 1); }
+  // luna
+  g.fillStyle = "#fff3cf"; g.beginPath(); g.arc(160, 34, 9, 0, 7); g.fill(); g.fillStyle = "rgba(255,243,207,.15)"; g.beginPath(); g.arc(160, 34, 16, 0, 7); g.fill();
+  // montagne lontane
+  g.fillStyle = "#4b356f"; g.beginPath(); g.moveTo(0, 230); for (let x = 0; x <= W; x += 10) g.lineTo(x, 200 - 22 * Math.abs(Math.sin(x / 37)) - 10 * Math.sin(x / 13)); g.lineTo(W, 270); g.lineTo(0, 270); g.fill();
+  g.fillStyle = "#35285a"; g.beginPath(); g.moveTo(0, 245); for (let x = 0; x <= W; x += 8) g.lineTo(x, 228 - 12 * Math.abs(Math.sin(x / 23 + 1))); g.lineTo(W, 270); g.lineTo(0, 270); g.fill();
+  // alberi lontani
+  const r2 = rng(3);
+  for (let i = 0; i < 26; i++) { const x = r2() * W, h = 14 + r2() * 18; g.fillStyle = i % 2 ? "#23402f" : "#2b4a36"; g.beginPath(); g.moveTo(x, 258 - h); g.lineTo(x - 6, 262); g.lineTo(x + 6, 262); g.fill(); }
+  // terreno sotto (sezione)
+  R(g, 0, 258, W, H - 258, P.earthD);
+}
+
+/* ---------- livello 2: la casa ---------- */
+function bricks(g, x, y, w, h, c1, c2, bw, bh) {
+  R(g, x, y, w, h, c1);
+  g.fillStyle = c2;
+  for (let yy = 0; yy < h; yy += bh) { g.fillRect(x, y + yy, w, 1); const off = (yy / bh) % 2 ? bw / 2 : 0; for (let xx = off; xx < w; xx += bw) g.fillRect(x + xx, y + yy, 1, bh); }
+}
+function planks(g, x, y, w, h, c1, c2) { R(g, x, y, w, h, c1); g.fillStyle = c2; for (let yy = 0; yy < h; yy += 3) g.fillRect(x, y + yy, w, 1); for (let i = 0; i < w; i += 17) g.fillRect(x + i, y + ((i * 7) % 3), 1, 2); }
+function checker(g, x, y, w, h, a, b) { for (let yy = 0; yy < h; yy += 3) for (let xx = 0; xx < w; xx += 3) R(g, x + xx, y + yy, 3, 3, ((xx + yy) / 3) % 2 ? a : b); }
+
+function arcade(g, x, y, scr, label, t, k, st) {
+  // cabinato 18x34
+  R(g, x, y + 4, 18, 30, "#22223a"); R(g, x + 1, y + 5, 16, 28, "#2f2f52");
+  R(g, x - 1, y, 20, 6, "#3b3b66"); R(g, x, y + 1, 18, 4, scr); // insegna
+  R(g, x + 3, y + 9, 12, 10, "#0b0b18"); // schermo
+  const f = (Math.sin(t / 250 + k) + 1) / 2;
+  g.fillStyle = scr; g.globalAlpha = 0.65 + 0.35 * f; g.fillRect(x + 4, y + 10, 10, 8); g.globalAlpha = 1;
+  // mini grafico sullo schermo
+  g.fillStyle = "#ffffff"; for (let i = 0; i < 10; i++) { const yy = y + 14 + Math.round(2.5 * Math.sin(i / 1.6 + t / 600 + k)); g.fillRect(x + 4 + i, yy, 1, 1); }
+  R(g, x + 2, y + 21, 14, 4, "#4a4a7a"); R(g, x + 5, y + 21, 2, 2, "#ff5d6c"); R(g, x + 11, y + 22, 2, 2, "#57d0ff"); R(g, x + 6, y + 19, 1, 3, "#ddd"); // comandi
+  R(g, x + 2, y + 27, 14, 5, "#1b1b30");
+  // stato della moneta: led
+  R(g, x + 8, y + 28, 2, 2, st === "long" ? "#4ade80" : st === "short" ? "#f87171" : "#555577");
+}
+function robot(g, x, y, t) {
+  const bob = Math.round(Math.sin(t / 400));
+  R(g, x + 3, y - 6 + bob, 1, 3, "#c9ced8"); R(g, x + 2, y - 7 + bob, 3, 2, (Math.floor(t / 500) % 2) ? "#ff6b6b" : "#ffd166"); // antenna
+  R(g, x, y - 3 + bob, 8, 7, "#c9ced8"); R(g, x + 1, y - 2 + bob, 6, 4, "#2b3448"); R(g, x + 2, y - 1 + bob, 1, 2, "#7dd3fc"); R(g, x + 5, y - 1 + bob, 1, 2, "#7dd3fc");
+  R(g, x - 1, y + 4, 10, 8, "#9aa3b5"); R(g, x + 2, y + 6, 4, 3, "#3b82f6"); R(g, x - 2, y + 5, 2, 5, "#9aa3b5"); R(g, x + 8, y + 5, 2, 5, "#9aa3b5");
+  R(g, x, y + 12, 3, 4, "#6b7280"); R(g, x + 5, y + 12, 3, 4, "#6b7280");
+}
+function drawHouse(g, t, st) {
+  const { games, ops, lab } = ROOMS;
+  // terreno in sezione (strati e sassi)
+  R(g, 0, 258, W, H - 258, P.earth); const r = rng(11);
+  for (let i = 0; i < 140; i++) { const x = r() * W, y = 262 + r() * (H - 262); R(g, x, y, 2 + r() * 3, 1 + r() * 2, r() < .5 ? P.earthD : "#5a3f2e"); }
+  R(g, 0, 254, W, 6, P.grass); for (let x = 0; x < W; x += 3) R(g, x, 251 + ((x * 7) % 4 === 0 ? 0 : 2), 1, 3, P.grassL);
+  // tetto
+  g.fillStyle = P.roofD; g.beginPath(); g.moveTo(10, 90); g.lineTo(100, 34); g.lineTo(190, 90); g.fill();
+  g.fillStyle = P.roof; g.beginPath(); g.moveTo(14, 88); g.lineTo(100, 38); g.lineTo(186, 88); g.fill();
+  g.fillStyle = P.roofL; for (let y = 44; y < 88; y += 5) { const half = (y - 38) * 86 / 50; g.fillRect(100 - half, y, half * 2, 1); }
+  R(g, 130, 44, 12, 20, "#6b4a3a"); R(g, 129, 42, 14, 3, "#4d3428"); // camino
+  // insegna sul tetto
+  R(g, 70, 70, 60, 14, "#2a1a10"); R(g, 71, 71, 58, 12, "#3b2616");
+  // muri esterni e travi
+  R(g, 16, 88, 168, 168, P.wallOutD); R(g, 18, 88, 164, 166, P.wallOut);
+  for (const rm of [games, ops]) R(g, rm.x - 2, rm.y - 3, rm.w + 4, rm.h + 5, P.beam);
+  // ---- sala giochi (TEST FREE)
+  R(g, games.x, games.y, games.w, games.h, "#2a1f4a");
+  for (let i = 0; i < games.w; i += 12) R(g, games.x + i, games.y, 6, games.h - 10, "#30245a"); // carta da parati
+  checker(g, games.x, games.y + games.h - 10, games.w, 10, "#3a3a5c", "#22223a");
+  // insegna al neon "TEST FREE"
+  R(g, games.x + 50, games.y + 4, 56, 9, "#140f2b");
+  const coins = ["BTC", "ETH", "SOL", "XRP"], scr = ["#3b82f6", "#8b5cf6", "#14b8a6", "#38bdf8"];
+  coins.forEach((c, k) => arcade(g, games.x + 10 + k * 37, games.y + games.h - 44, scr[k], c, t, k, st.sim[c]));
+  // ---- sala operativa (bot vero) - stanza principale
+  planks(g, ops.x, ops.y, ops.w, ops.h, "#5c3d2a", "#4c3222");
+  R(g, ops.x, ops.y, ops.w, ops.h - 12, "#2f3b4f"); for (let i = 0; i < ops.w; i += 2) R(g, ops.x + i, ops.y + ops.h - 13, 1, 1, "#3c4a62");
+  R(g, ops.x, ops.y + ops.h - 12, ops.w, 12, "#6b4a33"); for (let i = 0; i < ops.w; i += 20) R(g, ops.x + i, ops.y + ops.h - 12, 1, 12, "#57392a");
+  // finestra con la notte
+  R(g, ops.x + 6, ops.y + 10, 26, 22, "#4a3426"); R(g, ops.x + 8, ops.y + 12, 22, 18, "#1e2550"); R(g, ops.x + 18, ops.y + 12, 1, 18, "#4a3426"); R(g, ops.x + 8, ops.y + 20, 22, 1, "#4a3426"); R(g, ops.x + 24, ops.y + 14, 2, 2, "#fff3cf");
+  // parete di monitor
+  for (let k = 0; k < 3; k++) {
+    const mx = ops.x + 46 + k * 26, my = ops.y + 8;
+    R(g, mx, my, 24, 18, "#11161f"); R(g, mx + 1, my + 1, 22, 16, "#0d2a1f");
+    g.fillStyle = "#4ade80"; let py = my + 12;
+    for (let i = 0; i < 20; i++) { const v = Math.sin((i + t / 300 + k * 5) / 2.3) + Math.sin((i + t / 170) / 1.1) * 0.4; const ny = my + 9 - Math.round(v * 3); g.fillRect(mx + 2 + i, Math.min(py, ny), 1, Math.abs(ny - py) + 1); py = ny; }
+    R(g, mx + 10, my + 18, 4, 3, "#1f2937");
+  }
+  // scrivania-console
+  R(g, ops.x + 40, ops.y + 46, 90, 6, "#3b2a1e"); R(g, ops.x + 42, ops.y + 52, 4, 20, "#2d2017"); R(g, ops.x + 124, ops.y + 52, 4, 20, "#2d2017");
+  R(g, ops.x + 60, ops.y + 41, 30, 5, "#1f2937"); for (let i = 0; i < 6; i++) R(g, ops.x + 62 + i * 4, ops.y + 42, 3, 2, i % 2 ? "#60a5fa" : "#94a3b8");
+  // grande pulsante AVVIA (rosso = fermo, verde = in funzione)
+  const on = st.running, pulse = (Math.sin(t / 300) + 1) / 2;
+  R(g, ops.x + 100, ops.y + 36, 18, 10, "#2b2b2b"); R(g, ops.x + 102, ops.y + 32 + (on ? 1 : 0), 14, 6, on ? "#22c55e" : "#ef4444"); R(g, ops.x + 104, ops.y + 32 + (on ? 1 : 0), 10, 1, on ? "#86efac" : "#fca5a5");
+  // cassaforte (wallet)
+  const sx = ops.x + 136, sy = ops.y + ops.h - 30;
+  R(g, sx, sy, 16, 18, "#3f4654"); R(g, sx + 1, sy + 1, 14, 16, "#596273"); R(g, sx + 6, sy + 6, 5, 5, "#cbd5e1"); R(g, sx + 8, sy + 8, 1, 1, "#1f2937"); R(g, sx + 13, sy + 5, 1, 8, "#a3acb9");
+  R(g, sx + 4, sy + 14, 8, 1, st.real ? "#f59e0b" : "#64748b");
+  // pianta e orologio
+  R(g, ops.x + 8, ops.y + ops.h - 22, 8, 10, "#8b5a3c"); for (let i = 0; i < 6; i++) R(g, ops.x + 6 + i * 2, ops.y + ops.h - 30 + (i % 3) * 2, 2, 8, "#3f8f4a");
+  R(g, ops.x + 36, ops.y + 8, 8, 8, "#e5d3a1"); R(g, ops.x + 39, ops.y + 9, 1, 3, "#3b2a1e"); R(g, ops.x + 39, ops.y + 12, 3, 1, "#3b2a1e");
+  robot(g, ops.x + 84, ops.y + ops.h - 28, t);
+  // ---- scala che scende in cantina
+  R(g, 150, 246, 20, 10, "#2a1a10"); for (let i = 0; i < 4; i++) R(g, 152 + i * 4, 248 + i * 2, 4, 1, "#7a5233");
+  // ---- laboratorio sotterraneo
+  bricks(g, lab.x, lab.y, lab.w, lab.h, P.stone, P.stoneD, 10, 5);
+  R(g, lab.x, lab.y + lab.h - 8, lab.w, 8, "#3a3740"); for (let i = 0; i < lab.w; i += 6) R(g, lab.x + i, lab.y + lab.h - 8, 3, 1, P.stoneL);
+  // lavagna con la curva del conto
+  R(g, lab.x + 8, lab.y + 8, 46, 28, "#5b3a24"); R(g, lab.x + 10, lab.y + 10, 42, 24, "#1e3a2f");
+  g.fillStyle = "#e8f5e9"; let ly = lab.y + 30; for (let i = 0; i < 38; i++) { const ny = lab.y + 30 - Math.round(i * 0.45 + 2 * Math.sin(i / 2.5)); g.fillRect(lab.x + 12 + i, Math.min(ly, ny), 1, Math.abs(ny - ly) + 1); ly = ny; }
+  // banco con alambicchi
+  R(g, lab.x + 64, lab.y + 44, 60, 5, "#5b3a24"); R(g, lab.x + 66, lab.y + 49, 3, 21, "#3e2718"); R(g, lab.x + 119, lab.y + 49, 3, 21, "#3e2718");
+  const fl = [["#4ade80", 70], ["#60a5fa", 84], ["#f472b6", 98], ["#facc15", 110]];
+  fl.forEach(([c, x], k) => { R(g, lab.x + x + 2, lab.y + 30, 2, 6, "#cbd5e1"); R(g, lab.x + x, lab.y + 36, 6, 8, "#cbd5e1"); R(g, lab.x + x + 1, lab.y + 38, 4, 6, c);
+    if (Math.floor(t / 300 + k) % 3 === 0) R(g, lab.x + x + 2, lab.y + 26 - (Math.floor(t / 100 + k * 3) % 4), 1, 1, c); });
+  // scaffale con le "candele" (dati) e pergamene CSV
+  R(g, lab.x + 132, lab.y + 10, 20, 44, "#4a3020"); for (let s = 0; s < 4; s++) { R(g, lab.x + 132, lab.y + 20 + s * 11, 20, 2, "#2d1d12"); for (let i = 0; i < 4; i++) R(g, lab.x + 134 + i * 4, lab.y + 12 + s * 11, 2, 8, ["#f5f5f4", "#fde68a", "#fca5a5", "#bbf7d0"][(i + s) % 4]); }
+  // torce
+  for (const x of [lab.x + 58, lab.x + 128]) { R(g, x, lab.y + 14, 2, 7, "#6b4a33"); const fh = 2 + Math.floor((Math.sin(t / 90 + x) + 1) * 1.5); R(g, x - 1, lab.y + 14 - fh, 4, fh, "#ffb347"); R(g, x, lab.y + 13 - fh, 2, 2, "#fff1a8"); }
+  // gatto da laboratorio
+  const cx = lab.x + 30, cy = lab.y + lab.h - 14; R(g, cx, cy, 10, 6, "#2b2b2b"); R(g, cx + 8, cy - 3, 5, 5, "#2b2b2b"); R(g, cx + 8, cy - 5, 1, 2, "#2b2b2b"); R(g, cx + 12, cy - 5, 1, 2, "#2b2b2b"); R(g, cx + 9, cy - 2, 1, 1, "#facc15"); R(g, cx + 11, cy - 2, 1, 1, "#facc15");
+  const tail = Math.round(Math.sin(t / 350) * 2); R(g, cx - 3, cy - 2 + tail, 3, 2, "#2b2b2b");
+  // baule della cassa sepolto sotto il laboratorio
+  const bx = 86, by = 362; R(g, bx, by, 26, 14, "#6b3f1d"); R(g, bx, by, 26, 5, "#8a5426"); R(g, bx, by + 5, 26, 1, "#3b220f"); R(g, bx + 11, by + 4, 4, 5, "#e8b84a"); R(g, bx + 2, by, 2, 14, "#c08a2e"); R(g, bx + 22, by, 2, 14, "#c08a2e");
+  for (let i = 0; i < 5; i++) R(g, bx + 4 + i * 4, by - 2 + (i % 2), 3, 2, "#facc15");
+  g.fillStyle = "#3a2618"; for (let i = 0; i < 4; i++) { let x = 30 + i * 45, y = 262; for (let k = 0; k < 9; k++) { g.fillRect(x, y, 1, 2); y += 2; x += (k % 3) - 1; } }
+  // lampade e finestre esterne illuminate
+  R(g, 100, 92, 1, 6, "#2b2b2b"); R(g, 97, 98, 7, 3, "#ffd98a");
+  R(g, 100, 164, 1, 5, "#2b2b2b"); R(g, 96, 169, 9, 3, "#ffd98a");
+}
+
+/* ---------- livello 3: luci (si somma in modalità schermo) ---------- */
+function glow(g, x, y, r, c, a) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c.replace(")", `,${a})`).replace("rgb", "rgba")); gr.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); }
+function drawLights(g, t, st) {
+  g.clearRect(0, 0, W, H);
+  const { games, ops, lab } = ROOMS, f = (Math.sin(t / 250) + 1) / 2;
+  ["rgb(59,130,246)", "rgb(139,92,246)", "rgb(20,184,166)", "rgb(56,189,248)"].forEach((c, k) => glow(g, games.x + 19 + k * 37, games.y + games.h - 30, 24, c, 0.75 + 0.2 * Math.sin(t / 250 + k)));
+  glow(g, games.x + 78, games.y + 9, 34, "rgb(236,72,153)", 0.35 + 0.15 * f);
+  glow(g, 100, 102, 44, "rgb(255,200,120)", 0.55); glow(g, 100, 174, 60, "rgb(255,200,120)", 0.55);
+  for (let k = 0; k < 3; k++) glow(g, ops.x + 58 + k * 26, ops.y + 17, 20, "rgb(74,222,128)", 0.32);
+  glow(g, ops.x + 109, ops.y + 34, 16, st.running ? "rgb(34,197,94)" : "rgb(239,68,68)", 0.55 + 0.25 * f);
+  for (const x of [lab.x + 59, lab.x + 129]) glow(g, x, lab.y + 10, 40, "rgb(255,150,50)", 0.7 + 0.12 * Math.sin(t / 90 + x));
+  glow(g, lab.x + 92, lab.y + 40, 30, "rgb(74,222,128)", 0.18);
+  glow(g, 160, 34, 30, "rgb(255,243,207)", 0.25);
+  glow(g, 99, 368, 26, "rgb(250,204,21)", 0.35 + 0.1 * f);
+}
+
+/* ---------- livello 4: primo piano (sfocato, effetto diorama) ---------- */
+function drawFront(g, t) {
+  g.clearRect(0, 0, W, H);
+  const r = rng(5);
+  for (let i = 0; i < 18; i++) { const x = (i < 9 ? r() * 30 - 8 : W - 22 + r() * 30), h = 10 + r() * 22; g.fillStyle = i % 3 ? "#1f4d2a" : "#2d6a3a"; g.beginPath(); g.ellipse(x, 258 - h / 3, 9, h / 2, 0, 0, 7); g.fill(); }
+  // lucciole
+  for (let i = 0; i < 8; i++) { const x = (i * 37 + t / 40) % W, y = 236 + 10 * Math.sin(t / 900 + i * 2); g.fillStyle = `rgba(253,224,71,${0.4 + 0.4 * Math.sin(t / 300 + i)})`; g.fillRect(x | 0, y | 0, 1, 1); }
+}
+
+function mount(box, getState) {
+  box.innerHTML = '<canvas data-l="b"></canvas><canvas data-l="h"></canvas><canvas data-l="g"></canvas><canvas data-l="f"></canvas><div class="vign"></div>';
+  const cv = [...box.querySelectorAll("canvas")]; cv.forEach(c => { c.width = W; c.height = H; });
+  const [b, h, l, f] = cv.map(c => c.getContext("2d"));
+  let last = -1e9, fps = 12;
+  function frame(t) {
+    const st = getState(), still = st.still;
+    // animazioni spente: un solo disegno ogni 3 secondi (stato aggiornato, niente movimento)
+    if (!st.off && t - last >= (still ? 3000 : 1000 / fps)) { last = t; const tt = still ? 0 : t; drawBack(b, tt); drawHouse(h, tt, st); drawLights(l, tt, st); drawFront(f, tt); }
+    if (box.isConnected && !box.dataset.stop) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  // tocco su una stanza
+  box.addEventListener("click", e => {
+    const r = box.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+    for (const [k, rm] of Object.entries(ROOMS)) if (x >= rm.x && x <= rm.x + rm.w && y >= rm.y && y <= rm.y + rm.h) box.dispatchEvent(new CustomEvent("room", { detail: k, bubbles: true }));
+  });
+  return { setFps: v => fps = v };
+}
+root.Scene = { mount, ROOMS, W, H };
+})(window);
 
 </script>
 <script>
@@ -1377,6 +1686,8 @@ const COIN_NAME = { BTC: "Bitcoin", ETH: "Ethereum", SOL: "Solana", XRP: "XRP" }
 
 const TOGGLES = [
   { id: "bot", t: "Bot automatico (come il pulsante AVVIA)", d: "Apre e chiude da solo con le monete e le strategie accese", def: false },
+  { id: "house", t: "Grafica casa", d: "La casa in stile HD-2D: tocchi una stanza, zoom, e dentro trovi i comandi. Spento: grafica classica", def: true },
+  { id: "anim", t: "Animazioni della casa", d: "Luci, neon e robot in movimento (12 immagini al secondo). Spento: casa ferma, consuma meno sul telefono sempre acceso", def: true },
   { id: "rsTop", t: "Solo le 2 monete più forti", d: "Classifica sui rendimenti di 3, 7 e 14 giorni tra le monete accese: il bot entra solo sulle prime 2. Meno operazioni e discese più piccole", def: true },
   { id: "wakeLock", t: "Schermo sempre acceso", d: "Mentre il bot è avviato lo schermo non si spegne (indispensabile sul telefono)", def: true },
   { id: "manual", t: "Operazioni manuali", d: "Pulsanti Long / Short sulla moneta scelta nel grafico", def: true },
@@ -1393,12 +1704,12 @@ const TOGGLES = [
   { id: "askPw", t: "Password all'apertura", d: "Dati salvati cifrati: senza password l'app non si apre", def: true },
   { id: "autoLock", t: "Blocco automatico dopo 15 minuti", d: "Se non usi la pagina chiede di nuovo la password (il bot continua a lavorare)", def: false },
   { id: "steady", t: "Modalità costanza", d: "Chiude metà posizione quando guadagna 3 volte il rischio e porta lo stop a pareggio: guadagni minori, mesi più regolari", def: false },
-  { id: "saveCsv", t: "Salva i file CSV scaricati dal laboratorio", d: "Finiscono nella cartella Download", def: true },
+  { id: "saveCsv", t: "Chiedi di salvare il pacchetto delle candele scaricate", d: "Alla fine dei download del laboratorio propone un unico file .zip con i CSV di tutte le monete (cartella Download)", def: true },
 ];
 const STR = Core.STRATEGIES, SBY = Object.fromEntries(STR.map(s => [s.id, s]));
 // strategia con le opzioni scelte dall'utente (solo long, solo volatilità bassa, modalità costanza)
 const STEADY = { r: 3, frac: 0.5, be: 1 };
-const eff = s => { const o = (S.stratOpt && S.stratOpt[s.id]) || {}; return Object.assign({}, s, { dir: o.long ? "long" : "both", vol: o.lowVol ? "low" : "all", ex: S.tog.steady ? Object.assign({}, s.ex, { part: STEADY }) : s.ex }); };
+const eff = s => { const o = (S.stratOpt && S.stratOpt[s.id]) || {}; return Object.assign({}, s, { dir: s.smart ? "short" : o.long ? "long" : "both", vol: o.lowVol ? "low" : "all", ex: S.tog.steady ? Object.assign({}, s.ex, { part: STEADY }) : s.ex }); };
 const ES = () => STR.map(eff);
 const coinsOn = () => COINS.filter(c => S.coinOn[c]);
 function applyBest(auto) {
@@ -1406,7 +1717,7 @@ function applyBest(auto) {
   S.stratOpt = Object.fromEntries(STR.map(s => [s.id, { long: s.dir === "long", lowVol: s.vol === "low" }]));
   S.coinOn = Object.fromEntries(COINS.map(c => [c, true]));
   Object.assign(S.cfg, Core.BEST.cfg); S.bestV = Core.BEST.version; S.tog.rsTop = true;
-  log(auto ? "Configurazione aggiornata alla migliore trovata: BTC, ETH, SOL e XRP · Keltner 1h + Momentum 1h + Squeeze 4h, solo long · solo le 2 monete più forti · rischio 0,75% · una posizione per moneta." : "Ripristinata la configurazione migliore.");
+  log(auto ? "Configurazione aggiornata alla migliore trovata: BTC, ETH, SOL e XRP · Keltner 1h + Momentum 1h + Squeeze 4h long sulle 2 monete più forti · short intelligenti sulla più debole con BTC in discesa · rischio 0,75% · una posizione per moneta." : "Ripristinata la configurazione migliore.");
 }
 const TFN = { 1: "15 minuti", 4: "1 ora", 8: "2 ore", 16: "4 ore", 32: "8 ore" };
 
@@ -1447,6 +1758,12 @@ const coinOf = p => p.coin || "BTC";
 
 // classifica di forza tra le monete accese (0 = la più forte); null se mancano le candele giornaliere
 function ranks(t) { return Core.rsRanks(Object.fromEntries(coinsOn().map(c => [c, M[c].daily])), t || Date.now(), Core.RS.lbs); }
+// short intelligenti: solo sulla moneta più debole e con BTC sotto la media di 100 giorni
+function smartReason(coin, t) {
+  if (!M[coin].daily) return "classifica non disponibile (mancano le candele giornaliere)";
+  return Core.smartShortReason(ranks(t), coin, M.BTC.daily, t || Date.now());
+}
+const btcIsDown = () => Core.btcDown(M.BTC.daily, Date.now(), 100);
 function rsReason(coin, t) {
   if (!S.tog.rsTop) return "";
   if (!M[coin].daily) return "classifica non disponibile (mancano le candele giornaliere)";
@@ -1689,7 +2006,7 @@ function processCoin(coin) {
       if (!live) { log(`${nm} del ${dt(bar.t + BAR)} perso a pagina chiusa.`); continue; }
       const why = blockedReason(coin);
       if (why) { log(`${nm} ignorato: ${why}.`); continue; }
-      const rw = rsReason(coin, bar.t + BAR);
+      const rw = s.smart ? smartReason(coin, bar.t + BAR) : rsReason(coin, bar.t + BAR);
       if (rw) { log(`${nm} ignorato: ${rw}.`); continue; }
       const px = m.price || bar.c;
       const r = Core.openAuto(S.book, s, d, px, x.A[i], Date.now(), o);
@@ -1983,7 +2300,9 @@ function renderCoins() {
     const p = S.book && S.book.positions.find(x => coinOf(x) === c), R = S.real.pos[c];
     const fr = on && S.tog.failsafe ? failReason(c) : "";
     const rk = S.tog.rsTop && on && m.daily ? ranks()[c] : null;
-    const rkTxt = rk == null ? "" : rk < Core.RS.top ? `<br><b class="pos">${rk + 1}ª più forte: può entrare</b>` : `<br><span class="mut">${rk + 1}ª più forte: aspetta</span>`;
+    const smartOn = S.stratOn.kelS && on && m.daily && M.BTC.daily, nOn = coinsOn().length, rkAll = smartOn || S.tog.rsTop ? (on && m.daily ? ranks()[c] : null) : null;
+    let rkTxt = rk == null ? (rkAll != null ? `<br><span class="mut">${rkAll + 1}ª più forte</span>` : "") : rk < Core.RS.top ? `<br><b class="pos">${rk + 1}ª più forte: long possibili</b>` : `<br><span class="mut">${rk + 1}ª più forte: niente long</span>`;
+    if (smartOn && rkAll === nOn - 1 && btcIsDown()) rkTxt += '<br><b class="neg">la più debole e BTC in discesa: short possibili</b>';
     $("cs_" + c).innerHTML = (on ? "" : '<span class="mut">spenta: nessuna nuova entrata</span><br>')
       + (p ? `${sideTxt(p.side)} ${stratName(p.strat)} · <b class="${cls(Core.unrealized(p, m.price || p.entry))}">${eurS(m.price ? Core.unrealized(p, m.price) : 0)}</b>` : '<span class="mut">nessuna posizione</span>')
       + (R ? '<br><b class="warnc">posizione vera aperta</b>' : "")
@@ -2025,6 +2344,11 @@ function stratStatus(s) {
   for (const c of coinsOn()) { const m = M[c], x = m.SIG[s.id]; if (x) for (let i = m.sigLen - 1; i >= 0; i--) if (x.sig[i]) { if (!last || m.sigT[i] > last.t) last = { t: m.sigT[i], c, d: x.sig[i] }; break; } }
   const nx = Math.ceil(Date.now() / (s.f * BAR)) * s.f * BAR;
   out.push(`${last ? `Ultimo segnale: ${last.c} ${last.d > 0 ? "LONG" : "SHORT"} il ${dt(last.t + BAR)}` : "Nessun segnale negli ultimi giorni"} · prossima valutazione alle ${hm(nx)}`);
+  if (s.smart) {
+    if (!M.BTC.daily) out.push('<span class="warnc">In attesa delle candele giornaliere di BTC</span>');
+    else { const rk = ranks(), weak = coinsOn().find(c => rk[c] === coinsOn().length - 1);
+      out.push(btcIsDown() ? `<b class="neg">BTC sotto la media di 100 giorni: mercato in discesa</b> · short possibili solo su <b>${weak || "—"}</b> (la più debole)` : '<span class="mut">BTC sopra la media di 100 giorni: niente short (mercato non in discesa)</span>'); }
+  }
   if (s.key === "squeeze") out.push(coinsOn().map(c => squeezeState(s, c)).filter(Boolean).join(" · "));
   if (eff(s).vol === "low") out.push("Entra solo con volatilità bassa: " + (coinsOn().map(c => `${c} ${volTxt(c)}`).join(" · ") || "nessuna moneta accesa"));
   return out.filter(Boolean).join("<br>");
@@ -2033,7 +2357,7 @@ function renderStrats() {
   const box = $("strats");
   if (box.children.length !== STR.length) box.innerHTML = STR.map(s => `<div class="scard" id="sc_${s.id}"><div class="top"><h3>${s.title}</h3>${s.def ? '<span class="tag best">principale</span>' : '<span class="tag">secondaria</span>'}
       <label class="sw" title="Accendi o spegni"><input type="checkbox" data-strat="${s.id}"><span></span></label></div>
-      <div class="sopts"><label><input type="checkbox" data-opt="long" data-sid="${s.id}"> Solo long</label><label><input type="checkbox" data-opt="lowVol" data-sid="${s.id}"> Solo con volatilità bassa</label></div>
+      <div class="sopts">${s.smart ? '<span class="note">Solo short · sulla moneta più debole · con BTC in discesa</span>' : `<label><input type="checkbox" data-opt="long" data-sid="${s.id}"> Solo long</label>`}<label><input type="checkbox" data-opt="lowVol" data-sid="${s.id}"> Solo con volatilità bassa</label></div>
       <div class="status" id="ss_${s.id}"></div>
       <details><summary>Come funziona</summary><p>${s.what}</p><p><b>Uscita:</b> ${s.exit}</p><p><b>Dalla ricerca:</b> ${s.research}</p></details></div>`).join("");
   for (const s of STR) {
@@ -2041,7 +2365,7 @@ function renderStrats() {
     $("sc_" + s.id).classList.toggle("on", on);
     const cb = $("sc_" + s.id).querySelector("input[data-strat]"); if (cb.checked !== on) cb.checked = on;
     const o = S.stratOpt[s.id] || {};
-    for (const k of ["long", "lowVol"]) { const x = $("sc_" + s.id).querySelector(`input[data-opt="${k}"]`); if (x.checked !== !!o[k]) x.checked = !!o[k]; }
+    for (const k of ["long", "lowVol"]) { const x = $("sc_" + s.id).querySelector(`input[data-opt="${k}"]`); if (x && x.checked !== !!o[k]) x.checked = !!o[k]; }
     $("ss_" + s.id).innerHTML = stratStatus(s);
   }
 }
@@ -2104,6 +2428,122 @@ function buildToggles() {
     <label class="sw"><input type="checkbox" data-tog="${t.id}" ${S.tog[t.id] ? "checked" : ""} ${t.locked ? "disabled" : ""}><span></span></label></div>`).join("");
 }
 
+/* ---------------- grafica casa HD-2D: casa da lontano, zoom sulle stanze, comandi dentro le stanze ---------------- */
+const Casa = (() => {
+  const box = $("casa"), main = document.querySelector("main");
+  let built = false, cur = null, openW = null, moved = [];
+  const pc = y => y / Scene.H * 100, px = x => x / Scene.W * 100;
+  // finestre: quali pannelli esistenti contengono (sono spostati, non copiati: tutto continua a funzionare)
+  const WIN = {
+    run: ["Avvia / ferma", ["runPanel"]],
+    chart: ["Grafico e strategie", ["chartPanel", "stratPanel"]],
+    wallet: ["Wallet · la cassaforte", ["walletPanel"]],
+    risk: ["Rischio", ["riskPanel"]],
+    log: ["Diario del bot", ["logPanel"]],
+    tog: ["Pannello interruttori", ["togPanel"]],
+    sim: ["Conto finto", ["simPanel", "openPanel", "histPanel"]],
+    coins: ["Le monete", ["coinsPanel", "chartPanel"]],
+    manual: ["Joystick · operazione manuale", ["manualPanel", "chartPanel"]],
+    lab: ["Laboratorio", ["labPanel"]],
+  };
+  const MENU = {
+    ops: ["Sala operativa · il bot vero", [["run", "Avvia / ferma", "Timer e stato"], ["chart", "Grafico", "Strategie e segnali"], ["wallet", "Wallet", "La cassaforte · soldi veri"], ["risk", "Rischio", "Rischio e posizioni"], ["log", "Diario", "Registro del bot"], ["tog", "Pannello", "Interruttori"]]],
+    games: ["Sala giochi · test free", [["sim", "Conto finto", "Saldo, posizioni e storico"], ["coins", "Cabinati", "Le 4 monete"], ["manual", "Joystick", "Operazione manuale"]]],
+    lab: ["Laboratorio · prova sul passato", [["lab", "Nuova prova", "Scarica e prova"], ["lab:res", "Risultati", "Ultima prova e mesi"], ["lab:data", "Dati", "Carica CSV o pacchetto"]]],
+  };
+  const R = Scene.ROOMS, O = R.ops, G = R.games, L = R.lab;
+  const HOT = [
+    ["ops", "AVVIA / FERMA", O.x + 99, O.y + 30, 20, 17, "run"], ["ops", "GRAFICO E STRATEGIE", O.x + 45, O.y + 7, 80, 20, "chart"], ["ops", "WALLET", O.x + 135, O.y + 53, 18, 20, "wallet"],
+    ["ops", "DIARIO DEL BOT", O.x + 82, O.y + 49, 12, 21, "log"], ["ops", "RISCHIO", O.x + 59, O.y + 39, 32, 8, "risk"], ["ops", "PANNELLO", O.x + 35, O.y + 7, 10, 10, "tog"],
+    ...COINS.map((c, k) => ["games", c, G.x + 9 + k * 37, G.y + G.h - 45, 20, 36, "coin:" + c]), ["games", "CONTO FINTO", G.x + 49, G.y + 3, 58, 11, "sim"],
+    ["lab", "RISULTATI", L.x + 7, L.y + 7, 48, 30, "lab:res"], ["lab", "NUOVA PROVA", L.x + 64, L.y + 24, 60, 26, "lab"], ["lab", "DATI E PACCHETTI", L.x + 131, L.y + 9, 22, 46, "lab:data"],
+  ];
+  const state = () => {
+    if (!S.tog.house || !built) return { off: true };
+    const sim = {}; if (S.book) for (const p of S.book.positions) sim[coinOf(p)] = p.side > 0 ? "long" : "short";
+    return { running: S.tog.bot, real: realOn(), sim, still: !S.tog.anim };
+  };
+  function build() {
+    if (built) return; built = true;
+    box.innerHTML = `<div class="cstage" id="cStage"><div class="ccam" id="cCam"><div class="chouse" id="cHouse"></div></div>
+      <div class="hudw hl"><div class="pix">Saldo finto</div><div class="mono blue" id="hudSim">—</div></div>
+      <div class="hudw hr"><div class="pix" id="hudRunL">Bot</div><div class="mono" id="hudRun">—</div></div>
+      <button class="cwin cback pix" id="cBack">◂ Casa</button>
+      <div class="cwin chint pix" id="cHint">Tocca una stanza</div>
+      <div class="cwin csheet" id="cSheet"><button class="cx pix" id="cX" title="Chiudi">✕</button><button class="cup pix hidden" id="cUp">◂ Stanza</button><div class="cttl pix" id="cTitle"></div><div class="cbody" id="cBody"></div></div></div>`;
+    const house = $("cHouse");
+    Scene.mount(house, state);
+    const tag = (k, t, s) => { const r = R[k], d = document.createElement("div"); d.className = "ctag pix"; d.style.top = pc(r.y + 1) + "%"; d.style.left = px(r.x + 1) + "%"; d.innerHTML = t + "<small>" + s + "</small>"; house.appendChild(d); };
+    tag("games", "Sala giochi", "TEST FREE"); tag("ops", "Sala operativa", "il bot vero"); tag("lab", "Laboratorio", "prova sul passato");
+    const ne = document.createElement("div"); ne.className = "cneon pix"; ne.textContent = "TEST FREE"; ne.style.cssText = `top:${pc(G.y + 5)}%;left:${px(G.x + 50)}%;width:${px(56)}%`; house.appendChild(ne);
+    const sg = document.createElement("div"); sg.className = "csign pix"; sg.textContent = "CashMkr"; house.appendChild(sg);
+    for (const [room, label, x, y, w, h, win] of HOT) {
+      const d = document.createElement("div"); d.className = "chot" + (x + w > Scene.W - 40 ? " r" : ""); d.dataset.room = room; d.dataset.win = win;
+      d.style.cssText = `left:${px(x)}%;top:${pc(y)}%;width:${px(w)}%;height:${pc(h)}%`; d.innerHTML = `<span>${label}</span>`;
+      d.onclick = e => { e.stopPropagation(); open(win); }; house.appendChild(d);
+    }
+    house.addEventListener("room", e => { if (!cur) zoomTo(e.detail); });
+    $("cBack").onclick = home; $("cX").onclick = () => { if (openW) menu(cur); else home(); };
+    $("cUp").onclick = () => menu(cur);
+    $("cBody").addEventListener("click", e => { const b = e.target.closest("button[data-w]"); if (b) open(b.dataset.w); });
+    window.addEventListener("resize", () => { if (!S.tog.house) return; hdrH(); cur ? zoomTo(cur, true) : home(); });
+    setInterval(tick, 1000);
+  }
+  const stage = () => $("cStage"), cam = () => $("cCam"), house = () => $("cHouse");
+  function zoomTo(k, keep) {
+    cur = k; const r = R[k], st = stage(), W = st.clientWidth, Hh = st.clientHeight * 0.5, hw = house().clientWidth, hh = house().clientHeight;
+    const sc = Math.min(W * 1.04 / (r.w / Scene.W * hw), Hh / ((r.h + 14) / Scene.H * hh));
+    const cx = (r.x + r.w / 2) / Scene.W * hw, cy = (r.y + r.h / 2 - 4) / Scene.H * hh;
+    const tx = Math.max(W - hw * sc, Math.min(0, W / 2 - cx * sc)), ty = Math.min(0, Hh / 2 + 24 - cy * sc);
+    cam().style.transform = `translate(${tx}px,${ty}px) scale(${sc})`;
+    st.classList.add("zoomed"); box.querySelectorAll(".chot").forEach(h => h.classList.toggle("cur", h.dataset.room === k));
+    if (!keep) setTimeout(() => { if (cur === k && !openW) menu(k); }, 600);
+  }
+  function home() {
+    restore(); cur = null; const st = stage(); if (!st) return;
+    $("cSheet").classList.remove("open", "tall"); st.classList.remove("zoomed");
+    const hh = house().clientHeight, hw = house().clientWidth, sc = Math.min(1, (st.clientHeight - 30) / hh) * 0.86;
+    cam().style.transform = `translate(${(st.clientWidth - hw * sc) / 2}px,${(st.clientHeight - hh * sc) / 2 - 18}px) scale(${sc})`;
+  }
+  function menu(k) {
+    restore(); const [t, items] = MENU[k]; $("cTitle").textContent = t; $("cUp").classList.add("hidden");
+    $("cBody").innerHTML = '<div class="copts">' + items.map(([w, a, b]) => `<button data-w="${w}" class="pix">${a}<b>${b}</b></button>`).join("") + "</div>";
+    $("cSheet").classList.remove("tall"); $("cSheet").classList.add("open");
+  }
+  // rimette i pannelli al loro posto originale (nella grafica classica)
+  function restore() { for (const [el, parent, next] of moved.reverse()) parent.insertBefore(el, next); moved = []; openW = null; }
+  function open(w) {
+    if (w.startsWith("coin:")) { const c = w.slice(5); S.chartCoin = c; save(); renderCoinChips(); renderHeader(); renderManual(); w = "coins"; }
+    let scrollTo = null; if (w === "lab:res") { w = "lab"; scrollTo = "labOut"; } if (w === "lab:data") { w = "lab"; scrollTo = "labFile"; }
+    const room = { run: "ops", chart: "ops", wallet: "ops", risk: "ops", log: "ops", tog: "ops", sim: "games", coins: "games", manual: "games", lab: "lab" }[w];
+    if (room && cur !== room) zoomTo(room, true);
+    restore(); openW = w; const [title, ids] = WIN[w];
+    $("cTitle").textContent = title; $("cUp").classList.remove("hidden");
+    const body = $("cBody"); body.innerHTML = "";
+    for (const id of ids) { const el = $(id); moved.push([el, el.parentNode, el.nextSibling]); body.appendChild(el); }
+    $("cSheet").classList.add("open", "tall"); body.scrollTop = 0;
+    setTimeout(() => { drawChart(); if (window.__lastCurve) drawCurve(...window.__lastCurve); if (scrollTo && !$(scrollTo).closest(".hidden")) $(scrollTo).scrollIntoView({ block: "start" }); else if (scrollTo === "labFile") $("labData").scrollIntoView({ block: "center" }); }, 60);
+  }
+  function tick() {
+    if (!S.tog.house || !built) return;
+    $("hudSim").textContent = $("sEquity").textContent;
+    $("hudRun").textContent = S.tog.bot ? $("runTimer").textContent : "fermo"; $("hudRun").className = "mono " + (S.tog.bot ? "pos" : "neg");
+    $("hudRunL").textContent = S.tog.bot ? "In funzione" : "Bot";
+    // etichette dei cabinati con prezzo e posizione in classifica
+    const rk = coinsOn().length ? (() => { try { return ranks(); } catch (e) { return {}; } })() : {};
+    box.querySelectorAll('.chot[data-win^="coin:"] span').forEach(sp => { const c = sp.parentNode.dataset.win.slice(5), m = M[c]; sp.textContent = c + (m.price ? " " + usd(m.price) : "") + (rk[c] != null && S.coinOn[c] ? " · " + (rk[c] + 1) + "ª" : S.coinOn[c] ? "" : " · spenta"); });
+  }
+  const hdrH = () => document.documentElement.style.setProperty("--hdrh", document.querySelector(".hdr").offsetHeight + "px");
+  function apply() {
+    const on = !!S.tog.house;
+    document.body.classList.toggle("casa", on);
+    box.classList.toggle("hidden", !on);
+    if (on) { build(); hdrH(); requestAnimationFrame(() => { cur ? zoomTo(cur, true) : home(); tick(); }); }
+    else { restore(); if (built) { $("cSheet").classList.remove("open", "tall"); stage().classList.remove("zoomed"); } cur = null; drawChart(); }
+  }
+  return { apply, open, home, zoomTo };
+})();
+
 /* ---------------- laboratorio (più monete) ---------------- */
 function idb() { return new Promise((res, rej) => { try { const r = indexedDB.open("qg_leva", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); } }); }
 async function idbPut(k, v) { try { const db = await idb(); await new Promise((res, rej) => { const tx = db.transaction("kv", "readwrite"); tx.objectStore("kv").put(v, k); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); } catch (e) {} }
@@ -2120,10 +2560,44 @@ function showLabData(extra) {
     : "Nessun dato caricato." + (extra ? " " + extra : "");
   $("bLabRun").disabled = !ks.some(c => S.coinOn[c] && labD[c].arr.length >= 1200);
 }
-function saveCsv(arr, name) {
-  const lines = ["time,open,high,low,close,volume"]; for (const x of arr) lines.push([x.t, x.o, x.h, x.l, x.c, x.v].join(","));
-  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" })); a.download = name;
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+const csvText = arr => { const lines = ["time,open,high,low,close,volume"]; for (const x of arr) lines.push([x.t, x.o, x.h, x.l, x.c, x.v].join(",")); return lines.join("\n"); };
+function saveBlob(blob, name) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+}
+/* pacchetto .zip senza compressione (formato standard, si apre con doppio clic su Mac, Windows e iPhone) */
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = u => { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRC[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+function makeZip(files) { // files: [{ name, text }]
+  const enc = new TextEncoder(), parts = [], central = []; let off = 0;
+  const d = new Date(), dosT = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dosD = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  for (const f of files) {
+    const nm = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data);
+    const h = new DataView(new ArrayBuffer(30)); h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(8, 0, true); h.setUint16(10, dosT, true); h.setUint16(12, dosD, true); h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, nm.length, true);
+    parts.push(h.buffer, nm, data);
+    const c = new DataView(new ArrayBuffer(46)); c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(12, dosT, true); c.setUint16(14, dosD, true); c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, nm.length, true); c.setUint32(42, off, true);
+    central.push(c.buffer, nm); off += 30 + nm.length + data.length;
+  }
+  const cs = central.reduce((a, b) => a + b.byteLength, 0), e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cs, true); e.setUint32(16, off, true);
+  return new Blob([...parts, ...central, e.buffer], { type: "application/zip" });
+}
+// legge un .zip (senza compressione oppure compresso, se il browser lo permette): restituisce [{ name, text }]
+async function readZip(buf) {
+  const u = new Uint8Array(buf), v = new DataView(buf), out = [], dec = new TextDecoder();
+  let e = -1; for (let i = u.length - 22; i >= Math.max(0, u.length - 65557); i--) if (v.getUint32(i, true) === 0x06054b50) { e = i; break; }
+  if (e < 0) throw new Error("file .zip non valido");
+  let p = v.getUint32(e + 16, true); const n = v.getUint16(e + 10, true);
+  for (let k = 0; k < n; k++) {
+    const method = v.getUint16(p + 10, true), size = v.getUint32(p + 20, true), nl = v.getUint16(p + 28, true), xl = v.getUint16(p + 30, true), cl = v.getUint16(p + 32, true), lo = v.getUint32(p + 42, true);
+    const name = dec.decode(u.subarray(p + 46, p + 46 + nl)); p += 46 + nl + xl + cl;
+    const ds = lo + 30 + v.getUint16(lo + 26, true) + v.getUint16(lo + 28, true), raw = u.subarray(ds, ds + size);
+    if (/\/$/.test(name) || /(^|\/)(__MACOSX|\.)/.test(name) || !/\.csv$/i.test(name)) continue;
+    if (method === 0) out.push({ name: name.split("/").pop(), text: dec.decode(raw) });
+    else if (method === 8 && typeof DecompressionStream !== "undefined") out.push({ name: name.split("/").pop(), text: await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).text() });
+    else throw new Error("questo browser non sa aprire lo zip compresso: carica i file CSV estratti");
+  }
+  return out;
 }
 const WARM_DAYS = 200; // giorni in più prima del periodo: servono a indicatori e filtro di volatilità (6 mesi)
 $("bLabDl").onclick = async () => {
@@ -2133,7 +2607,8 @@ $("bLabDl").onclick = async () => {
   if (!coins.length) { showLabData('<b class="neg">Accendi almeno una moneta.</b>'); return; }
   const b = $("bLabDl"); b.disabled = true; $("labBarWrap").classList.remove("hidden"); $("labBar").style.width = "0";
   const end = Math.floor(Date.now() / BAR) * BAR - BAR, fromT = end - days * 86400000, start = fromT - WARM_DAYS * 86400000;
-  const errs = []; let ok = 0;
+  const errs = [], pack = []; let ok = 0;
+  const dTag = new Date(end).toISOString().slice(0, 10);
   for (let k = 0; k < coins.length; k++) {
     const c = coins[k]; let arr = null, srcName = "Binance";
     showLabData(`Scarico ${days} giorni di candele ${c} da 15 minuti (${k + 1} di ${coins.length})…`);
@@ -2145,24 +2620,38 @@ $("bLabDl").onclick = async () => {
     if (arr && arr.length > 1200) {
       setLab(c, arr, `${days} giorni scaricati ora da ${srcName}`, fromT, days); ok++;
       idbPut("lab_" + c, { arr, fromT, days, how: "salvate in questo browser" });
-      if (S.tog.saveCsv) saveCsv(arr, `${c.toLowerCase()}_15m_${days}g_${new Date(end).toISOString().slice(0, 10)}.csv`);
+      pack.push({ name: `${c.toLowerCase()}_15m_${days}g_${dTag}.csv`, arr, coin: c });
     } else if (arr) errs.push(`${c}: dati insufficienti`);
   }
   log(`Laboratorio: scaricati ${days} giorni per ${ok} monete${errs.length ? " (problemi: " + errs.join("; ") + ")" : ""}.`);
   showLabData(errs.length ? `<span class="neg">Download non riuscito per ${errs.join(" · ")}. Puoi usare "Carica file CSV".</span>` : "");
   b.disabled = false; setTimeout(() => $("labBarWrap").classList.add("hidden"), 800);
   if (ok) runLab();
+  // alla fine di tutti i download: un solo pacchetto con le monete scaricate
+  if (ok && S.tog.saveCsv) setTimeout(() => {
+    const names = pack.map(x => x.coin).join(", "), zname = `cashmkr_${pack.length}monete_${days}g_${dTag}.zip`;
+    if (!confirm(`Download finito. Salvare il pacchetto con ${names} (${days} giorni) in un unico file?\n\n${zname}`)) { log("Laboratorio: pacchetto delle candele non salvato."); return; }
+    try { saveBlob(makeZip(pack.map(x => ({ name: x.name, text: csvText(x.arr) }))), zname); log(`Laboratorio: salvato il pacchetto ${zname} (${names}).`); }
+    catch (e) { log("Laboratorio: pacchetto non salvato (" + e.message + ")."); }
+  }, 600);
 };
 $("labFile").onchange = async e => {
-  const files = [...e.target.files]; if (!files.length) return;
+  const picked = [...e.target.files]; if (!picked.length) return;
   const msgs = []; let ok = 0;
+  // i pacchetti .zip vengono aperti e trattati come i singoli CSV che contengono
+  const files = [];
+  for (const f of picked) {
+    if (/\.zip$/i.test(f.name)) { try { const inner = await readZip(await f.arrayBuffer()); if (!inner.length) msgs.push(`${f.name}: nessun file CSV dentro`); for (const x of inner) files.push({ name: x.name, from: f.name, text: async () => x.text }); } catch (err) { msgs.push(`${f.name}: ${err.message}`); } }
+    else files.push(f);
+  }
   for (const f of files) {
     const mm = f.name.toLowerCase().match(/^(btc|eth|sol|xrp)/), coin = mm ? mm[1].toUpperCase() : (files.length === 1 ? "BTC" : "");
     if (!coin) { msgs.push(`${f.name}: dal nome non si capisce la moneta (deve iniziare con btc_, eth_, sol_ o xrp_)`); continue; }
     try {
       const C = E.loadCSV(await f.text()); const arr = Array.from(C.t, (t, i) => ({ t, o: C.o[i], h: C.h[i], l: C.l[i], c: C.c[i], v: C.v[i] })).filter(x => x.t > 0 && x.c > 0);
       if (arr.length < 1200) throw new Error("file troppo corto o non valido");
-      setLab(coin, arr, "dal file " + f.name + (mm ? "" : ", considerato BTC"), 0, 0); idbPut("lab_" + coin, { arr, fromT: 0, days: 0, how: "dal file " + f.name }); ok++;
+      const how = "dal file " + f.name + (f.from ? " del pacchetto " + f.from : "");
+      setLab(coin, arr, how + (mm ? "" : ", considerato BTC"), 0, 0); idbPut("lab_" + coin, { arr, fromT: 0, days: 0, how }); ok++;
     } catch (err) { msgs.push(`${f.name}: ${err.message}`); }
   }
   showLabData(msgs.length ? `<span class="neg">${msgs.join(" · ")}</span>` : "");
@@ -2183,7 +2672,7 @@ function runLab() {
   const start = Math.max(10, +$("labStart").value || 100);
   $("bLabRun").disabled = true; $("bLabRun").textContent = "Calcolo…";
   setTimeout(() => {
-    const t0 = performance.now(), r = Core.backtestMulti(data, strats, Object.assign(opts(), { start, fromT, rs: S.tog.rsTop ? Core.RS : null }));
+    const t0 = performance.now(), r = Core.backtestMulti(data, strats, Object.assign(opts(), { start, fromT, rs: S.tog.rsTop ? Core.RS : null, btcDaily: !data.BTC && labD.BTC ? E.resample(toTyped(labD.BTC.arr), 96).C : null }));
     showLab(r, start, strats, coins, data, performance.now() - t0);
     $("bLabRun").disabled = false; $("bLabRun").textContent = "Rifai la prova sui dati caricati";
     $("labOut").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2219,6 +2708,7 @@ function showLab(r, start, strats, coins, data, ms) {
 }
 
 function drawCurve(curve, start) {
+  window.__lastCurve = [curve, start];
   const c = $("labCurve"), g = c.getContext("2d"), dpr = window.devicePixelRatio || 1, W = c.clientWidth, H = c.clientHeight;
   c.width = W * dpr; c.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
   if (curve.length < 2) return;
@@ -2271,7 +2761,7 @@ function bind() {
   $("coinChips").addEventListener("click", e => { const k = e.target.dataset.coin; if (!k) return; S.chartCoin = k; save(); renderCoinChips(); renderHeader(); renderManual(); drawChart(); });
   $("bRun").onclick = () => setRunning(!S.tog.bot);
   $("bBest").onclick = () => {
-    if (!confirm("Riportare monete, strategie, filtri e rischio alla configurazione migliore trovata?\n(BTC, ETH, SOL e XRP · Keltner 1h + Momentum 1h + Squeeze 4h, solo long · solo le 2 monete più forti · rischio 0,75% · una posizione per moneta)")) return;
+    if (!confirm("Riportare monete, strategie, filtri e rischio alla configurazione migliore trovata?\n(BTC, ETH, SOL e XRP · Keltner 1h + Momentum 1h + Squeeze 4h long sulle 2 monete più forti · short intelligenti sulla più debole con BTC in discesa · rischio 0,75% · una posizione per moneta)")) return;
     applyBest(false); $("cRisk").value = S.cfg.risk; $("cMaxPos").value = S.cfg.maxPos; $("cMaxLev").value = S.cfg.maxLev; save(); renderAll();
   };
   $("toggles").addEventListener("change", e => {
@@ -2295,6 +2785,7 @@ function bind() {
     S.tog[id] = e.target.checked;
     if (id === "steady") for (const k of COINS) M[k].lastBot = 0;
     if (id === "rsTop" && Object.keys(labD).length) showLabData();
+    if (id === "house") Casa.apply();
     log(`Interruttore "${TOGGLES.find(t => t.id === id).t}": ${S.tog[id] ? "acceso" : "spento"}.`);
     if (id === "save" && !S.tog.save) { try { localStorage.removeItem(KEY); } catch (_) {} } else save();
     renderAll();
@@ -2345,7 +2836,7 @@ function start() {
   if (S.bestV !== Core.BEST.version) applyBest(true);
   buildToggles(); bind(); renderTF(); renderCoinChips(); renderLog();
   if (!S.book) $("setup").classList.remove("hidden");
-  renderAll(); save();
+  renderAll(); save(); Casa.apply();
   (async () => {
     for (const c of COINS) {
       let cached = await idbGet("lab_" + c);
@@ -2371,7 +2862,7 @@ $("bLockNow").onclick = () => { if (!unlocked) return; if (!S.tog.askPw) { alert
   if (!readJSON(DATA_KEY) && readJSON(PLAIN_KEY) && readJSON(PLAIN_KEY).tog && readJSON(PLAIN_KEY).tog.askPw === false) { $("lock").classList.add("hidden"); apply(readJSON(PLAIN_KEY)); start(); return; } // password spenta dall'utente
   showLock();
 })();
-window.__qg = { get S() { return S; }, get W() { return W; }, M, get candles() { return M.BTC.candles; }, Core, COINS,
+window.__qg = { Casa, get S() { return S; }, get W() { return W; }, M, get candles() { return M.BTC.candles; }, Core, COINS,
   setPrice: (p, coin) => { if (typeof p === "object") { for (const k in p) { M[k].price = p[k]; M[k].priceAt = Date.now(); } } else { const k = coin || "BTC"; M[k].price = p; M[k].priceAt = Date.now(); } onTick(); },
   inject: (arr, coin) => { const k = coin || "BTC"; M[k].candles = arr; src = "hl"; M[k].priceAt = Date.now(); }, processClosed };
 })();
