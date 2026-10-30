@@ -382,6 +382,7 @@ details.op[open] { background: #0b1a33; margin: 0 -6px; padding: 6px; }
   <span class="pill sim">TEST FREE · soldi finti</span>
   <span class="pill" id="feedPill">collegamento…</span>
   <span class="pill" id="botPill">bot</span>
+  <span class="pill" id="stratPill" title="Strategia congelata di riferimento"></span>
   <span class="pill hidden" id="netPill"></span>
   <span class="sub" id="nextBar"></span>
   <span class="px"><span class="sub" id="priceCoin">BTC</span> <span id="price">—</span></span>
@@ -450,7 +451,7 @@ details.op[open] { background: #0b1a33; margin: 0 -6px; padding: 6px; }
     </section>
 
     <section class="panel" id="stratPanel">
-      <div class="ph"><h2>Strategie del bot</h2><button class="btn sm" id="bBest">Ripristina la configurazione migliore</button></div>
+      <div class="ph"><h2>Strategie del bot</h2><button class="btn sm" id="bBest">Ripristina PastaBank v1</button></div>
       <div class="strats" id="strats"></div>
     </section>
 
@@ -1358,6 +1359,10 @@ const STRATEGIES = [
 ];
 // configurazione migliore trovata (si applica al primo avvio e con "Ripristina la configurazione migliore")
 const BEST = { version: 6, cfg: { risk: 0.75, maxPos: 4, maxLev: 40 } };
+// Strategia congelata "PastaBank v1" (30 ottobre 2026): il riferimento da cui non ci si sposta senza nuovi test
+const PRESET = { name: "PastaBank", ver: "v1", coins: ["BTC", "ETH", "SOL", "XRP"], strats: ["kel1h", "mom1h", "sq4h", "kelS"], rsTop: true, risk: 0.75, cap: 1.5, adapt: { hi: 1.5, lo: 0.75, k: 2, max: 3 }, maxPos: 4, maxLev: 40,
+  desc: "BTC, ETH, SOL e XRP · Keltner 1h + Momentum 1h + Squeeze 4h long sulle 2 monete più forti · short intelligenti sulla più debole con BTC in discesa · rischio adattivo 1,5% con il saldo ai massimi, 0,75% sotto · tetto totale 2× il rischio (max 3%) · una posizione per moneta" };
+const presetLabel = () => PRESET.name + " " + PRESET.ver;
 // "Solo le monete più forti": classifica sui rendimenti di 3, 7 e 14 giorni, entra solo sulle prime 2
 const RS = { lbs: [3, 7, 14], top: 2 };
 
@@ -1630,7 +1635,7 @@ function backtestMulti(data, strats, opt, extras) {
   return { book: B, mdd, curve, from: fromT, to: toT };
 }
 
-const API = { adaptRisk, openRisk, RS, rsRanks, btcDown, smartShortReason, backtestMulti, closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
+const API = { PRESET, presetLabel, adaptRisk, openRisk, RS, rsRanks, btcDown, smartShortReason, backtestMulti, closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
 if (typeof module !== "undefined") module.exports = API; else root.Core = API;
 })(typeof window !== "undefined" ? window : this);
 
@@ -2055,6 +2060,7 @@ const TOGGLES = [
   { id: "house", t: "Grafica casa", d: "La casa in stile HD-2D: tocchi una stanza, zoom, e dentro trovi i comandi. Spento: grafica classica", def: true },
   { id: "anim", t: "Animazioni della casa", d: "Luci, neon e robot in movimento (12 immagini al secondo). Spento: casa ferma, consuma meno sul telefono sempre acceso", def: true },
   { id: "rsTop", t: "Solo le 2 monete più forti", d: "Classifica sui rendimenti di 3, 7 e 14 giorni tra le monete accese: il bot entra solo sulle prime 2. Meno operazioni e discese più piccole", def: true },
+  { id: "showName", t: "Nome della strategia in alto", d: "Mostra \"PastaBank v1\" (verde) o \"PastaBank v1 · modificata\" (giallo) se hai cambiato qualcosa rispetto alla strategia congelata", def: true },
   { id: "adapt", t: "Rischio adattivo (piano B)", d: "1,5% per operazione quando il saldo realizzato è al suo massimo, 0,75% appena una perdita chiusa lo porta sotto; il tetto totale segue (2× il rischio, max 3%). Acceso: rischio e tetto qui sotto non contano. Nei test su 10 finestre da 1.500 giorni ha battuto il rischio fisso in tutte", def: true },
   { id: "riskCap", t: "Tetto di rischio totale", d: "Somma il rischio fino allo stop di tutte le posizioni aperte del bot: se supera il tetto (1,5% di serie), la nuova posizione entra più piccola o non entra. Nei test 2020-2026: discese più piccole con poco guadagno perso", def: true },
   { id: "wakeLock", t: "Schermo sempre acceso", d: "Mentre il bot è avviato lo schermo non si spegne (indispensabile sul telefono)", def: true },
@@ -2089,7 +2095,9 @@ function applyBest(auto) {
   S.stratOpt = Object.fromEntries(STR.map(s => [s.id, { long: s.dir === "long", lowVol: s.vol === "low" }]));
   S.coinOn = Object.fromEntries(COINS.map(c => [c, true]));
   Object.assign(S.cfg, Core.BEST.cfg); S.bestV = Core.BEST.version; S.tog.rsTop = true;
-  log(auto ? "Configurazione aggiornata alla migliore trovata: BTC, ETH, SOL e XRP · Keltner 1h + Momentum 1h + Squeeze 4h long sulle 2 monete più forti · short intelligenti sulla più debole con BTC in discesa · rischio 0,75% · una posizione per moneta." : "Ripristinata la configurazione migliore.");
+  const P = Core.PRESET; Object.assign(S.cfg, { risk: P.risk, cap: P.cap, riskHi: P.adapt.hi, riskLo: P.adapt.lo, capK: P.adapt.k, capMax: P.adapt.max, maxPos: P.maxPos, maxLev: P.maxLev });
+  S.tog.adapt = true; S.tog.riskCap = true; S.tog.steady = false;
+  log((auto ? "Configurazione aggiornata a " : "Ripristinata la strategia congelata ") + Core.presetLabel() + ": " + Core.PRESET.desc + ".");
 }
 const TFN = { 1: "15 minuti", 4: "1 ora", 8: "2 ore", 16: "4 ore", 32: "8 ore" };
 
@@ -2145,6 +2153,18 @@ function rsReason(coin, t) {
 }
 function opts(coin) {
   return Object.assign({}, Core.DEFAULTS, { coin: coin || "BTC", risk: S.cfg.risk / 100, maxPos: S.cfg.maxPos, maxLev: S.cfg.maxLev, feesOn: S.tog.feesOn, fundingOn: S.tog.fundingOn, riskCap: S.tog.riskCap ? S.cfg.cap / 100 : 0, adapt: adaptCfg() });
+}
+// la configurazione attuale è ancora "PastaBank v1"? (altrimenti: modificata)
+function presetDiff() {
+  const P = Core.PRESET, d = [];
+  if (COINS.some(c => !!S.coinOn[c] !== P.coins.includes(c))) d.push("monete");
+  if (STR.some(x => !!S.stratOn[x.id] !== P.strats.includes(x.id))) d.push("strategie");
+  if (STR.some(x => { const o = S.stratOpt[x.id] || {}; return P.strats.includes(x.id) && (!!o.long !== (x.dir === "long") || !!o.lowVol !== (x.vol === "low")); })) d.push("filtri delle strategie");
+  if (!S.tog.rsTop) d.push("solo le 2 più forti");
+  if (S.tog.steady) d.push("costanza");
+  if (!S.tog.adapt || S.cfg.riskHi !== P.adapt.hi || S.cfg.riskLo !== P.adapt.lo) d.push("rischio adattivo");
+  if (S.cfg.maxPos !== P.maxPos || S.cfg.maxLev !== P.maxLev) d.push("posizioni/leva");
+  return d;
 }
 function adaptCfg() { return S.tog.adapt ? { hi: S.cfg.riskHi / 100, lo: S.cfg.riskLo / 100, k: S.cfg.capK, max: S.cfg.capMax / 100 } : null; }
 // conto vero: saldo realizzato (senza i G/P delle posizioni aperte) e suo massimo storico, per il rischio adattivo
@@ -2814,6 +2834,8 @@ function renderHeader() {
   if (!S.tog.bot) { bp.className = "pill"; bp.textContent = "bot spento"; }
   else if (why || !coinsOn().length) { bp.className = "pill warn"; bp.textContent = "bot in pausa"; }
   else { bp.className = "pill ok"; bp.textContent = "bot attivo · " + coinsOn().length + " monete"; }
+  const sp = $("stratPill");
+  if (sp) { const d = presetDiff(); sp.style.display = S.tog.showName === false ? "none" : ""; sp.className = d.length ? "pill warn" : "pill ok"; sp.textContent = "◆ " + Core.presetLabel() + (d.length ? " · modificata" : ""); sp.title = d.length ? "Diversa da " + Core.presetLabel() + " in: " + d.join(", ") + ". Ripristina con il pulsante in Strategie." : Core.PRESET.desc; }
   const nb = Math.ceil(Date.now() / BAR) * BAR - Date.now();
   $("nextBar").textContent = `prossima candela 15m tra ${Math.floor(nb / 60000)}:${String(Math.floor(nb / 1000) % 60).padStart(2, "0")}`;
   const frs = S.tog.failsafe ? coinsOn().map(c => [c, failReason(c)]).filter(x => x[1]) : [];
@@ -3628,7 +3650,7 @@ function showLab(r, start, strats, coins, data, ms) {
   $("lSummary").innerHTML = `<div><b>Risultato finale: ${eur(start)} → <span class="${cls(fin - start)}">${eur(fin)}</span></b> · guadagno <b class="${cls(fin - start)}">${eurS(fin - start)} (${pct((fin / start - 1) * 100)})</b> in ${Math.round(days)} giorni
     <br>${H.length} operazioni su ${coins.join(", ")}: <span class="pos">${wins.length} vinte</span> e <span class="neg">${loss.length} perse</span> (${H.length ? Math.round(wins.length / H.length * 100) : 0}% vinte) · guadagno medio per operazione ${H.length ? eurS((fin - start) / H.length) : "—"}
     · fattore di profitto ${gl > 0 ? (gw / gl).toFixed(2).replace(".", ",") : "—"} · resa media mensile ${pct(monthly)}${days >= 300 ? " · annua " + pct(yearly) : ""} · discesa massima −${(r.mdd * 100).toFixed(1).replace(".", ",")}%
-    <br><span class="note">Monete: ${coins.join(", ")}${S.tog.rsTop ? " (solo le 2 più forti)" : ""} · strategie accese: ${on} ${S.tog.adapt ? " · rischio adattivo " + S.cfg.riskHi.toLocaleString("it-IT") + "% ai massimi / " + S.cfg.riskLo.toLocaleString("it-IT") + "% sotto, tetto 2×" : " · rischio " + rk + "%" + (S.tog.riskCap ? " · tetto totale " + S.cfg.cap.toLocaleString("it-IT") + "%" : "")} · max ${S.cfg.maxPos} posizioni (una per moneta) · commissioni ${S.tog.feesOn ? "sì" : "no"} · funding ${S.tog.fundingOn ? "sì" : "no"}</span></div>`;
+    <br><span class="note">${presetDiff().length ? "Configurazione modificata (non " + Core.presetLabel() + ")" : "Strategia " + Core.presetLabel()} · Monete: ${coins.join(", ")}${S.tog.rsTop ? " (solo le 2 più forti)" : ""} · strategie accese: ${on} ${S.tog.adapt ? " · rischio adattivo " + S.cfg.riskHi.toLocaleString("it-IT") + "% ai massimi / " + S.cfg.riskLo.toLocaleString("it-IT") + "% sotto, tetto 2×" : " · rischio " + rk + "%" + (S.tog.riskCap ? " · tetto totale " + S.cfg.cap.toLocaleString("it-IT") + "%" : "")} · max ${S.cfg.maxPos} posizioni (una per moneta) · commissioni ${S.tog.feesOn ? "sì" : "no"} · funding ${S.tog.fundingOn ? "sì" : "no"}</span></div>`;
   drawCurve(r.curve, start);
 }
 
@@ -3686,8 +3708,8 @@ function bind() {
   $("coinChips").addEventListener("click", e => { const k = e.target.dataset.coin; if (!k) return; S.chartCoin = k; save(); renderCoinChips(); renderHeader(); renderManual(); drawChart(); });
   $("bRun").onclick = () => setRunning(!S.tog.bot);
   $("bBest").onclick = () => {
-    if (!confirm("Riportare monete, strategie, filtri e rischio alla configurazione migliore trovata?\n(BTC, ETH, SOL e XRP · Keltner 1h + Momentum 1h + Squeeze 4h long sulle 2 monete più forti · short intelligenti sulla più debole con BTC in discesa · rischio 0,75% · una posizione per moneta)")) return;
-    applyBest(false); $("cRisk").value = S.cfg.risk; $("cMaxPos").value = S.cfg.maxPos; $("cMaxLev").value = S.cfg.maxLev; save(); renderAll();
+    if (!confirm("Riportare tutto alla strategia congelata " + Core.presetLabel() + "?\n(" + Core.PRESET.desc + ")")) return;
+    applyBest(false); $("cRisk").value = S.cfg.risk; $("cMaxPos").value = S.cfg.maxPos; $("cMaxLev").value = S.cfg.maxLev; $("cCap").value = S.cfg.cap; $("cRiskHi").value = S.cfg.riskHi; $("cRiskLo").value = S.cfg.riskLo; save(); renderAll();
   };
   $("toggles").addEventListener("change", e => {
     const id = e.target.dataset.tog; if (!id) return;
