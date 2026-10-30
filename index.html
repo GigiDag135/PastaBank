@@ -1916,79 +1916,110 @@ function mountLand(el, getState) {
 
 /* ---------- astronave (modalità Verifica Bot Associato): plancia vista da dentro, spazio che scorre ---------- */
 const SW = 200, SH = 150;
-const STARS = (() => { const r = rng(91), a = []; for (let i = 0; i < 90; i++) a.push({ x: r() * 2 - 1, y: r() * 2 - 1, z: r() }); return a; })();
-function drawShip(g, t, st) {
-  const on = st.state === "on", warn = st.state === "warn", r = rng(5);
-  // finestra: spazio profondo
-  const sp = g.createLinearGradient(0, 0, 0, 100); sp.addColorStop(0, "#04020c"); sp.addColorStop(1, "#140b33");
-  g.fillStyle = sp; g.fillRect(0, 0, SW, 100);
-  // nebulose
-  glow(g, 40, 30, 60, "rgb(124,58,237)", 0.22); glow(g, 165, 60, 55, "rgb(20,184,166)", 0.16); glow(g, 120, 15, 40, "rgb(236,72,153)", 0.12);
-  // stelle che vengono incontro (volo in avanti), più veloci con il bot attivo
-  const cx = 100, cy = 44, speed = on ? 0.00022 : warn ? 0.00008 : 0.00004;
+// stelle su tre piani (lontane, medie, vicine): scorrono verso sinistra, l'astronave va verso destra
+const STARS = (() => { const r = rng(91), a = []; for (let i = 0; i < 110; i++) a.push({ x: r() * SW, y: r() * SH, l: i % 3, c: r() }); return a; })();
+function drawShip(g, t, st, SHD) {
+  const on = st.state === "on", warn = st.state === "warn" || st.state === "none";
+  const speed = on ? 0.05 : warn ? 0.012 : 0.004;               // pixel al millisecondo (piano vicino)
+  const dt = SHD.lt ? Math.min(200, Math.max(0, t - SHD.lt)) : 0; SHD.lt = t; SHD.d += dt * speed; const D = SHD.d;
+  // spazio
+  const sp = g.createLinearGradient(0, 0, 0, SH); sp.addColorStop(0, "#04020c"); sp.addColorStop(0.6, "#0f0a2a"); sp.addColorStop(1, "#1a0f3a");
+  g.fillStyle = sp; g.fillRect(0, 0, SW, SH);
+  const wrap = (x, w) => ((x % w) + w) % w;
+  glow(g, wrap(60 - D * 0.05, SW + 120) - 60, 40, 70, "rgb(124,58,237)", 0.22);
+  glow(g, wrap(170 - D * 0.05, SW + 120) - 60, 110, 60, "rgb(20,184,166)", 0.15);
+  glow(g, wrap(120 - D * 0.04, SW + 120) - 60, 20, 40, "rgb(236,72,153)", 0.1);
+  // pianeta con anelli, molto lontano
+  const px = wrap(240 - D * 0.08, SW + 160) - 50, py = 36;
+  g.fillStyle = "#3b2a6e"; g.beginPath(); g.arc(px, py, 15, 0, 7); g.fill();
+  g.fillStyle = "#5b45a6"; g.beginPath(); g.arc(px - 4, py - 4, 11, 0, 7); g.fill();
+  g.fillStyle = "#8e7ad6"; for (let i = -9; i < 11; i += 5) g.fillRect(px - 11, py + i, 20, 1);
+  g.strokeStyle = "#f5c96a"; g.lineWidth = 1.5; g.beginPath(); g.ellipse(px, py, 26, 6, -0.25, 0, 7); g.stroke();
+  g.fillStyle = "#3b2a6e"; g.beginPath(); g.arc(px, py, 15, Math.PI * 1.05, Math.PI * 1.95); g.fill();
+  // stelle
   for (const s of STARS) {
-    const z = 1 - ((s.z + t * speed) % 1), k = 0.12 / Math.max(z, 0.02), x = cx + s.x * 110 * k, y = cy + s.y * 70 * k;
-    if (x < 0 || x > SW || y < 0 || y > 100) continue;
-    const b = Math.min(1, (1 - z) * 1.6), len = on ? Math.min(6, (1 - z) * 7) : 1;
-    g.fillStyle = `rgba(230,240,255,${b})`;
-    if (len > 1.2) { const dx = (x - cx), dy = (y - cy), d = Math.hypot(dx, dy) || 1; for (let i = 0; i < len; i++) g.fillRect((x - dx / d * i) | 0, (y - dy / d * i) | 0, 1, 1); }
-    else g.fillRect(x | 0, y | 0, z < .3 ? 2 : 1, z < .3 ? 2 : 1);
+    const k = [0.15, 0.4, 1][s.l], x = wrap(s.x - D * k, SW), y = s.y;
+    const tw = 0.55 + 0.45 * Math.sin(t / 500 + s.c * 20);
+    g.fillStyle = s.l === 2 ? `rgba(240,245,255,${0.9 * tw})` : s.l === 1 ? `rgba(200,210,255,${0.7 * tw})` : `rgba(160,170,230,${0.5 * tw})`;
+    const len = s.l === 2 && on ? 6 : s.l === 1 && on ? 2 : 1;
+    g.fillRect(x | 0, y | 0, len, 1);
   }
-  // pianeta con anelli che passa lento
-  const pp = (t / 90000) % 1, px = 230 - pp * 300, py = 34 + Math.sin(pp * 3) * 6;
-  if (px > -60 && px < 260) {
-    g.fillStyle = "#3b2a6e"; g.beginPath(); g.arc(px, py, 16, 0, 7); g.fill();
-    g.fillStyle = "#5b45a6"; g.beginPath(); g.arc(px - 4, py - 4, 12, 0, 7); g.fill();
-    g.fillStyle = "#8e7ad6"; for (let i = -10; i < 12; i += 5) g.fillRect(px - 12, py + i, 22, 1);
-    g.strokeStyle = "#f5c96a"; g.lineWidth = 1.5; g.beginPath(); g.ellipse(px, py, 27, 6, -0.3, 0, 7); g.stroke();
-    g.fillStyle = "#3b2a6e"; g.beginPath(); g.arc(px, py, 16, Math.PI * 1.05, Math.PI * 1.95); g.fill();
+  // asteroidi vicini
+  for (let i = 0; i < 2; i++) { const ax = wrap(150 + i * 170 - D * 1.2, SW + 200) - 20, ay = 18 + i * 105 + Math.sin(D / 80 + i) * 3;
+    g.fillStyle = "#5b4b3c"; g.fillRect(ax | 0, ay | 0, 5, 4); g.fillStyle = "#8a7a66"; g.fillRect(ax | 0, ay | 0, 3, 1); g.fillStyle = "#3d3229"; g.fillRect((ax + 3) | 0, (ay + 3) | 0, 2, 1); }
+  // stella cadente ogni tanto
+  const sc = (t / 11000) % 1; if (sc < 0.06) { const k = sc / 0.06, x = 170 - k * 120, y = 12 + k * 30; for (let i = 0; i < 9; i++) { g.fillStyle = `rgba(255,255,255,${(1 - i / 9) * (1 - k)})`; g.fillRect((x + i * 2) | 0, (y - i) | 0, 2, 1); } }
+
+  // ---------- astronave (punta a destra), tozza in stile pixel ----------
+  const bob = Math.round(Math.sin(t / 650) * 2), ox = 52, oy = 54 + bob;
+  const X = v => ox + v, Y = v => oy + v;
+  // fiamma dei propulsori
+  const fl = on ? 22 + Math.round(Math.sin(t / 60) * 3 + Math.sin(t / 37) * 2) : warn ? (Math.floor(t / 300) % 3 === 0 ? 2 : 9 + Math.round(Math.sin(t / 50) * 2)) : 5 + Math.round(Math.sin(t / 90) * 2);
+  for (const ny of [13, 27]) {
+    glow(g, X(4), Y(ny + 3), on ? 20 : 10, "rgb(103,232,249)", on ? 0.5 : 0.3);
+    g.fillStyle = "#fb923c"; g.beginPath(); g.moveTo(X(5), Y(ny - 1)); g.lineTo(X(5 - fl), Y(ny + 3)); g.lineTo(X(5), Y(ny + 7)); g.fill();
+    g.fillStyle = "#fde68a"; g.beginPath(); g.moveTo(X(5), Y(ny)); g.lineTo(X(5 - fl * 0.65), Y(ny + 3)); g.lineTo(X(5), Y(ny + 6)); g.fill();
+    g.fillStyle = "#a5f3fc"; g.beginPath(); g.moveTo(X(5), Y(ny + 1)); g.lineTo(X(5 - fl * 0.3), Y(ny + 3)); g.lineTo(X(5), Y(ny + 5)); g.fill();
   }
-  // asteroide ogni tanto
-  const ap = (t / 14000) % 1; if (ap < 0.35) { const k = ap / 0.35, ax = 20 + k * 180, ay = 80 - k * 50 + Math.sin(k * 9) * 2; g.fillStyle = "#6b5b4a"; g.fillRect(ax | 0, ay | 0, 4, 3); g.fillStyle = "#8a7a66"; g.fillRect(ax | 0, ay | 0, 2, 1); }
-  // telaio della cabina (montanti obliqui, bulloni)
-  g.fillStyle = "#1b1f33"; g.beginPath(); g.moveTo(0, 0); g.lineTo(26, 0); g.lineTo(8, 100); g.lineTo(0, 100); g.fill();
-  g.beginPath(); g.moveTo(SW, 0); g.lineTo(SW - 26, 0); g.lineTo(SW - 8, 100); g.lineTo(SW, 100); g.fill();
-  R(g, 0, 0, SW, 6, "#1b1f33"); R(g, 0, 5, SW, 1, "#3b4466");
-  g.fillStyle = "#2c3352"; g.beginPath(); g.moveTo(70, 6); g.lineTo(74, 6); g.lineTo(66, 100); g.lineTo(62, 100); g.fill(); g.beginPath(); g.moveTo(126, 6); g.lineTo(130, 6); g.lineTo(138, 100); g.lineTo(134, 100); g.fill();
-  g.fillStyle = "#4a557f"; for (let x = 6; x < SW; x += 14) g.fillRect(x, 2, 1, 1);
-  for (let y = 14; y < 96; y += 12) { g.fillRect(14 - y / 8 | 0, y, 1, 1); g.fillRect(SW - 15 + y / 8 | 0, y, 1, 1); }
-  // riflesso sul vetro
-  g.fillStyle = "rgba(255,255,255,.05)"; g.beginPath(); g.moveTo(80, 6); g.lineTo(96, 6); g.lineTo(76, 100); g.lineTo(60, 100); g.fill();
-  // plancia
-  R(g, 0, 96, SW, 54, "#20253d"); R(g, 0, 96, SW, 3, "#3b4466"); R(g, 0, 99, SW, 1, "#11142a");
-  g.fillStyle = "#2a3150"; g.beginPath(); g.moveTo(0, 150); g.lineTo(30, 112); g.lineTo(170, 112); g.lineTo(SW, 150); g.fill();
-  // radar (a sinistra)
-  const rx = 28, ry = 122; g.fillStyle = "#06261f"; g.beginPath(); g.arc(rx, ry, 12, 0, 7); g.fill();
-  g.strokeStyle = "#10b98155"; g.lineWidth = 1; g.beginPath(); g.arc(rx, ry, 8, 0, 7); g.stroke(); g.beginPath(); g.arc(rx, ry, 4, 0, 7); g.stroke();
-  const ra = t / 600; g.strokeStyle = "#34d399"; g.beginPath(); g.moveTo(rx, ry); g.lineTo(rx + Math.cos(ra) * 12, ry + Math.sin(ra) * 12); g.stroke();
-  for (let i = 0; i < 4; i++) { const a = i * 1.7 + 0.4, d = 4 + (i * 3) % 7, al = ((ra - a) % 6.283 + 6.283) % 6.283; g.fillStyle = `rgba(110,231,183,${Math.max(0, 1 - al / 3)})`; g.fillRect(rx + Math.cos(a) * d | 0, ry + Math.sin(a) * d | 0, 2, 2); }
-  // schermo grafico (a destra)
-  R(g, 152, 110, 34, 22, "#071a2c"); R(g, 152, 110, 34, 1, "#38bdf8");
-  g.fillStyle = "#38bdf8"; for (let i = 0; i < 30; i++) { const y = 124 - Math.round(5 * Math.sin(i / 4 + t / 900) + i / 6); g.fillRect(153 + i, y, 1, 1); }
-  // file di led
-  for (let i = 0; i < 12; i++) { const c = ["#f87171", "#fbbf24", "#4ade80", "#38bdf8"][i % 4], blink = (Math.floor(t / 260 + i * 3.7) % 5) !== 0; R(g, 56 + i * 7, 104, 3, 2, blink ? c : "#2b3048"); }
-  // spia grande di stato al centro
-  const sc = on ? "rgb(74,222,128)" : warn ? "rgb(251,191,36)" : "rgb(248,113,113)", pulse = 0.55 + 0.45 * Math.sin(t / (on ? 400 : 900));
-  glow(g, 100, 126, 22, sc, 0.45 * pulse);
-  R(g, 92, 119, 16, 14, "#0d1020"); R(g, 94, 121, 12, 10, sc.replace("rgb", "rgba").replace(")", `,${0.6 + 0.4 * pulse})`)); R(g, 95, 122, 4, 2, "rgba(255,255,255,.6)");
-  // leva e joystick
-  R(g, 126, 120, 3, 12, "#4a557f"); R(g, 124, 118 + Math.round(Math.sin(t / 1300) * 2), 7, 4, "#e11d48");
-  R(g, 66, 124, 12, 6, "#141830"); R(g, 70, 116 + Math.round(Math.sin(t / 800)), 3, 9, "#9aa3b5"); R(g, 69, 114 + Math.round(Math.sin(t / 800)), 5, 3, "#ef4444");
-  // robottino pilota visto da dietro (a sinistra del centro), dondola un po'
-  const bx = 38, by = 84 + Math.round(Math.sin(t / 700));
-  R(g, bx + 6, by - 9, 1, 4, "#c9ced8"); R(g, bx + 5, by - 11, 3, 2, (Math.floor(t / 500) % 2) ? "#ff6b6b" : "#ffd166");
-  R(g, bx, by - 5, 13, 10, "#c9ced8"); R(g, bx + 1, by - 4, 11, 1, "#e5e7eb"); R(g, bx + 2, by, 9, 3, "#9aa3b5");
-  R(g, bx - 3, by + 5, 19, 10, "#9aa3b5"); R(g, bx - 3, by + 5, 19, 1, "#c9ced8"); R(g, bx + 3, by + 8, 7, 4, "#3b82f6");
-  // sedile
-  R(g, bx - 6, by + 10, 25, 6, "#3a1f2a"); R(g, bx - 6, by + 10, 25, 1, "#5a2f40");
+  if (on) for (let i = 0; i < 8; i++) { const k = ((t / 400 + i / 8) % 1), sx = X(-8 - k * 42), sy = Y(23 + Math.sin(i * 2.3 + t / 200) * 8 * k); g.fillStyle = `rgba(253,230,138,${1 - k})`; g.fillRect(sx | 0, sy | 0, 1, 1); }
+  // alette
+  g.fillStyle = "#b91c1c"; g.beginPath(); g.moveTo(X(12), Y(9)); g.lineTo(X(34), Y(9)); g.lineTo(X(22), Y(-4)); g.lineTo(X(8), Y(-4)); g.fill();
+  g.beginPath(); g.moveTo(X(12), Y(37)); g.lineTo(X(34), Y(37)); g.lineTo(X(22), Y(50)); g.lineTo(X(8), Y(50)); g.fill();
+  R(g, X(9), Y(-4), 13, 1, "#ef4444"); R(g, X(9), Y(49), 13, 1, "#7f1d1d");
+  // ugelli
+  R(g, X(5), Y(11), 6, 9, "#4a557f"); R(g, X(5), Y(25), 6, 9, "#4a557f"); R(g, X(5), Y(11), 6, 1, "#6b76a6"); R(g, X(5), Y(25), 6, 1, "#6b76a6");
+  // scafo: corpo + punta arrotondata
+  g.fillStyle = "#9aa3b5"; g.beginPath(); g.moveTo(X(10), Y(8)); g.lineTo(X(66), Y(8)); g.quadraticCurveTo(X(92), Y(10), X(98), Y(23)); g.quadraticCurveTo(X(92), Y(36), X(66), Y(38)); g.lineTo(X(10), Y(38)); g.fill();
+  g.fillStyle = "#c9ced8"; g.beginPath(); g.moveTo(X(10), Y(8)); g.lineTo(X(66), Y(8)); g.quadraticCurveTo(X(88), Y(10), X(95), Y(17)); g.lineTo(X(10), Y(17)); g.fill();
+  g.fillStyle = "#6b7280"; g.beginPath(); g.moveTo(X(10), Y(31)); g.lineTo(X(95), Y(31)); g.quadraticCurveTo(X(88), Y(37), X(66), Y(38)); g.lineTo(X(10), Y(38)); g.fill();
+  R(g, X(10), Y(8), 1, 30, "#4b5563"); R(g, X(11), Y(9), 50, 1, "#e5e7eb");
+  // banda rossa e pannelli
+  R(g, X(11), Y(23), 84, 3, "#e11d48"); R(g, X(11), Y(26), 83, 1, "#9f1239");
+  g.fillStyle = "#7c8597"; for (const x of [28, 46, 64]) g.fillRect(X(x), Y(10), 1, 12);
+  g.fillStyle = "#e5e7eb"; for (const x of [16, 32, 48, 64, 80]) g.fillRect(X(x), Y(34), 1, 1);
+  // stemma dorato CASHMKR (scudo con la freccia dell'icona)
+  R(g, X(16), Y(12), 9, 8, "#d8b25a"); R(g, X(17), Y(20), 7, 1, "#d8b25a"); R(g, X(18), Y(21), 5, 1, "#d8b25a"); R(g, X(19), Y(22), 3, 1, "#d8b25a");
+  R(g, X(17), Y(13), 7, 7, "#3c2f14"); R(g, X(18), Y(20), 5, 1, "#3c2f14");
+  g.fillStyle = "#67e8f9"; [[18, 18], [19, 17], [20, 18], [21, 16], [22, 15], [23, 14]].forEach(([x, y]) => g.fillRect(X(x), Y(y), 1, 1));
+  // oblò
+  g.fillStyle = "#4b5563"; g.beginPath(); g.arc(X(37), Y(16), 5, 0, 7); g.fill();
+  g.fillStyle = "#1e1b4b"; g.beginPath(); g.arc(X(37), Y(16), 3.6, 0, 7); g.fill();
+  R(g, X(35), Y(14), 2, 1, "rgba(255,255,255,.7)"); R(g, X(36), Y(18), 3, 1, "rgba(251,191,36,.45)");
+  // insegna di stato sul dorso con antenna
+  const lc = on ? "rgb(74,222,128)" : warn ? "rgb(251,191,36)" : "rgb(248,113,113)", pul = on ? 0.6 + 0.4 * Math.sin(t / 300) : warn ? (Math.floor(t / 400) % 2 ? 1 : 0.15) : 0.5 + 0.2 * Math.sin(t / 900);
+  R(g, X(44), Y(1), 1, 7, "#9aa3b5"); R(g, X(41), Y(6), 7, 2, "#4b5563");
+  glow(g, X(44.5), Y(0), 12, lc, 0.75 * pul);
+  R(g, X(43), Y(-2), 3, 3, lc.replace("rgb", "rgba").replace(")", `,${0.45 + 0.55 * pul})`)); R(g, X(43), Y(-2), 1, 1, "rgba(255,255,255,.7)");
+  // cupola di vetro grande con il robot pilota
+  const cx = X(66), cy = Y(9), rx = 17, ry = 14;
+  g.fillStyle = "rgba(14,30,60,.9)"; g.beginPath(); g.ellipse(cx, cy, rx, ry, 0, Math.PI, 0); g.fill();
+  const look = Math.floor(t / 3500) % 4 === 3;        // ogni tanto si gira a guardarti
+  // busto
+  R(g, cx - 8, cy - 5, 13, 5, "#9aa3b5"); R(g, cx - 5, cy - 4, 5, 3, "#3b82f6"); R(g, cx - 8, cy - 5, 13, 1, "#c9ced8");
+  // testa
+  R(g, cx - 7, cy - 14, 12, 9, "#c9ced8"); R(g, cx - 6, cy - 13, 10, 1, "#e5e7eb"); R(g, cx - 6, cy - 12, 10, 6, "#2b3448");
+  if (look) { R(g, cx - 5, cy - 11, 2, 2, "#7dd3fc"); R(g, cx, cy - 11, 2, 2, "#7dd3fc"); R(g, cx - 4, cy - 8, 5, 1, "#7dd3fc"); }
+  else { R(g, cx, cy - 11, 2, 2, "#7dd3fc"); R(g, cx + 3, cy - 11, 1, 2, "#7dd3fc"); R(g, cx + 1, cy - 8, 3, 1, "#7dd3fc"); }
+  R(g, cx - 2, cy - 18, 1, 4, "#c9ced8"); R(g, cx - 3, cy - 20, 3, 2, (Math.floor(t / 500) % 2) ? "#ff6b6b" : "#ffd166");
+  // braccio sulla cloche
+  const sw = Math.round(Math.sin(t / 700));
+  R(g, cx + 4, cy - 4, 6, 2, "#9aa3b5"); R(g, cx + 10, cy - 5 + sw, 2, 5, "#4a557f"); R(g, cx + 9, cy - 7 + sw, 4, 2, "#ef4444");
+  // vetro: bordo e riflessi
+  g.strokeStyle = "#cbd5e1"; g.lineWidth = 1; g.beginPath(); g.ellipse(cx, cy, rx, ry, 0, Math.PI, 0); g.stroke();
+  g.fillStyle = "rgba(186,230,253,.16)"; g.beginPath(); g.ellipse(cx, cy, rx - 1, ry - 1, 0, Math.PI, 0); g.fill();
+  R(g, cx - 12, cy - 10, 3, 1, "rgba(255,255,255,.75)"); R(g, cx - 14, cy - 7, 1, 3, "rgba(255,255,255,.6)"); R(g, cx + 7, cy - 12, 3, 1, "rgba(255,255,255,.35)");
+  R(g, cx - rx - 1, cy, rx * 2 + 2, 1, "#4b5563");
+  // luci di posizione
+  R(g, X(96), Y(22), 2, 2, Math.floor(t / 700) % 2 ? "#fde68a" : "#78350f");
+  R(g, X(8), Y(-4), 1, 1, Math.floor(t / 900) % 2 ? "#4ade80" : "#14532d");
 }
 function mountShip(el, getState) {
   el.innerHTML = '<canvas></canvas>';
   const c = el.querySelector("canvas"); c.width = SW; c.height = SH;
-  const g = c.getContext("2d"); let last = -1e9;
+  const g = c.getContext("2d"), sh = { d: 0, lt: 0 }; let last = -1e9;
   function frame(t) {
     const st = getState();
-    if (!st.off && t - last >= (st.still ? 3000 : 1000 / 12)) { last = t; drawShip(g, st.still ? 0 : t, st); }
+    if (!st.off && t - last >= (st.still ? 3000 : 1000 / 15)) { last = t; drawShip(g, st.still ? 0 : t, st, sh); }
     if (el.isConnected && !el.dataset.stop) requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
