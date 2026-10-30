@@ -302,6 +302,13 @@ body:not(.casa) .wkbox { background: var(--card); border-color: var(--line2); bo
 .cbody #weekPanel > .ph h2, .cbody #srvPanel > .ph h2 { display: none; }
 .csignw.low { min-width: 64px; padding: 3px 5px 4px; } .csignw.low small { font-size: 8px; }
 
+/* profili */
+#profList { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.profbtn { width: 100%; justify-content: flex-start; text-align: left; font-size: 16px; padding: 12px 14px; }
+.profbtn.add { justify-content: center; color: var(--dim); border-style: dashed; }
+#lockWho b { color: var(--text, #fff); }
+#profBox .row { display: flex; }
+
 </style>
 </head>
 <body>
@@ -309,6 +316,7 @@ body:not(.casa) .wkbox { background: var(--card); border-color: var(--line2); bo
 <header class="hdr">
   <div class="brand"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0iIzBCMEMwRCIvPgogIDxwYXRoIGQ9Ik0yNTYgNzAgTDQyMCAxMjggTDQyMCAyNTAgUTQyMCAzNzIgMjU2IDQ0NiBROTIgMzcyIDkyIDI1MCBMOTIgMTI4IFoiIGZpbGw9IiMxMjE0MUMiIHN0cm9rZT0iIzAwRjBGRiIgc3Ryb2tlLXdpZHRoPSIxNiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwb2x5bGluZSBwb2ludHM9IjE1MCwzMTggMjA1LDI2NiAyNDUsMjk2IDMwMiwyMTQgMzY2LDE4NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBGMEZGIiBzdHJva2Utd2lkdGg9IjIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt="">CashMkr</div>
   <button class="btn sm" id="bLockNow" title="Blocca la pagina con la password">🔒 Blocca</button>
+  <button class="btn sm" id="bProfile" title="Cambia profilo">👤</button>
   <span class="pill sim">TEST FREE · soldi finti</span>
   <span class="pill" id="feedPill">collegamento…</span>
   <span class="pill" id="botPill">bot</span>
@@ -467,6 +475,7 @@ body:not(.casa) .wkbox { background: var(--card); border-color: var(--line2); bo
 
     <section class="panel" id="togPanel">
       <div class="ph"><h2>Interruttori</h2></div>
+      <div class="tog" id="profBox"></div>
       <div id="toggles"></div>
     </section>
 
@@ -525,8 +534,11 @@ body:not(.casa) .wkbox { background: var(--card); border-color: var(--line2); bo
 <div class="modal solid" id="lock">
   <div class="panel">
     <div class="brand" style="font-size:22px;margin-bottom:6px"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0iIzBCMEMwRCIvPgogIDxwYXRoIGQ9Ik0yNTYgNzAgTDQyMCAxMjggTDQyMCAyNTAgUTQyMCAzNzIgMjU2IDQ0NiBROTIgMzcyIDkyIDI1MCBMOTIgMTI4IFoiIGZpbGw9IiMxMjE0MUMiIHN0cm9rZT0iIzAwRjBGRiIgc3Ryb2tlLXdpZHRoPSIxNiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwb2x5bGluZSBwb2ludHM9IjE1MCwzMTggMjA1LDI2NiAyNDUsMjk2IDMwMiwyMTQgMzY2LDE4NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBGMEZGIiBzdHJva2Utd2lkdGg9IjIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt="" style="width:34px;height:34px">CashMkr</div>
+    <div class="note hidden" id="lockWho" style="margin-top:2px"></div>
     <p class="note" id="lockMsg" style="margin-top:4px"></p>
+    <div id="profList" class="hidden"></div>
     <form id="lockForm" autocomplete="off">
+      <input type="text" id="pName" class="wide hidden" placeholder="Nome del profilo (es. Gigi)" maxlength="30" autocomplete="nickname" style="margin-bottom:8px">
       <input type="password" id="pw1" class="wide" placeholder="Password" autocomplete="current-password">
       <input type="password" id="pw2" class="wide hidden" placeholder="Ripeti la password" autocomplete="new-password" style="margin-top:8px">
       <button class="btn blue" id="bUnlock" type="submit" style="width:100%;margin-top:12px">Entra</button>
@@ -1863,6 +1875,7 @@ const TOGGLES = [
   { id: "observe", t: "Solo osservazione (bot sul server)", d: "Il telefono mostra conto vero, posizioni e storico ma non manda nessun ordine: li manda CashMkr Server. Basta collegare l'indirizzo del wallet, senza chiave", def: false },
   { id: "real", t: "Soldi veri", d: "Il bot e i pulsanti manuali inviano anche ordini veri al wallet collegato e verificato", def: false },
   { id: "rememberKey", t: "Ricorda la chiave dell'API wallet", d: "Spento: alla riapertura della pagina va reinserita", def: false },
+  { id: "profiles", t: "Profili", d: "All'apertura scegli il profilo (es. Gigi, Pippo Pasta): ognuno ha la sua password, il suo conto vero, il suo TEST FREE e le sue impostazioni, cifrati a parte. Spento: si apre subito l'ultimo profilo, con una sola password come prima", def: true },
   { id: "askPw", t: "Password all'apertura", d: "Dati salvati cifrati: senza password l'app non si apre", def: true },
   { id: "autoLock", t: "Blocco automatico dopo 15 minuti", d: "Se non usi la pagina chiede di nuovo la password (il bot continua a lavorare)", def: false },
   { id: "steady", t: "Modalità costanza", d: "Chiude metà posizione quando guadagna 3 volte il rischio e porta lo stop a pareggio: guadagni minori, mesi più regolari", def: false },
@@ -1936,7 +1949,11 @@ function opts(coin) {
   return Object.assign({}, Core.DEFAULTS, { coin: coin || "BTC", risk: S.cfg.risk / 100, maxPos: S.cfg.maxPos, maxLev: S.cfg.maxLev, feesOn: S.tog.feesOn, fundingOn: S.tog.fundingOn });
 }
 /* ---------------- password e cifratura (PBKDF2 + AES-GCM) ---------------- */
-const LOCK_KEY = "cashmkr_lock", DATA_KEY = "cashmkr_data", PLAIN_KEY = "cashmkr_plain", OLD_KEY = KEY;
+/* profili: ognuno ha la sua password e i suoi dati cifrati a parte. Il primo profilo ("p1") usa le chiavi di sempre */
+const PROF_KEY = "cashmkr_profiles", OLD_KEY = KEY;
+const pKey = (base, id) => id === "p1" ? base : base + "_" + id;
+let LOCK_KEY = "cashmkr_lock", DATA_KEY = "cashmkr_data", PLAIN_KEY = "cashmkr_plain", curProf = "p1";
+function useProfile(id) { curProf = id; LOCK_KEY = pKey("cashmkr_lock", id); DATA_KEY = pKey("cashmkr_data", id); PLAIN_KEY = pKey("cashmkr_plain", id); }
 let cryptoKey = null, saveTimer = null, unlocked = false;
 const b64 = u => { const a = new Uint8Array(u); let t = ""; for (let i = 0; i < a.length; i += 8192) t += String.fromCharCode.apply(null, a.subarray(i, i + 8192)); return btoa(t); };
 const unb64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
@@ -1957,9 +1974,15 @@ function snapshot() { return Object.assign({}, S, { wallet: Object.assign({}, S.
 function save() {
   if (!unlocked) return;
   if (!S.tog.save) { try { localStorage.removeItem(DATA_KEY); localStorage.removeItem(PLAIN_KEY); } catch (e) {} return; }
-  if (!S.tog.askPw) { try { localStorage.setItem(PLAIN_KEY, JSON.stringify(snapshot())); localStorage.removeItem(DATA_KEY); } catch (e) {} return; }
+  if (!S.tog.askPw) { try { localStorage.setItem(PLAIN_KEY, JSON.stringify(snapshot())); localStorage.removeItem(DATA_KEY); } catch (e) {} profTouch(); return; }
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(async () => { try { if (cryptoKey) { localStorage.setItem(DATA_KEY, JSON.stringify(await encryptJSON(cryptoKey, snapshot()))); localStorage.removeItem(PLAIN_KEY); } } catch (e) {} }, 250);
+  saveTimer = setTimeout(saveNow, 250);
+}
+async function saveNow() {
+  clearTimeout(saveTimer); profTouch();
+  if (!unlocked || !S.tog.save) return;
+  if (!S.tog.askPw) { try { localStorage.setItem(PLAIN_KEY, JSON.stringify(snapshot())); } catch (e) {} return; }
+  try { if (cryptoKey) { localStorage.setItem(DATA_KEY, JSON.stringify(await encryptJSON(cryptoKey, snapshot()))); localStorage.removeItem(PLAIN_KEY); } } catch (e) {}
 }
 function apply(o) {
   if (!o || o.v !== 1) return;
@@ -1974,18 +1997,116 @@ function apply(o) {
 }
 const readJSON = k => { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } };
 let fails = 0, waitUntil = 0;
+const esc = t => String(t == null ? "" : t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+/* ---------------- profili ---------------- */
+const profSave = m => { try { localStorage.setItem(PROF_KEY, JSON.stringify(m)); } catch (e) {} };
+function profMeta() {
+  let m = readJSON(PROF_KEY);
+  if (!m || !Array.isArray(m.list)) {
+    let legacy = false; try { legacy = !!(localStorage.getItem("cashmkr_lock") || localStorage.getItem("cashmkr_plain") || localStorage.getItem(OLD_KEY)); } catch (e) {}
+    m = { v: 1, on: true, last: legacy ? "p1" : "", list: legacy ? [{ id: "p1", name: "Gigi", addr: "" }] : [] };
+    profSave(m);
+  }
+  return m;
+}
+const profName = id => (profMeta().list.find(p => p.id === id) || {}).name || "";
+function profTouch() {
+  if (!unlocked) return;
+  const m = profMeta(), p = m.list.find(x => x.id === curProf); if (!p) return;
+  const a = (S.wallet.addr || "").toLowerCase(), on = S.tog.profiles !== false;
+  if (p.addr !== a || m.last !== curProf || m.on !== on) { p.addr = a; m.last = curProf; m.on = on; profSave(m); }
+}
+// link personale (comando /app del server): #nome=…&addr=0x…&net=mainnet&obs=1 — solo l'indirizzo, mai chiavi
+const LINK = (() => { try {
+  const h = new URLSearchParams(location.hash.slice(1)), addr = (h.get("addr") || "").trim();
+  if (!/^0x[0-9a-fA-F]{40}$/.test(addr)) return null;
+  return { name: (h.get("nome") || "").trim().slice(0, 30), addr, net: h.get("net") === "testnet" ? "testnet" : "mainnet", obs: h.get("obs") !== "0" };
+} catch (e) { return null; } })();
+window.addEventListener("hashchange", () => { if (/addr=0x/i.test(location.hash)) location.reload(); });
+function clearLink() { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
+function applyLink() {
+  if (!LINK) return;
+  const cur = (S.wallet.addr || "").toLowerCase();
+  clearLink();
+  if (cur && cur !== LINK.addr.toLowerCase()) { setTimeout(() => log("Link personale ignorato: questo profilo ha già un altro wallet collegato."), 0); return; }
+  if (cur === LINK.addr.toLowerCase()) return;   // già collegato: non tocco le impostazioni
+  S.wallet.verifiedFor = ""; S.wallet.key = ""; memKey = "";
+  S.wallet.addr = LINK.addr; S.wallet.net = LINK.net; S.tog.observe = LINK.obs; S.tog.real = false;
+  setTimeout(() => log(`Link personale: wallet ${LINK.addr.slice(0, 6)}…${LINK.addr.slice(-4)} (${LINK.net})${LINK.obs ? " in sola osservazione" : ""}.`), 0);
+}
+const isPlain = () => { const P = readJSON(PLAIN_KEY); return !readJSON(LOCK_KEY) || (!readJSON(DATA_KEY) && P && P.tog && P.tog.askPw === false); };
+function openProfile(id) {
+  useProfile(id);
+  if (readJSON(LOCK_KEY) && !isPlain()) { showLock("unlock"); return; }
+  const P = readJSON(PLAIN_KEY);
+  if (!readJSON(LOCK_KEY) && !P) { showLock("create"); return; }  // profilo senza dati: si sceglie la password
+  $("lock").classList.add("hidden"); apply(P); applyLink(); start();
+}
+function bootLock() {
+  const m = profMeta();
+  let pick = false; try { pick = sessionStorage.getItem("cashmkr_pick") === "1"; sessionStorage.removeItem("cashmkr_pick"); } catch (e) {}
+  if (!m.list.length) { newProf = !!LINK; showLock("create"); return; }
+  if (LINK) {
+    const p = m.list.find(x => x.addr && x.addr === LINK.addr.toLowerCase());
+    if (p) { openProfile(p.id); return; }
+    newProf = true; showLock("create"); return;
+  }
+  if (pick || m.on !== false) { showLock("pick"); return; }
+  openProfile(m.list.find(x => x.id === m.last) ? m.last : m.list[0].id);
+}
+let newProf = false;
 function showLock(mode) {
-  const L = readJSON(LOCK_KEY), m = mode || (L ? "unlock" : "create");
+  const m = mode || "unlock", M0 = profMeta(), many = M0.list.length > 0;
   $("lock").dataset.mode = m; $("lock").classList.remove("hidden");
   $("pw1").value = ""; $("pw2").value = ""; $("lockErr").textContent = "";
+  const pick = m === "pick";
+  $("lockForm").classList.toggle("hidden", pick);
+  $("profList").classList.toggle("hidden", !pick);
+  $("pName").classList.toggle("hidden", m !== "create");
   $("pw2").classList.toggle("hidden", m === "unlock");
-  $("bUnlock").textContent = m === "unlock" ? "Entra" : "Imposta la password";
-  $("lockMsg").innerHTML = m === "unlock" ? "Inserisci la password per aprire CashMkr."
-    : m === "change" ? "Scegli la nuova password (almeno 8 caratteri)."
-    : "Prima apertura: scegli una password (almeno 8 caratteri). Servirà ogni volta che apri CashMkr e cifra tutti i dati salvati. <b>Non è recuperabile</b>: annotala in un posto sicuro." + (readJSON(OLD_KEY) ? "<br>I dati già salvati della versione precedente verranno cifrati con questa password." : "");
+  $("bUnlock").textContent = m === "unlock" ? "Entra" : m === "create" ? "Crea il profilo" : "Imposta la password";
+  const nm = profName(curProf);
+  $("lockWho").classList.toggle("hidden", !(m === "unlock" || (m === "create" && many)));
+  $("lockWho").innerHTML = m === "unlock" ? `Profilo <b>${esc(nm)}</b>` + (M0.list.length > 1 || M0.on !== false ? ` · <a href="#" id="lockOther">altro profilo</a>` : "")
+    : `<a href="#" id="lockOther">← profili</a>`;
+  if (pick) {
+    $("profList").innerHTML = M0.list.map(p => `<button type="button" class="btn profbtn" data-p="${p.id}"><span class="pix">👤</span> ${esc(p.name)}</button>`).join("")
+      + `<button type="button" class="btn profbtn add" data-p="+">+ Nuovo profilo</button>`;
+    $("lockMsg").innerHTML = "Chi sei? Scegli il tuo profilo: ognuno ha la sua password, il suo conto e le sue impostazioni.";
+  } else if (m === "unlock") $("lockMsg").innerHTML = "Inserisci la password per aprire CashMkr.";
+  else if (m === "change") $("lockMsg").innerHTML = "Scegli la nuova password (almeno 8 caratteri).";
+  else {
+    $("pName").value = LINK && newProf ? LINK.name : (!newProf && profName(curProf)) || "";
+    $("lockMsg").innerHTML = (LINK && newProf ? `Link personale${LINK.name ? " di <b>" + esc(LINK.name) + "</b>" : ""}: il wallet <b>${LINK.addr.slice(0, 6)}…${LINK.addr.slice(-4)}</b> (${LINK.net}) si collega da solo in sola osservazione. Devi solo scegliere la tua password (almeno 8 caratteri).<br>Su iPhone, se vuoi l'icona sulla Home, aggiungila <b>adesso</b> (Condividi → Aggiungi alla schermata Home) e crea il profilo aprendo l'icona.`
+      : many ? "Nuovo profilo: scrivi il nome e scegli la sua password (almeno 8 caratteri)."
+      : "Prima apertura: scrivi il nome del profilo e scegli una password (almeno 8 caratteri).")
+      + " La password serve ogni volta che apri il profilo e cifra i suoi dati. <b>Non è recuperabile</b>: annotala in un posto sicuro."
+      + (!many && readJSON(OLD_KEY) ? "<br>I dati già salvati della versione precedente verranno cifrati con questa password." : "");
+  }
+  $("lockReset").textContent = M0.list.length > 1 ? "Password dimenticata? Cancella questo profilo" : "Password dimenticata? Cancella tutti i dati";
   $("lockReset").parentElement.classList.toggle("hidden", m !== "unlock");
   $("bLockCancel").classList.toggle("hidden", m !== "change");
-  setTimeout(() => $("pw1").focus(), 50);
+  const o = $("lockOther");
+  if (o) o.onclick = ev => { ev.preventDefault(); if (unlocked) switchProfile(); else { newProf = false; showLock("pick"); } };
+  setTimeout(() => (m === "create" && !$("pName").value ? $("pName") : $("pw1")).focus(), 50);
+}
+$("profList").addEventListener("click", e => {
+  const b = e.target.closest("[data-p]"); if (!b) return;
+  if (b.dataset.p === "+") { newProf = true; showLock("create"); return; }
+  newProf = false; openProfile(b.dataset.p);
+});
+async function switchProfile() {
+  if (S.tog.bot && !confirm("Il bot TEST FREE di questo profilo si ferma finché non lo riapri (quello sul server continua). Cambiare profilo?")) return;
+  await saveNow();
+  try { sessionStorage.setItem("cashmkr_pick", "1"); } catch (e) {}
+  location.reload();
+}
+function renameProfile() {
+  const m = profMeta(), p = m.list.find(x => x.id === curProf); if (!p) return;
+  const n = (prompt("Nuovo nome del profilo:", p.name) || "").trim().slice(0, 30);
+  if (!n || n === p.name) return;
+  if (m.list.some(x => x.id !== p.id && x.name.toLowerCase() === n.toLowerCase())) { alert("Esiste già un profilo con questo nome."); return; }
+  p.name = n; profSave(m); log(`Profilo rinominato: ${n}.`); renderProf();
 }
 async function submitLock(e) {
   e.preventDefault();
@@ -2000,31 +2121,50 @@ async function submitLock(e) {
       await decryptJSON(k, L.check);                 // la password è giusta solo se il controllo si decifra
       if (!unlocked && D) apply(await decryptJSON(k, D));
       cryptoKey = k; fails = 0; $("lock").classList.add("hidden");
-      if (!unlocked) start();
+      if (!unlocked) { applyLink(); start(); }
     } catch (err) {
       fails++; if (fails >= 3) waitUntil = Date.now() + Math.min(300, 5 * 2 ** (fails - 3)) * 1000;
       $("lockErr").textContent = "Password sbagliata." + (fails >= 3 ? " Attendi qualche secondo prima di riprovare." : "");
     }
     $("bUnlock").disabled = false; return;
   }
+  let M0 = null, name = "";
+  if (m === "create") {
+    M0 = profMeta(); name = $("pName").value.trim().slice(0, 30) || (M0.list.length ? "Profilo " + (M0.list.length + 1) : "Gigi");
+    const same = M0.list.find(x => x.name.toLowerCase() === name.toLowerCase() && (newProf || x.id !== curProf));
+    if (same) { $("lockErr").textContent = "Esiste già un profilo con questo nome: torna ai profili e sceglilo, oppure usa un altro nome."; return; }
+  }
   if (pw.length < 8) { $("lockErr").textContent = "La password deve avere almeno 8 caratteri."; return; }
   if (pw !== $("pw2").value) { $("lockErr").textContent = "Le due password non coincidono."; return; }
+  $("bUnlock").disabled = true;
   const salt = crypto.getRandomValues(new Uint8Array(16)), iter = 310000;
   const k = await deriveKey(pw, salt, iter);
-  if (m === "create") apply(readJSON(OLD_KEY) || readJSON(PLAIN_KEY));
+  if (m === "create") {
+    // profilo già in elenco ma senza dati (es. "Gigi" vuoto) oppure profilo nuovo
+    let p = newProf ? null : M0.list.find(x => x.id === curProf && !readJSON(LOCK_KEY));
+    if (!p) { const id = M0.list.some(x => x.id === "p1") ? "p" + Date.now().toString(36) : "p1"; p = { id, name, addr: "" }; M0.list.push(p); }
+    p.name = name; M0.last = p.id; profSave(M0); useProfile(p.id);
+    if (p.id === "p1") apply(readJSON(OLD_KEY) || readJSON(PLAIN_KEY));
+    if (LINK && newProf) applyLink();
+  }
   S.tog.askPw = true; cryptoKey = k;
   localStorage.setItem(LOCK_KEY, JSON.stringify({ v: 1, salt: b64(salt), iter, check: await encryptJSON(k, { ok: "cashmkr" }) }));
   localStorage.setItem(DATA_KEY, JSON.stringify(await encryptJSON(k, snapshot())));
-  try { localStorage.removeItem(OLD_KEY); localStorage.removeItem(PLAIN_KEY); } catch (e) {}
+  try { if (curProf === "p1") localStorage.removeItem(OLD_KEY); localStorage.removeItem(PLAIN_KEY); } catch (e) {}
+  $("bUnlock").disabled = false;
   $("lock").classList.add("hidden");
-  if (!unlocked) start(); else { log("Password impostata."); buildToggles(); }
+  if (!unlocked) { if (m === "create") setTimeout(() => log(`Profilo "${name}" creato.`), 0); start(); } else { log("Password impostata."); buildToggles(); }
 }
 function resetAll(e) {
   e.preventDefault();
-  if (!confirm("Cancellare TUTTI i dati di CashMkr in questo browser (conto di prova, storico, impostazioni, chiave salvata)?\nNon si può annullare.")) return;
+  const M0 = profMeta(), others = M0.list.filter(x => x.id !== curProf), nm = profName(curProf);
+  if (others.length) {
+    if (!confirm(`Cancellare il profilo "${nm}" da questo dispositivo (conto di prova, storico, impostazioni, chiave salvata)?\nGli altri profili restano. Non si può annullare.`)) return;
+  } else if (!confirm("Cancellare TUTTI i dati di CashMkr in questo browser (conto di prova, storico, impostazioni, chiave salvata)?\nNon si può annullare.")) return;
   if ((prompt("Scrivi CANCELLA per confermare") || "").trim().toUpperCase() !== "CANCELLA") return;
-  for (const k of [LOCK_KEY, DATA_KEY, PLAIN_KEY, OLD_KEY]) try { localStorage.removeItem(k); } catch (_) {}
-  try { indexedDB.deleteDatabase("qg_leva"); } catch (_) {}
+  for (const k of [LOCK_KEY, DATA_KEY, PLAIN_KEY].concat(curProf === "p1" ? [OLD_KEY] : [])) try { localStorage.removeItem(k); } catch (_) {}
+  M0.list = others; if (M0.last === curProf) M0.last = others.length ? others[0].id : ""; profSave(M0);
+  if (!others.length) { try { localStorage.removeItem(PROF_KEY); } catch (_) {} try { indexedDB.deleteDatabase("qg_leva"); } catch (_) {} }
   location.reload();
 }
 let lastAct = Date.now();
@@ -2618,7 +2758,14 @@ function drawChart() {
 }
 
 /* interruttori */
+function renderProf() {
+  const n = profName(curProf) || "—", m = profMeta();
+  $("bProfile").textContent = "👤 " + n;
+  $("profBox").innerHTML = `<div>Profilo <b>${esc(n)}</b><small>${m.list.length} ${m.list.length === 1 ? "profilo" : "profili"} su questo dispositivo: ${m.list.map(p => esc(p.name)).join(", ")}. I profili restano su questo telefono o computer.</small></div>
+    <div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn sm" data-pa="ren">Rinomina</button><button class="btn sm" data-pa="sw">Cambia</button></div>`;
+}
 function buildToggles() {
+  renderProf();
   $("toggles").innerHTML = TOGGLES.map(t => `<div class="tog"><div>${t.t}${t.d ? `<small>${t.d}</small>` : ""}</div>
     <label class="sw"><input type="checkbox" data-tog="${t.id}" ${S.tog[t.id] ? "checked" : ""} ${t.locked ? "disabled" : ""}><span></span></label></div>`).join("");
 }
@@ -3103,6 +3250,7 @@ function bind() {
     if (id === "house") Casa.apply();
     if (id === "observe") { SRV.at = 0; refreshWallet(); }
     if (id === "week") { renderWeek(); Casa.sign(); }
+    if (id === "profiles") { profTouch(); renderProf(); }
     log(`Interruttore "${TOGGLES.find(t => t.id === id).t}": ${S.tog[id] ? "acceso" : "spento"}.`);
     if (id === "save" && !S.tog.save) { try { localStorage.removeItem(KEY); } catch (_) {} } else save();
     renderAll();
@@ -3126,6 +3274,7 @@ function bind() {
     if (HLC) { HLC = new HLM.Client(n, S.wallet.addr, memKey); W.acc = null; refreshWallet(true); }
     renderWallet(); log("Rete del wallet: " + n + ".");
   });
+  $("profBox").addEventListener("click", e => { const a = e.target.dataset.pa; if (a === "ren") renameProfile(); if (a === "sw") switchProfile(); });
   $("bWConnect").onclick = () => connectWallet();
   $("bWVerify").onclick = () => verifyWallet();
   $("bWForget").onclick = () => forgetWallet();
@@ -3141,6 +3290,7 @@ function renderCoinChips() { document.querySelectorAll("#coinChips .chip").forEa
 /* ---------------- avvio ---------------- */
 const startAt = Date.now();
 function start() {
+  S.tog.profiles = profMeta().on !== false; // impostazione del dispositivo, uguale per tutti i profili
   unlocked = true;
   if (S.tog.bot && S.sess.alive) {
     const gap = Date.now() - S.sess.alive;
@@ -3174,11 +3324,9 @@ function start() {
 $("lockForm").addEventListener("submit", submitLock);
 $("lockReset").addEventListener("click", resetAll);
 $("bLockCancel").onclick = () => { $("lock").classList.add("hidden"); buildToggles(); };
-$("bLockNow").onclick = () => { if (!unlocked) return; if (!S.tog.askPw) { alert("Accendi prima l'interruttore \"Password all'apertura\"."); return; } showLock("unlock"); };
-(() => {
-  if (!readJSON(DATA_KEY) && readJSON(PLAIN_KEY) && readJSON(PLAIN_KEY).tog && readJSON(PLAIN_KEY).tog.askPw === false) { $("lock").classList.add("hidden"); apply(readJSON(PLAIN_KEY)); start(); return; } // password spenta dall'utente
-  showLock();
-})();
+$("bLockNow").onclick = () => { if (!unlocked) return; if (!S.tog.askPw) { if (profMeta().on !== false) { switchProfile(); return; } alert("Accendi prima l'interruttore \"Password all'apertura\"."); return; } showLock("unlock"); };
+$("bProfile").onclick = () => { if (unlocked) switchProfile(); };
+bootLock();
 window.__qg = { Casa, get S() { return S; }, get W() { return W; }, M, get candles() { return M.BTC.candles; }, Core, COINS,
   setPrice: (p, coin) => { if (typeof p === "object") { for (const k in p) { M[k].price = p[k]; M[k].priceAt = Date.now(); } } else { const k = coin || "BTC"; M[k].price = p; M[k].priceAt = Date.now(); } onTick(); },
   inject: (arr, coin) => { const k = coin || "BTC"; M[k].candles = arr; src = "hl"; M[k].priceAt = Date.now(); }, processClosed };
