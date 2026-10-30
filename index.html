@@ -483,6 +483,9 @@ details.op[open] { background: #0b1a33; margin: 0 -6px; padding: 6px; }
       <div class="ph"><h2>Rischio</h2></div>
       <div class="row"><label>Rischio per operazione (% del saldo)</label><input type="number" id="cRisk" min="0.1" max="10" step="0.1"></div>
       <div class="row"><label>Posizioni del bot aperte insieme, al massimo</label><input type="number" id="cMaxPos" min="1" max="4" step="1"></div>
+      <div class="row"><label>Tetto di rischio totale (% del conto, se l'interruttore è acceso)</label><input type="number" id="cCap" min="0.5" max="6" step="0.25"></div>
+      <div class="row"><label>Rischio adattivo: % ai massimi del saldo</label><input type="number" id="cRiskHi" min="0.1" max="3" step="0.05"></div>
+      <div class="row"><label>Rischio adattivo: % sotto il massimo</label><input type="number" id="cRiskLo" min="0.1" max="3" step="0.05"></div>
       <div class="row"><label>Leva massima consentita</label><input type="number" id="cMaxLev" min="1" max="40" step="1"></div>
       <div class="row"><label>Perdita massima giornaliera (%)</label><input type="number" id="cDaily" min="1" max="50" step="1"></div>
       <div class="note">La perdita di ogni operazione del bot è limitata dallo stop al rischio scelto; la leva serve solo a impegnare meno margine, e la liquidazione resta sempre più lontana dello stop.</div>
@@ -1358,7 +1361,11 @@ const BEST = { version: 6, cfg: { risk: 0.75, maxPos: 4, maxLev: 40 } };
 // "Solo le monete più forti": classifica sui rendimenti di 3, 7 e 14 giorni, entra solo sulle prime 2
 const RS = { lbs: [3, 7, 14], top: 2 };
 
-const DEFAULTS = { risk: 0.01, maxPos: 1, maxLev: 40, fee: 0.00045, feeIn: 0.00045, slip: 0.0001, funding: 0.0001, mmr: 0.0125, minNotional: 10 };
+const DEFAULTS = { risk: 0.01, maxPos: 1, maxLev: 40, fee: 0.00045, feeIn: 0.00045, slip: 0.0001, funding: 0.0001, mmr: 0.0125, minNotional: 10, riskCap: 0 };
+// Tetto di rischio totale: quanto si perderebbe se tutte le posizioni del bot toccassero lo stop (più la commissione di chiusura)
+// Rischio adattivo (piano B): rischio alto quando il saldo realizzato è al suo massimo, base sotto il massimo; tetto = k × rischio (con un massimo)
+function adaptRisk(B, a) { const pk = Math.max(B.peak || 0, B.start || 0), high = B.balance >= pk * 0.999, risk = high ? a.hi : a.lo; return { risk, cap: Math.min(a.k * risk, a.max), high }; }
+function openRisk(positions, fee) { let r = 0; for (const p of positions) { if (p.by === "manuale" || p.strat === "manuale") continue; const q = p.qty != null ? p.qty : p.size; r += Math.max(0, q * (p.entry - p.sl) * p.side) + q * p.sl * (fee || 0); } return r; }
 
 /* Volatilità: ATR giornaliero / prezzo, percentile sugli ultimi 180 giorni (solo dati passati).
    D = candele giornaliere {t,o,h,l,c}; restituisce un valore per ogni candela 15m di C (NaN se la storia non basta). */
@@ -1426,6 +1433,7 @@ function closePos(B, pos, px, t, why, o) {
   let pnl = gross - pos.feeIn - feeOut - fund;
   if (why === "Liquidata") pnl = -pos.margin - pos.feeIn;
   B.balance += pnl;
+  B.peak = Math.max(B.peak || B.start || 0, B.balance);
   B.positions = B.positions.filter(p => p.id !== pos.id);
   const tr = { id: pos.id, coin: pos.coin || "BTC", strat: pos.strat, side: pos.side, lev: pos.lev, entry: pos.entry, exit: px, opened: pos.opened, closed: t, why, pnl, r: pnl / pos.riskAmt, notional: pos.qty * pos.entry };
   B.history.push(tr);
@@ -1438,6 +1446,7 @@ function closePart(B, pos, px, t, frac, o) {
   const fIn = pos.feeIn * frac, fOut = o.feesOn ? q * px * o.fee : 0, fund = o.fundingOn ? q * pos.entry * o.funding * hours / 8 : 0;
   const pnl = q * (px - pos.entry) * pos.side - fIn - fOut - fund, rk = pos.riskAmt * frac;
   B.balance += pnl;
+  B.peak = Math.max(B.peak || B.start || 0, B.balance);
   B.history.push({ id: pos.id, coin: pos.coin || "BTC", strat: pos.strat, side: pos.side, lev: pos.lev, entry: pos.entry, exit: px, opened: pos.opened, closed: t, why: "Uscita parziale", pnl, r: pnl / rk, notional: q * pos.entry, partial: true });
   pos.qty -= q; pos.margin *= 1 - frac; pos.feeIn -= fIn; pos.riskAmt -= rk; pos.partDone = true;
 }
@@ -1486,7 +1495,9 @@ function openAuto(B, strat, side, px, atr, t, o) {
   if (open.length >= o.maxPos) return "già aperte " + o.maxPos + " posizioni (limite)";
   const entry = px * (1 + side * o.slip), slD = strat.ex.sl * atr, slPct = slD / entry;
   const lev = Math.max(1, Math.min(o.maxLev, Math.floor(1 / (slPct * 1.5 + o.mmr))));
-  const riskAmt = B.balance * o.risk;
+  if (o.adapt) { const x = adaptRisk(B, o.adapt); o = Object.assign({}, o, { risk: x.risk, riskCap: x.cap }); }
+  let riskAmt = B.balance * o.risk;
+  if (o.riskCap > 0) { const left = B.balance * o.riskCap - openRisk(open, o.feesOn ? o.fee : 0); if (left < B.balance * o.risk * 0.1) return "tetto di rischio totale raggiunto (" + +(o.riskCap * 100).toFixed(2) + "% del conto)"; riskAmt = Math.min(riskAmt, left); }
   const fIn = o.feesOn ? o.feeIn : 0, fOut = o.feesOn ? o.fee : 0;
   let notional = riskAmt / (slPct + fIn + fOut + o.slip);
   const free = B.balance - B.positions.reduce((a, p) => a + p.margin, 0);
@@ -1619,7 +1630,7 @@ function backtestMulti(data, strats, opt, extras) {
   return { book: B, mdd, curve, from: fromT, to: toT };
 }
 
-const API = { RS, rsRanks, btcDown, smartShortReason, backtestMulti, closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
+const API = { adaptRisk, openRisk, RS, rsRanks, btcDown, smartShortReason, backtestMulti, closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
 if (typeof module !== "undefined") module.exports = API; else root.Core = API;
 })(typeof window !== "undefined" ? window : this);
 
@@ -2044,6 +2055,8 @@ const TOGGLES = [
   { id: "house", t: "Grafica casa", d: "La casa in stile HD-2D: tocchi una stanza, zoom, e dentro trovi i comandi. Spento: grafica classica", def: true },
   { id: "anim", t: "Animazioni della casa", d: "Luci, neon e robot in movimento (12 immagini al secondo). Spento: casa ferma, consuma meno sul telefono sempre acceso", def: true },
   { id: "rsTop", t: "Solo le 2 monete più forti", d: "Classifica sui rendimenti di 3, 7 e 14 giorni tra le monete accese: il bot entra solo sulle prime 2. Meno operazioni e discese più piccole", def: true },
+  { id: "adapt", t: "Rischio adattivo (piano B)", d: "1,5% per operazione quando il saldo realizzato è al suo massimo, 0,75% appena una perdita chiusa lo porta sotto; il tetto totale segue (2× il rischio, max 3%). Acceso: rischio e tetto qui sotto non contano. Nei test su 10 finestre da 1.500 giorni ha battuto il rischio fisso in tutte", def: true },
+  { id: "riskCap", t: "Tetto di rischio totale", d: "Somma il rischio fino allo stop di tutte le posizioni aperte del bot: se supera il tetto (1,5% di serie), la nuova posizione entra più piccola o non entra. Nei test 2020-2026: discese più piccole con poco guadagno perso", def: true },
   { id: "wakeLock", t: "Schermo sempre acceso", d: "Mentre il bot è avviato lo schermo non si spegne (indispensabile sul telefono)", def: true },
   { id: "manual", t: "Operazioni manuali", d: "Pulsanti Long / Short sulla moneta scelta nel grafico", def: true },
   { id: "feesOn", t: "Commissioni", d: "0,045% del valore a ogni apertura e chiusura (Hyperliquid)", def: true },
@@ -2088,7 +2101,7 @@ let S = {
   stratOn: Object.fromEntries(STR.map(s => [s.id, s.def])),
   stratOpt: Object.fromEntries(STR.map(s => [s.id, { long: s.dir === "long", lowVol: s.vol === "low" }])),
   bestV: Core.BEST.version,
-  cfg: { risk: 0.75, maxPos: 4, maxLev: 40, daily: 5 },
+  cfg: { risk: 0.75, maxPos: 4, maxLev: 40, daily: 5, cap: 1.5, riskHi: 1.5, riskLo: 0.75, capK: 2, capMax: 3 },
   manual: { lev: 10, margin: 20, sl: 1, tp: 2 },
   day: { key: "", startEq: 0, locked: "" },
   wallet: { net: "testnet", addr: "", key: "", verifiedFor: "" },
@@ -2131,7 +2144,12 @@ function rsReason(coin, t) {
   return r >= Core.RS.top ? `${coin} è ${r + 1}ª in classifica, non tra le prime ${Core.RS.top}` : "";
 }
 function opts(coin) {
-  return Object.assign({}, Core.DEFAULTS, { coin: coin || "BTC", risk: S.cfg.risk / 100, maxPos: S.cfg.maxPos, maxLev: S.cfg.maxLev, feesOn: S.tog.feesOn, fundingOn: S.tog.fundingOn });
+  return Object.assign({}, Core.DEFAULTS, { coin: coin || "BTC", risk: S.cfg.risk / 100, maxPos: S.cfg.maxPos, maxLev: S.cfg.maxLev, feesOn: S.tog.feesOn, fundingOn: S.tog.fundingOn, riskCap: S.tog.riskCap ? S.cfg.cap / 100 : 0, adapt: adaptCfg() });
+}
+function adaptCfg() { return S.tog.adapt ? { hi: S.cfg.riskHi / 100, lo: S.cfg.riskLo / 100, k: S.cfg.capK, max: S.cfg.capMax / 100 } : null; }
+// conto vero: saldo realizzato (senza i G/P delle posizioni aperte) e suo massimo storico, per il rischio adattivo
+const realizedOf = acc => acc.equity - Object.values(acc.positions || {}).reduce((x, p) => x + (+p.unrealizedPnl || 0), 0);
+function trackHwm(acc) { const r = realizedOf(acc); if (r > 0 && !(S.real.hwm >= r)) { S.real.hwm = r; save(); } return r;
 }
 /* ---------------- password e cifratura (PBKDF2 + AES-GCM) ---------------- */
 /* profili: ognuno ha la sua password e i suoi dati cifrati a parte. Il primo profilo ("p1") usa le chiavi di sempre */
@@ -2568,7 +2586,7 @@ async function refreshWallet(first) {
   if (!HLC || W.busy) return;
   try {
     const [acc, orders, mids] = await Promise.all([HLC.account(), HLC.openOrders(), HLC.mids()]);
-    W.acc = acc; W.orders = orders; W.mids = mids || {}; W.err = ""; W.at = Date.now();
+    W.acc = acc; W.orders = orders; W.mids = mids || {}; W.err = ""; W.at = Date.now(); trackHwm(acc);
     if (first) log(`Wallet collegato (${S.wallet.net}): valore ${usd2(acc.equity)}.`);
     const k = todayKey(), D = S.real.day;
     if (D.key !== k) S.real.day = { key: k, startEq: acc.equity, locked: "" };
@@ -2655,7 +2673,16 @@ async function doRealOpen(coin, stratId, side, slPct, tpPct, lev, notionalWanted
     const nBot = Object.values(S.real.pos).filter(p => p.strat !== "manuale").length;
     if (bot && nBot >= S.cfg.maxPos) { rlog(`${coin}: ordine vero non inviato, già ${nBot} posizioni vere del bot (limite ${S.cfg.maxPos}).`); return; }
     lev = Math.max(1, Math.min(lev, meta.maxLeverage, S.cfg.maxLev));
-    let notional = notionalWanted != null ? notionalWanted : acc.equity * S.cfg.risk / 100 / (slPct + 2 * Core.DEFAULTS.fee + 0.0005);
+    const ac = bot ? adaptCfg() : null, ad = ac ? Core.adaptRisk({ balance: trackHwm(acc), peak: S.real.hwm }, ac) : null;
+    let riskPct = ad ? ad.risk * 100 : S.cfg.risk;
+    const baseR = riskPct, capPct = ad ? ad.cap * 100 : (S.tog.riskCap ? S.cfg.cap : 0);
+    if (ad) rlog(`${coin}: rischio adattivo, saldo ${ad.high ? "ai massimi" : "sotto il massimo"} → ${+riskPct.toFixed(2)}% (tetto ${+capPct.toFixed(2)}%).`);
+    if (bot && notionalWanted == null && capPct) {
+      const used = Core.openRisk(Object.values(S.real.pos), Core.DEFAULTS.fee) / acc.equity * 100, left = capPct - used;
+      if (left < baseR * 0.1) { rlog(`${coin}: ordine vero non inviato, tetto di rischio totale raggiunto (${used.toFixed(2)}% già a rischio, tetto ${+capPct.toFixed(2)}%).`); return; }
+      if (left < riskPct) { riskPct = left; rlog(`${coin}: rischio ridotto a ${left.toFixed(2)}% per restare nel tetto totale del ${+capPct.toFixed(2)}%.`); }
+    }
+    let notional = notionalWanted != null ? notionalWanted : acc.equity * riskPct / 100 / (slPct + 2 * Core.DEFAULTS.fee + 0.0005);
     if (notional / lev > acc.available * 0.95) notional = acc.available * 0.95 * lev;
     const sz = HLM.roundSz(notional / mid, meta.szDecimals);
     if (sz * mid < 10.5) { rlog(`${coin}: ordine vero non inviato, valore ${usd2(sz * mid)} sotto il minimo di 10 $ (conto ${usd2(acc.equity)}).`); return; }
@@ -3601,7 +3628,7 @@ function showLab(r, start, strats, coins, data, ms) {
   $("lSummary").innerHTML = `<div><b>Risultato finale: ${eur(start)} → <span class="${cls(fin - start)}">${eur(fin)}</span></b> · guadagno <b class="${cls(fin - start)}">${eurS(fin - start)} (${pct((fin / start - 1) * 100)})</b> in ${Math.round(days)} giorni
     <br>${H.length} operazioni su ${coins.join(", ")}: <span class="pos">${wins.length} vinte</span> e <span class="neg">${loss.length} perse</span> (${H.length ? Math.round(wins.length / H.length * 100) : 0}% vinte) · guadagno medio per operazione ${H.length ? eurS((fin - start) / H.length) : "—"}
     · fattore di profitto ${gl > 0 ? (gw / gl).toFixed(2).replace(".", ",") : "—"} · resa media mensile ${pct(monthly)}${days >= 300 ? " · annua " + pct(yearly) : ""} · discesa massima −${(r.mdd * 100).toFixed(1).replace(".", ",")}%
-    <br><span class="note">Monete: ${coins.join(", ")}${S.tog.rsTop ? " (solo le 2 più forti)" : ""} · strategie accese: ${on} · rischio ${rk}% · max ${S.cfg.maxPos} posizioni (una per moneta) · commissioni ${S.tog.feesOn ? "sì" : "no"} · funding ${S.tog.fundingOn ? "sì" : "no"}</span></div>`;
+    <br><span class="note">Monete: ${coins.join(", ")}${S.tog.rsTop ? " (solo le 2 più forti)" : ""} · strategie accese: ${on} ${S.tog.adapt ? " · rischio adattivo " + S.cfg.riskHi.toLocaleString("it-IT") + "% ai massimi / " + S.cfg.riskLo.toLocaleString("it-IT") + "% sotto, tetto 2×" : " · rischio " + rk + "%" + (S.tog.riskCap ? " · tetto totale " + S.cfg.cap.toLocaleString("it-IT") + "%" : "")} · max ${S.cfg.maxPos} posizioni (una per moneta) · commissioni ${S.tog.feesOn ? "sì" : "no"} · funding ${S.tog.fundingOn ? "sì" : "no"}</span></div>`;
   drawCurve(r.curve, start);
 }
 
@@ -3622,10 +3649,10 @@ function drawCurve(curve, start) {
 /* ---------------- eventi ---------------- */
 function bind() {
   const c = S.cfg, m = S.manual;
-  $("cRisk").value = c.risk; $("cMaxPos").value = c.maxPos; $("cMaxLev").value = c.maxLev; $("cDaily").value = c.daily;
+  $("cRisk").value = c.risk; $("cMaxPos").value = c.maxPos; $("cMaxLev").value = c.maxLev; $("cDaily").value = c.daily; $("cCap").value = c.cap; $("cRiskHi").value = c.riskHi; $("cRiskLo").value = c.riskLo;
   $("mLev").value = m.lev; $("mMargin").value = m.margin; $("mSl").value = m.sl; $("mTp").value = m.tp;
   const num = (id, obj, k, lo, hi, intg) => $(id).addEventListener("input", () => { let v = parseFloat($(id).value); if (isNaN(v)) return; v = Math.min(hi, Math.max(lo, v)); obj[k] = intg ? Math.round(v) : v; save(); renderManual(); renderHeader(); });
-  num("cRisk", c, "risk", 0.1, 10); num("cMaxPos", c, "maxPos", 1, 4, 1); num("cMaxLev", c, "maxLev", 1, 40, 1); num("cDaily", c, "daily", 1, 50, 1);
+  num("cRisk", c, "risk", 0.1, 10); num("cMaxPos", c, "maxPos", 1, 4, 1); num("cMaxLev", c, "maxLev", 1, 40, 1); num("cDaily", c, "daily", 1, 50, 1); num("cCap", c, "cap", 0.5, 6); num("cRiskHi", c, "riskHi", 0.1, 3); num("cRiskLo", c, "riskLo", 0.1, 3);
   num("mLev", m, "lev", 1, 40, 1); num("mMargin", m, "margin", 1, 1e7); num("mSl", m, "sl", 0, 100); num("mTp", m, "tp", 0, 1000);
   $("mLev").addEventListener("input", () => { if (m.lev > c.maxLev) { m.lev = c.maxLev; $("mLev").value = m.lev; } });
   const manual = side => {
