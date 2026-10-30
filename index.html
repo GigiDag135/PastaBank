@@ -309,6 +309,67 @@ body:not(.casa) .wkbox { background: var(--card); border-color: var(--line2); bo
 #lockWho b { color: var(--text, #fff); }
 #profBox .row { display: flex; }
 
+/* teletrasporto e astronave */
+.cport { position: absolute; bottom: 12px; left: calc(50% + 74px); z-index: 3; background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; transition: opacity .4s; }
+.cport .portal { width: 42px; height: 42px; image-rendering: pixelated; animation: portPulse 1.6s ease-in-out infinite; }
+.cport span { font-size: 8px; color: #c4b5fd; text-shadow: 0 1px 0 #000, 0 0 6px #8b5cf6; }
+.zoomed .cport { opacity: 0; pointer-events: none; }
+.portal .sw { animation: portSw 1.2s steps(3) infinite; }
+@keyframes portPulse { 0%, 100% { filter: drop-shadow(0 0 3px #8b5cf6) drop-shadow(0 0 6px #22d3ee66); transform: scale(1); } 50% { filter: drop-shadow(0 0 8px #a78bfa) drop-shadow(0 0 14px #22d3eeaa); transform: scale(1.06); } }
+@keyframes portSw { 0% { opacity: 1; } 50% { opacity: .35; } 100% { opacity: 1; } }
+.tpfx { position: fixed; inset: 0; z-index: 90; pointer-events: none; overflow: hidden; }
+.tpfx.go { animation: tpFlash 1.1s ease-out forwards; }
+.tpfx i { position: absolute; left: 50%; top: 55%; width: 4px; height: 4px; opacity: 0; box-shadow: 0 0 6px currentColor; }
+.tpfx.go i { animation: tpSpark .9s ease-out forwards; }
+@keyframes tpFlash { 0% { background: rgba(196,181,253,0); } 25% { background: rgba(240,235,255,.95); } 45% { background: rgba(255,255,255,1); } 100% { background: rgba(196,181,253,0); } }
+@keyframes tpSpark { 0% { opacity: 1; transform: translate(0,0) scale(1.4); } 100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(.4); } }
+body.inship { overflow: hidden; }
+.ship { position: fixed; inset: 0; z-index: 60; background: #05030f; display: flex; flex-direction: column; color: #e6e9ff; }
+.shipview { position: relative; flex: none; width: 100%; max-width: 640px; margin: 0 auto; aspect-ratio: 4 / 3; max-height: 38vh; }
+.shipview #shipCanvas, .shipview canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+.shipview canvas { object-fit: cover; }
+.shiptop { position: absolute; left: 10px; top: calc(8px + env(safe-area-inset-top)); font-size: 10px; color: #a5f3fc; background: #0b0f24cc; border: 2px solid #38bdf8; box-shadow: inset 0 0 0 1px #000a, 0 0 10px #38bdf855; padding: 6px 8px 5px; border-radius: 3px; max-width: calc(100% - 96px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shipback { position: absolute; right: 8px; top: calc(4px + env(safe-area-inset-top)); background: none; border: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+.shipback .portal { width: 40px; height: 40px; image-rendering: pixelated; animation: portPulse 1.6s ease-in-out infinite; }
+.shipback span.pix { font-size: 8px; color: #c4b5fd; text-shadow: 0 1px 0 #000; }
+.shipdeck { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px 12px calc(24px + env(safe-area-inset-bottom)); width: 100%; max-width: 640px; margin: 0 auto; background: linear-gradient(180deg, #20253d 0, #12152a 40px, #0b0d1e 100%); border-top: 3px solid #3b4466; }
+.scr { display: block; background: linear-gradient(180deg, #0d1530, #0a0f24); border: 2px solid #2c3a66; box-shadow: inset 0 0 0 1px #000c, inset 0 0 18px #38bdf814, 0 4px 12px #0008; border-radius: 4px; padding: 10px 12px; margin-bottom: 10px; }
+.scrt, .scr > summary { font-size: 10px; color: #7dd3fc; letter-spacing: 1px; margin-bottom: 8px; }
+.scr > summary { cursor: pointer; list-style: none; margin: 0; display: flex; justify-content: space-between; align-items: center; }
+.scr > summary::-webkit-details-marker { display: none; }
+.scr > summary::after { content: "▾"; color: #38bdf8; font-size: 12px; margin-left: 8px; }
+.scr[open] > summary { margin-bottom: 8px; }
+.scr[open] > summary::after { content: "▴"; }
+.scr .big { font-size: 18px; margin: 2px 0 8px; }
+.scrs { font-size: 9px; color: #93c5fd; margin: 10px 0 4px; }
+.st-on { border-color: #22c55e; box-shadow: inset 0 0 0 1px #000c, inset 0 0 24px #22c55e22, 0 0 14px #22c55e33; } .st-on .big { color: #4ade80; text-shadow: 0 0 10px #22c55e88; }
+.st-off { border-color: #ef4444; box-shadow: inset 0 0 0 1px #000c, inset 0 0 24px #ef444422; } .st-off .big { color: #f87171; }
+.st-warn { border-color: #f59e0b; } .st-warn .big { color: #fbbf24; font-size: 13px; }
+.scr .kv { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; font-size: 13px; border-bottom: 1px dashed #1e2a4d; }
+.scr .kv span { color: #94a3c8; } .scr .kv b { text-align: right; font-family: var(--mono); font-weight: 600; }
+.scr .kv.big2 b { font-size: 18px; }
+.pcard { background: #0b1a33; border: 1px solid #1f3b66; border-radius: 3px; padding: 6px 8px; margin: 6px 0; font-size: 13px; }
+.schips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.schip { font: 600 11px var(--mono); padding: 3px 7px; border-radius: 3px; border: 1px solid #334166; color: #64748b; background: #0b1124; }
+.schip.on { color: #a5f3fc; border-color: #0891b2; background: #082f49; }
+details.op { border-top: 1px solid #1e2a4d; padding: 6px 0; }
+details.op > summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; font-size: 12.5px; align-items: center; }
+details.op > summary::-webkit-details-marker { display: none; }
+details.op > summary span { color: #94a3c8; font-family: var(--mono); }
+details.op[open] { background: #0b1a33; margin: 0 -6px; padding: 6px; }
+.seg { display: flex; gap: 4px; background: #070b1a; border: 1px solid #1e2a4d; border-radius: 4px; padding: 3px; }
+.seg button { flex: 1; background: none; border: 0; color: #94a3c8; font: 600 12px var(--mono); padding: 7px 4px; border-radius: 3px; cursor: pointer; }
+.seg button.on { background: #1e3a8a; color: #fff; box-shadow: inset 0 0 0 1px #3b82f6; }
+.bars { display: flex; align-items: flex-end; gap: 2px; height: 70px; margin: 8px 0 14px; border-bottom: 1px solid #334166; }
+.bars i { flex: 1; height: 100%; display: flex; align-items: flex-end; position: relative; }
+.bars i b { display: block; width: 100%; min-height: 1px; background: #334166; }
+.bars i.up b { background: #22c55e; } .bars i.dn b { background: #ef4444; } .bars i.fut b { background: transparent; }
+.bars i s { position: absolute; bottom: -13px; left: 50%; transform: translateX(-50%); font: 9px var(--mono); color: #64748b; text-decoration: none; white-space: nowrap; }
+.slog { font: 11px/1.45 var(--mono); color: #a5b4fc; max-height: 260px; overflow-y: auto; }
+.shipfoot { text-align: center; margin: 14px 0 0; color: #64748b; }
+.shipfoot a { color: #7dd3fc; }
+.ship .note { color: #8b97bd; }
+
 </style>
 </head>
 <body>
@@ -317,6 +378,7 @@ body:not(.casa) .wkbox { background: var(--card); border-color: var(--line2); bo
   <div class="brand"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0iIzBCMEMwRCIvPgogIDxwYXRoIGQ9Ik0yNTYgNzAgTDQyMCAxMjggTDQyMCAyNTAgUTQyMCAzNzIgMjU2IDQ0NiBROTIgMzcyIDkyIDI1MCBMOTIgMTI4IFoiIGZpbGw9IiMxMjE0MUMiIHN0cm9rZT0iIzAwRjBGRiIgc3Ryb2tlLXdpZHRoPSIxNiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwb2x5bGluZSBwb2ludHM9IjE1MCwzMTggMjA1LDI2NiAyNDUsMjk2IDMwMiwyMTQgMzY2LDE4NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBGMEZGIiBzdHJva2Utd2lkdGg9IjIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt="">CashMkr</div>
   <button class="btn sm" id="bLockNow" title="Blocca la pagina con la password">🔒 Blocca</button>
   <button class="btn sm" id="bProfile" title="Cambia profilo">👤</button>
+  <button class="btn sm hidden" id="bShip" title="Teletrasporto: Verifica Bot Associato">🌀 Verifica</button>
   <span class="pill sim">TEST FREE · soldi finti</span>
   <span class="pill" id="feedPill">collegamento…</span>
   <span class="pill" id="botPill">bot</span>
@@ -440,6 +502,7 @@ body:not(.casa) .wkbox { background: var(--card); border-color: var(--line2); bo
         <button class="btn" id="bWVerify" disabled>Verifica permessi trading</button>
         <button class="btn" id="bWForget">Scollega</button>
       </div>
+      <div id="wSrv" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"></div>
       <div class="note" id="wMsg"></div>
       <div id="wInfo" class="hidden">
         <div class="stats s3" style="margin-top:10px">
@@ -530,6 +593,15 @@ body:not(.casa) .wkbox { background: var(--card); border-color: var(--line2); bo
   </div>
 </div>
 
+
+<div class="ship hidden" id="ship">
+  <div class="shipview"><div id="shipCanvas"></div>
+    <div class="shiptop pix" id="shipTitle">Verifica bot associato</div>
+    <button class="shipback" id="shipBack" title="Torna a casa"><span class="portalwrap"></span><span class="pix">Casa</span></button>
+  </div>
+  <div class="shipdeck" id="shipDeck"></div>
+</div>
+<div class="tpfx hidden" id="tpFx"></div>
 
 <div class="modal solid" id="lock">
   <div class="panel">
@@ -1841,7 +1913,87 @@ function mountLand(el, getState) {
   function frame(t) { const st = getState(); if (!st.off && !st.zoomed && t - last >= (st.still ? 3000 : 1000 / 8)) { last = t; const tt = st.still ? 0 : t; drawLand(ga, tt); drawLandLights(gb, tt); } requestAnimationFrame(frame); }
   requestAnimationFrame(frame);
 }
-root.Scene = { mount, mountLand, ROOMS, W, H, LAND: { LW, LH, OX, OY } };
+
+/* ---------- astronave (modalità Verifica Bot Associato): plancia vista da dentro, spazio che scorre ---------- */
+const SW = 200, SH = 150;
+const STARS = (() => { const r = rng(91), a = []; for (let i = 0; i < 90; i++) a.push({ x: r() * 2 - 1, y: r() * 2 - 1, z: r() }); return a; })();
+function drawShip(g, t, st) {
+  const on = st.state === "on", warn = st.state === "warn", r = rng(5);
+  // finestra: spazio profondo
+  const sp = g.createLinearGradient(0, 0, 0, 100); sp.addColorStop(0, "#04020c"); sp.addColorStop(1, "#140b33");
+  g.fillStyle = sp; g.fillRect(0, 0, SW, 100);
+  // nebulose
+  glow(g, 40, 30, 60, "rgb(124,58,237)", 0.22); glow(g, 165, 60, 55, "rgb(20,184,166)", 0.16); glow(g, 120, 15, 40, "rgb(236,72,153)", 0.12);
+  // stelle che vengono incontro (volo in avanti), più veloci con il bot attivo
+  const cx = 100, cy = 44, speed = on ? 0.00022 : warn ? 0.00008 : 0.00004;
+  for (const s of STARS) {
+    const z = 1 - ((s.z + t * speed) % 1), k = 0.12 / Math.max(z, 0.02), x = cx + s.x * 110 * k, y = cy + s.y * 70 * k;
+    if (x < 0 || x > SW || y < 0 || y > 100) continue;
+    const b = Math.min(1, (1 - z) * 1.6), len = on ? Math.min(6, (1 - z) * 7) : 1;
+    g.fillStyle = `rgba(230,240,255,${b})`;
+    if (len > 1.2) { const dx = (x - cx), dy = (y - cy), d = Math.hypot(dx, dy) || 1; for (let i = 0; i < len; i++) g.fillRect((x - dx / d * i) | 0, (y - dy / d * i) | 0, 1, 1); }
+    else g.fillRect(x | 0, y | 0, z < .3 ? 2 : 1, z < .3 ? 2 : 1);
+  }
+  // pianeta con anelli che passa lento
+  const pp = (t / 90000) % 1, px = 230 - pp * 300, py = 34 + Math.sin(pp * 3) * 6;
+  if (px > -60 && px < 260) {
+    g.fillStyle = "#3b2a6e"; g.beginPath(); g.arc(px, py, 16, 0, 7); g.fill();
+    g.fillStyle = "#5b45a6"; g.beginPath(); g.arc(px - 4, py - 4, 12, 0, 7); g.fill();
+    g.fillStyle = "#8e7ad6"; for (let i = -10; i < 12; i += 5) g.fillRect(px - 12, py + i, 22, 1);
+    g.strokeStyle = "#f5c96a"; g.lineWidth = 1.5; g.beginPath(); g.ellipse(px, py, 27, 6, -0.3, 0, 7); g.stroke();
+    g.fillStyle = "#3b2a6e"; g.beginPath(); g.arc(px, py, 16, Math.PI * 1.05, Math.PI * 1.95); g.fill();
+  }
+  // asteroide ogni tanto
+  const ap = (t / 14000) % 1; if (ap < 0.35) { const k = ap / 0.35, ax = 20 + k * 180, ay = 80 - k * 50 + Math.sin(k * 9) * 2; g.fillStyle = "#6b5b4a"; g.fillRect(ax | 0, ay | 0, 4, 3); g.fillStyle = "#8a7a66"; g.fillRect(ax | 0, ay | 0, 2, 1); }
+  // telaio della cabina (montanti obliqui, bulloni)
+  g.fillStyle = "#1b1f33"; g.beginPath(); g.moveTo(0, 0); g.lineTo(26, 0); g.lineTo(8, 100); g.lineTo(0, 100); g.fill();
+  g.beginPath(); g.moveTo(SW, 0); g.lineTo(SW - 26, 0); g.lineTo(SW - 8, 100); g.lineTo(SW, 100); g.fill();
+  R(g, 0, 0, SW, 6, "#1b1f33"); R(g, 0, 5, SW, 1, "#3b4466");
+  g.fillStyle = "#2c3352"; g.beginPath(); g.moveTo(70, 6); g.lineTo(74, 6); g.lineTo(66, 100); g.lineTo(62, 100); g.fill(); g.beginPath(); g.moveTo(126, 6); g.lineTo(130, 6); g.lineTo(138, 100); g.lineTo(134, 100); g.fill();
+  g.fillStyle = "#4a557f"; for (let x = 6; x < SW; x += 14) g.fillRect(x, 2, 1, 1);
+  for (let y = 14; y < 96; y += 12) { g.fillRect(14 - y / 8 | 0, y, 1, 1); g.fillRect(SW - 15 + y / 8 | 0, y, 1, 1); }
+  // riflesso sul vetro
+  g.fillStyle = "rgba(255,255,255,.05)"; g.beginPath(); g.moveTo(80, 6); g.lineTo(96, 6); g.lineTo(76, 100); g.lineTo(60, 100); g.fill();
+  // plancia
+  R(g, 0, 96, SW, 54, "#20253d"); R(g, 0, 96, SW, 3, "#3b4466"); R(g, 0, 99, SW, 1, "#11142a");
+  g.fillStyle = "#2a3150"; g.beginPath(); g.moveTo(0, 150); g.lineTo(30, 112); g.lineTo(170, 112); g.lineTo(SW, 150); g.fill();
+  // radar (a sinistra)
+  const rx = 28, ry = 122; g.fillStyle = "#06261f"; g.beginPath(); g.arc(rx, ry, 12, 0, 7); g.fill();
+  g.strokeStyle = "#10b98155"; g.lineWidth = 1; g.beginPath(); g.arc(rx, ry, 8, 0, 7); g.stroke(); g.beginPath(); g.arc(rx, ry, 4, 0, 7); g.stroke();
+  const ra = t / 600; g.strokeStyle = "#34d399"; g.beginPath(); g.moveTo(rx, ry); g.lineTo(rx + Math.cos(ra) * 12, ry + Math.sin(ra) * 12); g.stroke();
+  for (let i = 0; i < 4; i++) { const a = i * 1.7 + 0.4, d = 4 + (i * 3) % 7, al = ((ra - a) % 6.283 + 6.283) % 6.283; g.fillStyle = `rgba(110,231,183,${Math.max(0, 1 - al / 3)})`; g.fillRect(rx + Math.cos(a) * d | 0, ry + Math.sin(a) * d | 0, 2, 2); }
+  // schermo grafico (a destra)
+  R(g, 152, 110, 34, 22, "#071a2c"); R(g, 152, 110, 34, 1, "#38bdf8");
+  g.fillStyle = "#38bdf8"; for (let i = 0; i < 30; i++) { const y = 124 - Math.round(5 * Math.sin(i / 4 + t / 900) + i / 6); g.fillRect(153 + i, y, 1, 1); }
+  // file di led
+  for (let i = 0; i < 12; i++) { const c = ["#f87171", "#fbbf24", "#4ade80", "#38bdf8"][i % 4], blink = (Math.floor(t / 260 + i * 3.7) % 5) !== 0; R(g, 56 + i * 7, 104, 3, 2, blink ? c : "#2b3048"); }
+  // spia grande di stato al centro
+  const sc = on ? "rgb(74,222,128)" : warn ? "rgb(251,191,36)" : "rgb(248,113,113)", pulse = 0.55 + 0.45 * Math.sin(t / (on ? 400 : 900));
+  glow(g, 100, 126, 22, sc, 0.45 * pulse);
+  R(g, 92, 119, 16, 14, "#0d1020"); R(g, 94, 121, 12, 10, sc.replace("rgb", "rgba").replace(")", `,${0.6 + 0.4 * pulse})`)); R(g, 95, 122, 4, 2, "rgba(255,255,255,.6)");
+  // leva e joystick
+  R(g, 126, 120, 3, 12, "#4a557f"); R(g, 124, 118 + Math.round(Math.sin(t / 1300) * 2), 7, 4, "#e11d48");
+  R(g, 66, 124, 12, 6, "#141830"); R(g, 70, 116 + Math.round(Math.sin(t / 800)), 3, 9, "#9aa3b5"); R(g, 69, 114 + Math.round(Math.sin(t / 800)), 5, 3, "#ef4444");
+  // robottino pilota visto da dietro (a sinistra del centro), dondola un po'
+  const bx = 38, by = 84 + Math.round(Math.sin(t / 700));
+  R(g, bx + 6, by - 9, 1, 4, "#c9ced8"); R(g, bx + 5, by - 11, 3, 2, (Math.floor(t / 500) % 2) ? "#ff6b6b" : "#ffd166");
+  R(g, bx, by - 5, 13, 10, "#c9ced8"); R(g, bx + 1, by - 4, 11, 1, "#e5e7eb"); R(g, bx + 2, by, 9, 3, "#9aa3b5");
+  R(g, bx - 3, by + 5, 19, 10, "#9aa3b5"); R(g, bx - 3, by + 5, 19, 1, "#c9ced8"); R(g, bx + 3, by + 8, 7, 4, "#3b82f6");
+  // sedile
+  R(g, bx - 6, by + 10, 25, 6, "#3a1f2a"); R(g, bx - 6, by + 10, 25, 1, "#5a2f40");
+}
+function mountShip(el, getState) {
+  el.innerHTML = '<canvas></canvas>';
+  const c = el.querySelector("canvas"); c.width = SW; c.height = SH;
+  const g = c.getContext("2d"); let last = -1e9;
+  function frame(t) {
+    const st = getState();
+    if (!st.off && t - last >= (st.still ? 3000 : 1000 / 12)) { last = t; drawShip(g, st.still ? 0 : t, st); }
+    if (el.isConnected && !el.dataset.stop) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+root.Scene = { mount, mountLand, mountShip, ROOMS, W, H, LAND: { LW, LH, OX, OY }, SHIP: { SW, SH } };
 
 })(window);
 
@@ -1871,8 +2023,9 @@ const TOGGLES = [
   { id: "catchup", t: "Recupero alla riapertura", d: "Aggiorna stop e uscite con le candele perse a pagina chiusa", def: true },
   { id: "sound", t: "Suono a ogni operazione", d: "", def: false },
   { id: "save", t: "Salva nel browser", d: "Conserva conto, posizioni e impostazioni", def: true },
+  { id: "ship", t: "Teletrasporto e astronave", d: "Tasto del portale sottoterra (accanto a \"Tocca una stanza\"): ti porta sull'astronave, dove controlli il bot che gira su CashMkr Server per questo profilo. Solo controllo, niente si può modificare", def: true },
+  { id: "shipAnim", t: "Animazioni dell'astronave", d: "Stelle, pianeti e luci in movimento. Spento: astronave ferma, consuma meno batteria", def: true },
   { id: "week", t: "Resoconto settimanale", d: "Cartello nell'orto del trattore con il totale della settimana; toccandolo si aprono operazioni aperte, chiuse e le ultime 8 settimane (vero e finto)", def: true },
-  { id: "observe", t: "Solo osservazione (bot sul server)", d: "Il telefono mostra conto vero, posizioni e storico ma non manda nessun ordine: li manda CashMkr Server. Basta collegare l'indirizzo del wallet, senza chiave", def: false },
   { id: "real", t: "Soldi veri", d: "Il bot e i pulsanti manuali inviano anche ordini veri al wallet collegato e verificato", def: false },
   { id: "rememberKey", t: "Ricorda la chiave dell'API wallet", d: "Spento: alla riapertura della pagina va reinserita", def: false },
   { id: "profiles", t: "Profili", d: "All'apertura scegli il profilo (es. Gigi, Pippo Pasta): ognuno ha la sua password, il suo conto vero, il suo TEST FREE e le sue impostazioni, cifrati a parte. Spento: si apre subito l'ultimo profilo, con una sola password come prima", def: true },
@@ -1908,6 +2061,7 @@ let S = {
   manual: { lev: 10, margin: 20, sl: 1, tp: 2 },
   day: { key: "", startEq: 0, locked: "" },
   wallet: { net: "testnet", addr: "", key: "", verifiedFor: "" },
+  srv: { url: "", k: "" },  // bot associato su CashMkr Server (solo lettura)
   sess: { since: 0, alive: 0, total: 0 },
   real: { pos: {}, history: [], day: { key: "", startEq: 0, locked: "" } },
 };
@@ -1991,7 +2145,8 @@ function apply(o) {
   if (typeof S.lastBarT !== "object" || !S.lastBarT) S.lastBarT = S.lastBarT ? { BTC: +S.lastBarT } : {};
   const rp = S.real.pos; S.real.pos = !rp ? {} : rp.side ? { BTC: Object.assign({ coin: "BTC" }, rp) } : rp;
   if (!COINS.includes(S.chartCoin)) S.chartCoin = "BTC";
-  delete S.tog.offline;
+  delete S.tog.offline; delete S.tog.observe;
+  S.srv = Object.assign({ url: "", k: "" }, o.srv);
   S.tog.real = false; memKey = S.wallet.key || "";
   S.bestV = o.bestV || 0; // dati salvati da versioni precedenti: verranno portati alla configurazione migliore
 }
@@ -2016,11 +2171,12 @@ function profTouch() {
   const a = (S.wallet.addr || "").toLowerCase(), on = S.tog.profiles !== false;
   if (p.addr !== a || m.last !== curProf || m.on !== on) { p.addr = a; m.last = curProf; m.on = on; profSave(m); }
 }
-// link personale (comando /app del server): #nome=…&addr=0x…&net=mainnet&obs=1 — solo l'indirizzo, mai chiavi
+// link personale (comando /app del server): #nome=…&addr=0x…&net=mainnet&srv=…&k=… — indirizzo pubblico e codice di sola lettura, mai chiavi del wallet
 const LINK = (() => { try {
   const h = new URLSearchParams(location.hash.slice(1)), addr = (h.get("addr") || "").trim();
   if (!/^0x[0-9a-fA-F]{40}$/.test(addr)) return null;
-  return { name: (h.get("nome") || "").trim().slice(0, 30), addr, net: h.get("net") === "testnet" ? "testnet" : "mainnet", obs: h.get("obs") !== "0" };
+  const srv = (h.get("srv") || "").trim(), k = (h.get("k") || "").trim().toLowerCase();
+  return { name: (h.get("nome") || "").trim().slice(0, 30), addr, net: h.get("net") === "testnet" ? "testnet" : "mainnet", srv: srv && /^[0-9a-f]{32,64}$/.test(k) ? { url: "https://" + srv.replace(/^https?:\/\//, "").replace(/\/.*$/, ""), k } : null };
 } catch (e) { return null; } })();
 window.addEventListener("hashchange", () => { if (/addr=0x/i.test(location.hash)) location.reload(); });
 function clearLink() { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
@@ -2028,11 +2184,12 @@ function applyLink() {
   if (!LINK) return;
   const cur = (S.wallet.addr || "").toLowerCase();
   clearLink();
+  if (LINK.srv && (!cur || cur === LINK.addr.toLowerCase())) { S.srv = LINK.srv; setTimeout(() => log("Link personale: profilo associato al bot su " + LINK.srv.url.replace("https://", "") + "."), 0); }
   if (cur && cur !== LINK.addr.toLowerCase()) { setTimeout(() => log("Link personale ignorato: questo profilo ha già un altro wallet collegato."), 0); return; }
   if (cur === LINK.addr.toLowerCase()) return;   // già collegato: non tocco le impostazioni
   S.wallet.verifiedFor = ""; S.wallet.key = ""; memKey = "";
-  S.wallet.addr = LINK.addr; S.wallet.net = LINK.net; S.tog.observe = LINK.obs; S.tog.real = false;
-  setTimeout(() => log(`Link personale: wallet ${LINK.addr.slice(0, 6)}…${LINK.addr.slice(-4)} (${LINK.net})${LINK.obs ? " in sola osservazione" : ""}.`), 0);
+  S.wallet.addr = LINK.addr; S.wallet.net = LINK.net; S.tog.real = false;
+  setTimeout(() => log(`Link personale: wallet ${LINK.addr.slice(0, 6)}…${LINK.addr.slice(-4)} (${LINK.net}).`), 0);
 }
 const isPlain = () => { const P = readJSON(PLAIN_KEY); return !readJSON(LOCK_KEY) || (!readJSON(DATA_KEY) && P && P.tog && P.tog.askPw === false); };
 function openProfile(id) {
@@ -2077,7 +2234,7 @@ function showLock(mode) {
   else if (m === "change") $("lockMsg").innerHTML = "Scegli la nuova password (almeno 8 caratteri).";
   else {
     $("pName").value = LINK && newProf ? LINK.name : (!newProf && profName(curProf)) || "";
-    $("lockMsg").innerHTML = (LINK && newProf ? `Link personale${LINK.name ? " di <b>" + esc(LINK.name) + "</b>" : ""}: il wallet <b>${LINK.addr.slice(0, 6)}…${LINK.addr.slice(-4)}</b> (${LINK.net}) si collega da solo in sola osservazione. Devi solo scegliere la tua password (almeno 8 caratteri).<br>Su iPhone, se vuoi l'icona sulla Home, aggiungila <b>adesso</b> (Condividi → Aggiungi alla schermata Home) e crea il profilo aprendo l'icona.`
+    $("lockMsg").innerHTML = (LINK && newProf ? `Link personale${LINK.name ? " di <b>" + esc(LINK.name) + "</b>" : ""}: il wallet <b>${LINK.addr.slice(0, 6)}…${LINK.addr.slice(-4)}</b> (${LINK.net}) si collega da solo${LINK.srv ? " e il profilo viene associato al tuo bot sul server" : ""}. Devi solo scegliere la tua password (almeno 8 caratteri).<br>Su iPhone, se vuoi l'icona sulla Home, aggiungila <b>adesso</b> (Condividi → Aggiungi alla schermata Home) e crea il profilo aprendo l'icona.`
       : many ? "Nuovo profilo: scrivi il nome e scegli la sua password (almeno 8 caratteri)."
       : "Prima apertura: scrivi il nome del profilo e scegli una password (almeno 8 caratteri).")
       + " La password serve ogni volta che apri il profilo e cifra i suoi dati. <b>Non è recuperabile</b>: annotala in un posto sicuro."
@@ -2344,7 +2501,9 @@ const usd2 = v => (v < 0 ? "−" : "") + "$" + Math.abs(v).toLocaleString("it-IT
 const walletSig = () => S.wallet.net + "|" + S.wallet.addr.toLowerCase() + "|" + (HLC ? HLC.agentAddress().toLowerCase() : "");
 const keyOk = () => !!(HLC && HLC.key && HLC.agentAddress());
 const verified = () => keyOk() && S.wallet.verifiedFor === walletSig();
-const realOn = () => S.tog.real && verified() && !S.tog.observe;
+const obsMode = () => !!(S.srv && S.srv.k);   // profilo associato al bot sul server: il telefono non manda mai ordini
+const SRV_VIEW = false;                        // (vecchia vista "solo osservazione" nella casa: ora c'è l'astronave)
+const realOn = () => S.tog.real && verified() && !obsMode();
 function rlog(msg) { log("💶 " + (S.wallet.net === "mainnet" ? "[MAINNET] " : "[TESTNET] ") + msg); }
 // gli ordini veri passano in fila uno alla volta (aperture e chiusure su più monete nello stesso momento)
 let realQ = Promise.resolve();
@@ -2384,7 +2543,7 @@ async function refreshWallet(first) {
     if (D.key !== k) S.real.day = { key: k, startEq: acc.equity, locked: "" };
     if (S.tog.dailyLimit && S.real.day.locked !== k && S.real.day.startEq > 0 && acc.equity < S.real.day.startEq * (1 - S.cfg.daily / 100)) { S.real.day.locked = k; rlog(`Perdita di oggi oltre il ${S.cfg.daily}%: niente nuovi ordini veri fino a domani (UTC).`); }
     await loadFills();
-    if (keyOk() && !S.tog.observe) { W.busy = true; try { await manageReal(); } finally { W.busy = false; } }
+    if (keyOk() && !obsMode()) { W.busy = true; try { await manageReal(); } finally { W.busy = false; } }
     wkLoad();
   } catch (e) { W.err = e.message; }
   renderWallet();
@@ -2446,7 +2605,7 @@ async function doRealClose(coin, why) {
   catch (e) { rlog(`${coin}: chiusura non riuscita: ${e.message}`); }
 }
 function realClose(coin, why) {
-  if (S.tog.observe) { rlog(`${coin}: chiusura non inviata, il telefono è in "Solo osservazione" (gli ordini li manda CashMkr Server).`); return Promise.resolve(); }
+  if (obsMode()) { rlog(`${coin}: chiusura non inviata, il profilo è associato al bot sul server (gli ordini li manda CashMkr Server).`); return Promise.resolve(); }
   if (!keyOk()) return Promise.resolve();
   return enqueue(() => doRealClose(coin, why)).then(() => refreshWallet());
 }
@@ -2486,13 +2645,13 @@ async function doRealOpen(coin, stratId, side, slPct, tpPct, lev, notionalWanted
 /* ---------- bot vero sul server (Solo osservazione): tutto letto da Hyperliquid ---------- */
 let SRV = { fills: [], at: 0 };
 async function loadFills() {
-  if (!HLC || !S.tog.observe || Date.now() - SRV.at < 60000) return;
+  if (!HLC || !SRV_VIEW || Date.now() - SRV.at < 60000) return;
   try { SRV.fills = (await HLC.fills(Date.now() - 30 * 86400000)) || []; SRV.at = Date.now(); } catch (e) {}
 }
 function weekStart() { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); }
 const fillNet = f => (+f.closedPnl || 0) - (+f.fee || 0);
 function renderServer() {
-  const on = S.tog.observe && !!HLC; $("srvPanel").classList.toggle("hidden", !on); if (!on) return;
+  const on = SRV_VIEW && !!HLC; $("srvPanel").classList.toggle("hidden", !on); if (!on) return;
   const a = W.acc, F = SRV.fills.slice().sort((x, y) => y.time - x.time);
   $("srvNet").textContent = (S.wallet.net === "mainnet" ? "MAINNET" : "TESTNET") + " · " + (S.wallet.addr ? S.wallet.addr.slice(0, 6) + "…" + S.wallet.addr.slice(-4) : "");
   $("srvEq").textContent = a ? usd2(a.equity) : "—";
@@ -2518,7 +2677,7 @@ function renderWallet() {
   $("wInfo").classList.toggle("hidden", !HLC);
   const np = $("netPill");
   if (realOn()) { np.className = net === "mainnet" ? "pill real" : "pill warn"; np.textContent = net === "mainnet" ? "MAINNET · SOLDI VERI" : "TESTNET · ordini veri di prova"; }
-  else if (HLC && S.tog.observe) { np.className = "pill ok"; np.textContent = `${net} · solo osservazione`; }
+  else if (HLC && obsMode()) { np.className = "pill ok"; np.textContent = `${net} · server`; }
   else if (HLC) { np.className = "pill"; np.textContent = `wallet ${net} · ${verified() ? "verificato" : keyOk() ? "da verificare" : "sola lettura"}`; }
   else np.className = "pill hidden";
   $("realBanner").classList.toggle("hidden", !realOn());
@@ -2530,7 +2689,7 @@ function renderWallet() {
   $("wState").innerHTML = W.err ? `<span class="neg">${W.err}</span>` : realOn() ? '<span class="pos">ordini veri attivi</span>' : verified() ? '<span class="blue">verificato, ordini spenti</span>' : keyOk() ? '<span class="warnc">da verificare</span>' : '<span class="mut">sola lettura</span>';
   const ps = a ? Object.entries(a.positions) : [];
   $("wPos").innerHTML = ps.length ? ps.map(([c, p]) => { const R = S.real.pos[c];
-    return `<div><b>${c}</b>: ${+p.szi > 0 ? '<b class="pos">LONG</b>' : '<b class="neg">SHORT</b>'} ${Math.abs(+p.szi)} ${c} · entrata ${usd(+p.entryPx)} · leva ${p.leverage && p.leverage.value}x · liquidazione ${p.liquidationPx ? usd(+p.liquidationPx) : "—"} · G/P <b class="${cls(+p.unrealizedPnl)}">${usd2(+p.unrealizedPnl)}</b>${R ? ` · gestita dal bot (${stratName(R.strat)}${R.beDone ? ", stop a pareggio" : ""})` : S.tog.observe ? " · <span class='pos'>gestita da CashMkr Server</span>" : " · <span class='warnc'>non aperta dal bot</span>"}</div>`; }).join("") : "Nessuna posizione sul conto.";
+    return `<div><b>${c}</b>: ${+p.szi > 0 ? '<b class="pos">LONG</b>' : '<b class="neg">SHORT</b>'} ${Math.abs(+p.szi)} ${c} · entrata ${usd(+p.entryPx)} · leva ${p.leverage && p.leverage.value}x · liquidazione ${p.liquidationPx ? usd(+p.liquidationPx) : "—"} · G/P <b class="${cls(+p.unrealizedPnl)}">${usd2(+p.unrealizedPnl)}</b>${R ? ` · gestita dal bot (${stratName(R.strat)}${R.beDone ? ", stop a pareggio" : ""})` : obsMode() ? " · <span class='pos'>gestita da CashMkr Server</span>" : " · <span class='warnc'>non aperta dal bot</span>"}</div>`; }).join("") : "Nessuna posizione sul conto.";
   const prot = ps.map(([c]) => { const so = stopOrders(c); return so.length ? `${c}: ` + so.map(o => `${o.orderType || "trigger"} a ${usd(+o.triggerPx)}`).join(", ") : `<span class="neg">${c}: nessuno stop attivo sull'exchange!</span>`; });
   $("wOrders").innerHTML = prot.length ? "Protezioni sull'exchange: " + prot.join(" · ") : "";
   $("bWClose").disabled = !(ps.length && keyOk());
@@ -2734,7 +2893,7 @@ function drawChart() {
   for (let i = a; i < n; i++) { hi = Math.max(hi, R.h[i]); lo = Math.min(lo, R.l[i]); if (bU && !isNaN(bU(i))) { hi = Math.max(hi, bU(i)); lo = Math.min(lo, bD(i)); } }
   const lines = [];
   // posizioni vere (Solo osservazione): entrata in oro, stop sull'exchange in rosso
-  if (S.tog.observe && W.acc && W.acc.positions[coin]) { const rp = W.acc.positions[coin]; lines.push([+rp.entryPx, "#F5C96A"]); for (const o of stopOrders(coin)) lines.push([+o.triggerPx, "#F87171"]); }
+  if (W.acc && W.acc.positions[coin] && !S.real.pos[coin]) { const rp = W.acc.positions[coin]; lines.push([+rp.entryPx, "#F5C96A"]); for (const o of stopOrders(coin)) lines.push([+o.triggerPx, "#F87171"]); }
   for (const p of (S.book ? S.book.positions.filter(p => coinOf(p) === coin) : [])) {
     lines.push([p.entry, "#3B82F6"]); if (p.sl > 0 && p.sl < 1e11) lines.push([p.sl, "#F87171"]); if (p.tp) lines.push([p.tp, "#4ADE80"]); lines.push([p.liq, "#FBBF24"]);
   }
@@ -2843,6 +3002,249 @@ function weekSummary() {
   const s = simOps(w0, w1); return { txt: eurS(s.total), n: s.closed.length, cls: cls(s.total), lbl: "finto" };
 }
 
+/* ---------------- teletrasporto e astronave: Verifica Bot Associato ----------------
+   Il profilo è associato a un conto di CashMkr Server (indirizzo https del server + codice segreto del conto).
+   L'astronave mostra SOLO in lettura il bot che gira sul server: stato, età di lavoro, conto, posizioni,
+   operazioni svolte e riepilogo di settimana, mese e anno (dagli eseguiti di Hyperliquid). */
+const SHIP = { on: false, data: null, at: 0, err: "", busy: false, tick: 0, poll: 0, fills: null, fillsAt: 0, fillsBusy: false, sum: "week", open: {}, opOpen: {}, mounted: false };
+const srvAssoc = () => !!(S.srv && S.srv.url && S.srv.k);
+// accetta il link di /app, "dominio/codice" oppure "dominio codice"
+function parseSrv(txt) {
+  txt = (txt || "").trim(); if (!txt) return null;
+  try {
+    if (/[#&?]k=/.test(txt)) { const h = new URLSearchParams(txt.slice(txt.search(/[#?]/) + 1)); const srv = h.get("srv"), k = h.get("k"); if (srv && /^[0-9a-f]{32,64}$/i.test(k || "")) return { url: srvUrl(srv), k: k.toLowerCase() }; }
+  } catch (e) {}
+  const m = txt.match(/^(?:https?:\/\/)?([a-z0-9.-]+\.[a-z]{2,}(?::\d+)?)[\s/#]+([0-9a-f]{32,64})\s*$/i);
+  return m ? { url: srvUrl(m[1]), k: m[2].toLowerCase() } : null;
+}
+const srvUrl = h => "https://" + String(h).replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+function associate(txt) {
+  const r = parseSrv(txt);
+  if (!r) { alert("Codice non riconosciuto. Incolla il link o il codice che ti manda il bot Telegram con /app (tipo cashmkr-gigi.duckdns.org/3f9a…)."); return false; }
+  S.srv = r; SHIP.data = null; SHIP.err = ""; SHIP.fills = null; save();
+  log(`Profilo associato al bot di ${r.url.replace("https://", "")}.`);
+  shipFetch(true); renderAssoc(); return true;
+}
+function dissociate() {
+  if (!confirm("Togliere l'associazione di questo profilo al bot sul server? Il bot sul server continua a lavorare; potrai riassociarlo con il codice di /app.")) return;
+  S.srv = { url: "", k: "" }; SHIP.data = null; SHIP.fills = null; save(); log("Associazione al bot sul server tolta."); shipRender(); renderAssoc();
+}
+async function shipFetch(force) {
+  if (!srvAssoc() || SHIP.busy) return;
+  if (!force && Date.now() - SHIP.at < 12000) return;
+  SHIP.busy = true;
+  try {
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 12000);
+    const r = await fetch(S.srv.url + "/api/stato", { method: "POST", body: JSON.stringify({ k: S.srv.k }), signal: ctl.signal });
+    clearTimeout(to);
+    if (r.status === 403) { SHIP.err = "codice non valido: chiedi un nuovo codice con /app"; }
+    else if (!r.ok) SHIP.err = "il server ha risposto con un errore (" + r.status + ")";
+    else { SHIP.data = await r.json(); SHIP.at = Date.now(); SHIP.err = ""; }
+  } catch (e) { SHIP.err = "server non raggiungibile"; }
+  SHIP.busy = false;
+  if (SHIP.data && SHIP.data.address) shipFills();
+  if (SHIP.on) shipRender();
+  renderAssoc();
+}
+// eseguiti di Hyperliquid da inizio anno (o dal lunedì della settimana se è a cavallo di due anni)
+async function shipFills(force) {
+  const d = SHIP.data; if (!d || SHIP.fillsBusy) return;
+  if (!force && SHIP.fills && Date.now() - SHIP.fillsAt < 60000) return;
+  SHIP.fillsBusy = true;
+  try {
+    const c = new HLM.Client(d.net, d.address, ""), y0 = new Date(new Date().getFullYear(), 0, 1).getTime(), from = Math.min(y0, wkStart(Date.now())) - 40 * 86400000;
+    let all = [], t = from;
+    for (let i = 0; i < 6; i++) { const f = (await c.fills(t)) || []; all = all.concat(f); if (f.length < 2000) break; t = Math.max(...f.map(x => +x.time)) + 1; }
+    const seen = new Set(); SHIP.fills = all.filter(f => { const k = f.tid || f.hash + f.time + f.sz; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => a.time - b.time);
+    SHIP.fillsAt = Date.now();
+  } catch (e) {}
+  SHIP.fillsBusy = false;
+  if (SHIP.on) shipRender();
+}
+// eseguiti → operazioni (da posizione zero a posizione zero, per moneta)
+function shipTrades() {
+  const F = SHIP.fills || [], open = {}, out = [];
+  for (const f of F) {
+    const c = f.coin, sz = +f.sz, sgn = f.side === "B" ? 1 : -1;
+    let st = open[c];
+    const start = f.startPosition != null ? +f.startPosition : st ? st.pos : 0;
+    if (!st || Math.abs(start) < 1e-12 && Math.abs(st.pos) < 1e-12) { st = open[c] = { coin: c, opened: Math.abs(start) < 1e-12 ? +f.time : 0, side: Math.abs(start) > 1e-12 ? Math.sign(start) : sgn, pos: start, pnl: 0, inSz: 0, inVal: 0, outSz: 0, outVal: 0, n: 0 }; }
+    const isOpen = f.dir ? /^Open/i.test(f.dir) : Math.sign(start + sgn * sz) === st.side && Math.abs(start + sgn * sz) > Math.abs(start);
+    if (isOpen) { st.inSz += sz; st.inVal += sz * +f.px; } else { st.outSz += sz; st.outVal += sz * +f.px; }
+    st.pnl += (+f.closedPnl || 0) - (+f.fee || 0); st.n++;
+    st.pos = start + sgn * sz;
+    if (Math.abs(st.pos) < 1e-9) { st.closed = +f.time; out.push(st); delete open[c]; }
+  }
+  const H = (SHIP.data && SHIP.data.hist) || [];
+  for (const t of out) { const h = H.find(x => x.coin === t.coin && Math.abs(x.closed - t.closed) < 180000); if (h) { t.strat = h.strat; t.why = h.why; } }
+  return { closed: out, open: Object.values(open) };
+}
+function shipSum(from, to) {
+  const T = shipTrades(), cl = T.closed.filter(t => t.closed >= from && t.closed < to);
+  const opened = T.closed.filter(t => t.opened >= from && t.opened < to).length + T.open.filter(t => t.opened >= from && t.opened < to).length;
+  const total = cl.reduce((s, t) => s + t.pnl, 0), won = cl.filter(t => t.pnl > 0).length;
+  const best = cl.reduce((b, t) => !b || t.pnl > b.pnl ? t : b, null), worst = cl.reduce((b, t) => !b || t.pnl < b.pnl ? t : b, null);
+  const byCoin = {}; for (const t of cl) { const b = byCoin[t.coin] || (byCoin[t.coin] = { n: 0, pnl: 0 }); b.n++; b.pnl += t.pnl; }
+  return { cl, opened, total, won, best, worst, byCoin };
+}
+function periodOf(k) {
+  const n = new Date();
+  if (k === "week") { const a = wkStart(Date.now()); return { from: a, to: a + WEEK, lbl: `lunedì ${dm(a)} → domenica ${dm(a + WEEK - 1)}`, bars: Array.from({ length: 7 }, (_, i) => [a + i * 86400000, a + (i + 1) * 86400000, ["L", "M", "M", "G", "V", "S", "D"][i]]) };
+  }
+  if (k === "month") { const a = new Date(n.getFullYear(), n.getMonth(), 1).getTime(), b = new Date(n.getFullYear(), n.getMonth() + 1, 1).getTime(), days = Math.round((b - a) / 86400000);
+    return { from: a, to: b, lbl: n.toLocaleDateString("it-IT", { month: "long", year: "numeric" }), bars: Array.from({ length: days }, (_, i) => { const d0 = new Date(n.getFullYear(), n.getMonth(), i + 1).getTime(); return [d0, new Date(n.getFullYear(), n.getMonth(), i + 2).getTime(), (i + 1) % 5 === 1 ? String(i + 1) : ""]; }) };
+  }
+  const a = new Date(n.getFullYear(), 0, 1).getTime(), b = new Date(n.getFullYear() + 1, 0, 1).getTime();
+  return { from: a, to: b, lbl: "anno " + n.getFullYear(), bars: Array.from({ length: 12 }, (_, i) => [new Date(n.getFullYear(), i, 1).getTime(), new Date(n.getFullYear(), i + 1, 1).getTime(), "GFMAMGLASOND"[i]]) };
+}
+function dur(ms) {
+  if (!(ms > 0)) return "—";
+  const m = Math.floor(ms / 60000), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mi = m % 60;
+  return d ? `${d} g ${h} h ${mi} min` : h ? `${h} h ${mi} min` : `${mi} min`;
+}
+const shSide = s => s > 0 ? '<b class="pos">LONG</b>' : '<b class="neg">SHORT</b>';
+const stName = id => !id ? "—" : id === "manuale" ? "Manuale" : ((STR.find(s => s.id === id) || {}).title || id);
+function shipState() {
+  const d = SHIP.data;
+  if (!srvAssoc()) return "none";
+  if (!d || SHIP.err || Date.now() - SHIP.at > 120000) return "warn";
+  return d.bot ? "on" : "off";
+}
+function assocHTML(inShip) {
+  return `<section class="scr"><div class="scrt pix">Nessun bot associato</div>
+    <p class="note">Questo profilo non è ancora associato a un bot di CashMkr Server. Scrivi <b>/app</b> al bot Telegram: ti manda un link e un codice personale.
+    Apri il link, oppure incolla qui il link o il codice (tipo <span class="mono">cashmkr-gigi.duckdns.org/3f9a…</span>).</p>
+    <input class="wide" id="${inShip ? "shipCode" : "wSrvCode"}" placeholder="Link o codice di /app" autocomplete="off">
+    <button class="btn blue" data-ship="assoc" style="width:100%;margin-top:8px">Associa</button>
+    <p class="note" style="margin-top:8px">Ogni codice mostra un solo conto: con il codice di Gigi si vede solo il bot di Gigi. Da qui non si può modificare niente.</p></section>`;
+}
+function renderAssoc() {
+  const el = $("wSrv"); if (!el) return;
+  el.innerHTML = srvAssoc() ? `<div class="note">Bot sul server associato: <b>${esc(S.srv.url.replace("https://", ""))}</b>${SHIP.data ? " · conto di <b>" + esc(SHIP.data.name) + "</b>" : ""} · si guarda con il teletrasporto. <a href="#" data-ship="dis">Togli associazione</a></div>`
+    : `<div class="note" style="margin-bottom:4px">Bot sul server (CashMkr Server): incolla il link o il codice di <b>/app</b> per vederlo con il teletrasporto.</div><div style="display:flex;gap:6px"><input class="wide" id="wSrvCode" placeholder="Link o codice di /app" autocomplete="off" style="margin:0"><button class="btn sm blue" data-ship="assoc">Associa</button></div>`;
+}
+function shipRender() {
+  const el = $("shipDeck"); if (!el) return;
+  const d = SHIP.data, st = shipState();
+  $("shipTitle").textContent = srvAssoc() ? "Verifica · bot " + (d ? "di " + d.name : "associato") : "Verifica bot associato";
+  if (!srvAssoc()) { el.innerHTML = assocHTML(true); return; }
+  if (!d) { el.innerHTML = `<section class="scr st-warn"><div class="scrt pix">Collegamento</div><div class="big pix">${SHIP.err ? "⚠ " + esc(SHIP.err) : "Contatto il server…"}</div><p class="note">${esc(S.srv.url.replace("https://", ""))}</p>${SHIP.err ? `<button class="btn" data-ship="retry" style="width:100%">Riprova</button>` : ""}</section>${footHTML()}`; return; }
+  const sv = d.set || {}, now = Date.now(), eq = d.eq, d0 = d.dayStart;
+  let h = "";
+  // 1. stato
+  const age = d.bot && d.botSince ? now - d.botSince : 0;
+  h += `<section class="scr st-${st}"><div class="scrt pix">Stato del bot</div>
+    <div class="big pix">${st === "on" ? "● Attivo" : st === "off" ? "■ Spento" : "▲ " + esc(SHIP.err || "dati vecchi")}</div>
+    ${d.bot ? `<div class="kv"><span>Età di lavoro</span><b id="shipAge">${dur(age)}</b></div><div class="note">${d.botSinceApprox ? "contata dall'aggiornamento del server" : "dall'ultimo avvio, " + dt(d.botSince)}</div>`
+      : `<div class="kv"><span>Spento da</span><b>${d.botStopped ? dur(now - d.botStopped) : "—"}</b></div>`}
+    <div class="kv"><span>Collegato al server da</span><b>${d.linked ? dur(now - d.linked).replace(/ \d+ min$/, "") : "—"}</b></div>
+    <div class="kv"><span>Rete</span><b>${d.net === "mainnet" ? "MAINNET · soldi veri" : "TESTNET · prova"}</b></div>
+    <div class="kv"><span>Dati di mercato</span><b class="${d.mkt ? "pos" : "neg"}">${d.mkt ? "regolari" : "in ritardo"}</b></div>
+    ${d.dayLocked ? `<div class="note neg">Perdita giornaliera raggiunta: niente nuove entrate fino a domani.</div>` : ""}
+    <div class="note" id="shipAgo"></div></section>`;
+  // 2. conto e posizioni
+  h += `<section class="scr"><div class="scrt pix">Conto vero</div>
+    <div class="kv big2"><span>Saldo</span><b>${eq != null ? usd2(eq) : "—"}</b></div>
+    <div class="kv"><span>Oggi</span><b class="${eq != null && d0 ? cls(eq - d0) : ""}">${eq != null && d0 ? signUsd(eq - d0) + ` (${((eq / d0 - 1) * 100).toFixed(2).replace(".", ",")}%)` : "—"}</b></div>
+    <div class="scrs pix">Posizioni aperte (${(d.positions || []).length})</div>
+    ${(d.positions || []).length ? d.positions.map(p => `<div class="pcard"><div><b>${p.coin}</b> ${shSide(p.side)} <span class="note">${p.strat ? stName(p.strat) : "non aperta dal bot"}</span></div>
+      <div class="kv"><span>Entrata</span><b>${usd(p.entry)}</b></div><div class="kv"><span>Stop</span><b class="${p.stops && p.stops.length ? "" : "neg"}">${p.stops && p.stops.length ? p.stops.map(usd).join(", ") : "⚠ nessuno"}</b></div>
+      <div class="kv"><span>In corso</span><b class="${cls(p.upnl)}">${signUsd(p.upnl)}</b></div>${p.opened ? `<div class="note">aperta ${dt(p.opened)} · leva ${p.lev || "?"}x</div>` : ""}</div>`).join("") : `<div class="note">Nessuna posizione aperta adesso.</div>`}</section>`;
+  // 3. impostazioni (sola lettura)
+  const chip = (t, on) => `<span class="schip ${on ? "on" : ""}">${t}</span>`;
+  h += `<section class="scr"><div class="scrt pix">Impostazioni · sola lettura</div>
+    <div class="kv"><span>Rischio per operazione</span><b>${String(sv.risk).replace(".", ",")}%</b></div>
+    <div class="kv"><span>Posizioni insieme al massimo</span><b>${sv.maxPos}</b></div>
+    <div class="kv"><span>Leva massima</span><b>${sv.maxLev}x</b></div>
+    <div class="schips">${COINS.map(c => chip(c, sv.coins && sv.coins[c])).join("")}</div>
+    <div class="schips">${Object.entries(sv.strats || {}).map(([k, v]) => chip(stName(k), v)).join("")}</div>
+    <div class="schips">${chip("Solo le 2 più forti", sv.rsTop)}${chip("Costanza", sv.steady)}${chip("Blocco giornaliero " + (sv.daily || 5) + "%", sv.dailyLimit)}</div>
+    ${(d.order || []).length ? `<div class="scrs pix">Classifica</div><div class="note">${d.order.map((c, i) => `${i + 1}. <b>${c}</b>`).join(" · ")} · BTC ${d.btcDown ? '<b class="neg">in discesa</b>: short intelligenti possibili' : "sopra la media: niente short"}</div>` : ""}</section>`;
+  // 4. operazioni svolte (menu a tendina)
+  const T = shipTrades(), ops = T.closed.slice().reverse().slice(0, 200);
+  h += `<details class="scr drop" data-d="ops" ${SHIP.open.ops ? "open" : ""}><summary class="pix">Operazioni svolte <span class="note">${SHIP.fills ? ops.length + (T.closed.length > 200 ? " di " + T.closed.length : "") : "lettura…"}</span></summary>
+    ${ops.length ? ops.map((t, i) => { const id = t.coin + t.closed; return `<details class="op" data-op="${id}" ${SHIP.opOpen[id] ? "open" : ""}><summary><span>${dt(t.closed)}</span><b>${t.coin}</b>${shSide(t.side)}<b class="${cls(t.pnl)}">${signUsd(t.pnl)}</b></summary>
+      <div class="kv"><span>Strategia</span><b>${t.strat ? stName(t.strat) : "—"}</b></div>
+      <div class="kv"><span>Aperta</span><b>${t.opened ? dt(t.opened) : "prima del periodo"}</b></div><div class="kv"><span>Chiusa</span><b>${dt(t.closed)}</b></div>
+      <div class="kv"><span>Durata</span><b>${t.opened ? dur(t.closed - t.opened) : "—"}</b></div>
+      <div class="kv"><span>Prezzo entrata</span><b>${t.inSz ? usd(t.inVal / t.inSz) : "—"}</b></div><div class="kv"><span>Prezzo uscita</span><b>${t.outSz ? usd(t.outVal / t.outSz) : "—"}</b></div>
+      <div class="kv"><span>Motivo dell'uscita</span><b>${t.why ? esc(t.why) : "—"}</b></div>
+      <div class="kv"><span>Risultato (commissioni comprese)</span><b class="${cls(t.pnl)}">${signUsd(t.pnl)}</b></div></details>`; }).join("") : `<div class="note">${SHIP.fills ? "Nessuna operazione chiusa quest'anno." : "Leggo le operazioni da Hyperliquid…"}</div>`}</details>`;
+  // 5. riepilogo (menu a tendina con settimana / mese / anno)
+  const P = periodOf(SHIP.sum), R = shipSum(P.from, P.to);
+  const bars = P.bars.map(([a, b, l]) => { const v = R.cl.filter(t => t.closed >= a && t.closed < b).reduce((s, t) => s + t.pnl, 0); return { v, l, fut: a > Date.now() }; });
+  const mx = Math.max(1e-9, ...bars.map(x => Math.abs(x.v)));
+  h += `<details class="scr drop" data-d="sum" ${SHIP.open.sum !== false ? "open" : ""}><summary class="pix">Riepilogo</summary>
+    <div class="seg">${[["week", "Settimana"], ["month", "Mese"], ["year", "Anno"]].map(([k, t]) => `<button data-sum="${k}" class="${SHIP.sum === k ? "on" : ""}">${t}</button>`).join("")}</div>
+    <div class="note" style="text-align:center;margin:6px 0 2px">${P.lbl}</div>
+    ${!SHIP.fills ? `<div class="note">Leggo le operazioni da Hyperliquid…</div>` : `
+    <div class="big pix ${cls(R.total)}" style="text-align:center">${signUsd(R.total)}</div>
+    <div class="bars">${bars.map(x => `<i class="${x.fut ? "fut" : x.v > 0 ? "up" : x.v < 0 ? "dn" : ""}" title="${signUsd(x.v)}"><b style="height:${Math.round(Math.abs(x.v) / mx * 100)}%"></b><s>${x.l}</s></i>`).join("")}</div>
+    <div class="kv"><span>Operazioni aperte</span><b>${R.opened}</b></div><div class="kv"><span>Operazioni chiuse</span><b>${R.cl.length}</b></div>
+    <div class="kv"><span>Vinte · perse</span><b><span class="pos">${R.won}</span> · <span class="neg">${R.cl.length - R.won}</span>${R.cl.length ? ` <span class="note">(${Math.round(R.won / R.cl.length * 100)}% vinte)</span>` : ""}</b></div>
+    ${R.best ? `<div class="kv"><span>Migliore</span><b class="${cls(R.best.pnl)}">${R.best.coin} ${signUsd(R.best.pnl)} <span class="note">${dm(R.best.closed)}</span></b></div><div class="kv"><span>Peggiore</span><b class="${cls(R.worst.pnl)}">${R.worst.coin} ${signUsd(R.worst.pnl)} <span class="note">${dm(R.worst.closed)}</span></b></div>` : ""}
+    ${Object.keys(R.byCoin).length ? `<div class="scrs pix">Per moneta</div>${COINS.filter(c => R.byCoin[c]).map(c => `<div class="kv"><span>${c} · ${R.byCoin[c].n} op</span><b class="${cls(R.byCoin[c].pnl)}">${signUsd(R.byCoin[c].pnl)}</b></div>`).join("")}` : ""}`}</details>`;
+  // 6. registro del server
+  h += `<details class="scr drop" data-d="log" ${SHIP.open.log ? "open" : ""}><summary class="pix">Registro del server</summary><div class="slog">${(d.log || []).map(l => `<div>${esc(l)}</div>`).join("") || '<div class="note">vuoto</div>'}</div></details>`;
+  el.innerHTML = h + footHTML();
+  shipClock();
+}
+const footHTML = () => `<p class="note shipfoot">Solo controllo: da qui non si può modificare niente. I comandi sono su Telegram.<br><a href="#" data-ship="dis">Togli associazione di questo profilo</a></p>`;
+// ogni secondo: "aggiornato X s fa" ed età di lavoro
+function shipClock() {
+  const a = $("shipAgo"); if (a) a.textContent = SHIP.at ? `aggiornato ${Math.max(0, Math.round((Date.now() - SHIP.at) / 1000))} s fa${SHIP.busy ? " · aggiorno…" : ""}` : "";
+  const g = $("shipAge"), d = SHIP.data; if (g && d && d.bot && d.botSince) g.textContent = dur(Date.now() - d.botSince);
+}
+// portale in pixel art (14×14)
+const PORTAL_SVG = (() => {
+  const map = [".....aaaa.....", "...aabbbbaa...", "..abbccccbba..", ".abcckkkkccba.", ".abckkddkkcba.", "abckkdkkdkkcba", "abckdkeekdkcba", "abckdkeekdkcba", "abckkdkkdkkcba", ".abckkddkkcba.", ".abcckkkkccba.", "..abbccccbba..", "...aabbbbaa...", ".....aaaa....."];
+  const col = { a: "#4c1d95", b: "#8b5cf6", c: "#67e8f9", d: "#e879f9", e: "#ffffff", k: "#1e1b4b" };
+  let r = ""; map.forEach((row, y) => [...row].forEach((ch, x) => { if (col[ch]) r += `<rect x="${x}" y="${y}" width="1" height="1" fill="${col[ch]}"${ch === "d" || ch === "e" ? ' class="sw"' : ""}/>`; }));
+  return `<svg class="portal" viewBox="0 0 14 14" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+})();
+/* teletrasporto: lampo e scintille, poi casa ↔ astronave */
+function teleport(toShip) {
+  const fx = $("tpFx"); if (!fx) return;
+  fx.innerHTML = ""; fx.classList.remove("hidden", "go"); void fx.offsetWidth;
+  const n = S.tog.anim ? 46 : 14;
+  for (let i = 0; i < n; i++) { const sp = document.createElement("i"), a = Math.random() * 6.283, r = 90 + Math.random() * 260;
+    sp.style.setProperty("--x", Math.cos(a) * r + "px"); sp.style.setProperty("--y", Math.sin(a) * r + "px"); sp.style.animationDelay = Math.random() * 0.18 + "s";
+    sp.style.background = ["#c4b5fd", "#67e8f9", "#fde68a", "#ffffff", "#f0abfc"][i % 5]; fx.appendChild(sp); }
+  fx.classList.add("go"); beep(toShip ? 880 : 440);
+  setTimeout(() => shipShow(toShip), 420);
+  setTimeout(() => { fx.classList.add("hidden"); fx.classList.remove("go"); fx.innerHTML = ""; }, 1100);
+}
+function shipShow(on) {
+  SHIP.on = on; document.body.classList.toggle("inship", on); $("ship").classList.toggle("hidden", !on);
+  if (on) {
+    if (!SHIP.mounted) { SHIP.mounted = true; Scene.mountShip($("shipCanvas"), () => ({ state: shipState(), still: !S.tog.shipAnim, off: !SHIP.on })); }
+    $("shipDeck").scrollTop = 0; shipRender(); shipFetch(true);
+    clearInterval(SHIP.tick); SHIP.tick = setInterval(shipClock, 1000);
+    clearInterval(SHIP.poll); SHIP.poll = setInterval(() => { shipFetch(); shipFills(); }, 15000);
+  } else { clearInterval(SHIP.tick); clearInterval(SHIP.poll); }
+}
+function shipBind() {
+  document.querySelector("#shipBack .portalwrap").innerHTML = PORTAL_SVG;
+  $("shipBack").onclick = () => teleport(false);
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-ship]"); if (b) { e.preventDefault(); const a = b.dataset.ship;
+      if (a === "assoc") { const inp = $("shipCode") || $("wSrvCode"); const box = b.closest("section, #wSrv"); associate((box && box.querySelector("input") || inp || {}).value); }
+      if (a === "dis") dissociate();
+      if (a === "retry") shipFetch(true);
+      return; }
+    const sb = e.target.closest("[data-sum]"); if (sb && SHIP.on) { SHIP.sum = sb.dataset.sum; shipRender(); }
+  });
+  $("shipDeck").addEventListener("toggle", e => {
+    const t = e.target; if (t.dataset.d) SHIP.open[t.dataset.d] = t.open; if (t.dataset.op) SHIP.opOpen[t.dataset.op] = t.open;
+  }, true);
+}
+function renderPort() {
+  const show = !!S.tog.ship;
+  const p = $("cPort"); if (p) p.classList.toggle("hidden", !show);
+  $("bShip").classList.toggle("hidden", !show || S.tog.house);
+  if (!show && SHIP.on) shipShow(false);
+}
+
 /* ---------------- grafica casa HD-2D: casa da lontano, zoom sulle stanze, comandi dentro le stanze ---------------- */
 const Casa = (() => {
   const box = $("casa"), main = document.querySelector("main");
@@ -2877,7 +3279,7 @@ const Casa = (() => {
   const state = () => {
     if (!S.tog.house || !built) return { off: true };
     const sim = {}; if (S.book) for (const p of S.book.positions) sim[coinOf(p)] = p.side > 0 ? "long" : "short";
-    return { running: S.tog.bot, real: realOn() || (S.tog.observe && !!(HLC && W.acc)), server: S.tog.observe && !!HLC, sim, still: !S.tog.anim };
+    return { running: S.tog.bot, real: realOn(), server: false, sim, still: !S.tog.anim };
   };
   function build() {
     if (built) return; built = true;
@@ -2887,8 +3289,10 @@ const Casa = (() => {
       <button class="csignw" id="cWeek" title="Resoconto settimanale"><span class="pix">Settimana</span><b id="cWeekV">—</b><small id="cWeekN"></small></button>
       <button class="cwin cback pix" id="cBack">◂ Casa</button>
       <div class="cwin chint pix" id="cHint">Tocca una stanza</div>
+      <button class="cport" id="cPort" title="Teletrasporto: Verifica Bot Associato">${PORTAL_SVG}<span class="pix">Verifica</span></button>
       <div class="cwin csheet" id="cSheet"><button class="cx pix" id="cX" title="Chiudi">✕</button><button class="cup pix hidden" id="cUp">◂ Stanza</button><div class="cttl pix" id="cTitle"></div><div class="cbody" id="cBody"></div></div></div>`;
     const house = $("cHouse");
+    $("cPort").onclick = e => { e.stopPropagation(); teleport(true); }; renderPort();
     Scene.mount(house, state);
     Scene.mountLand($("cLand"), () => Object.assign(state(), { zoomed: !!cur }));
     const tag = (k, t, s) => { const r = R[k], d = document.createElement("div"); d.className = "ctag pix"; d.style.top = pc(r.y + 1) + "%"; d.style.left = px(r.x + 1) + "%"; d.innerHTML = t + "<small>" + s + "</small>"; house.appendChild(d); };
@@ -2936,7 +3340,7 @@ const Casa = (() => {
   function menu(k) {
     if (!k) return home();
     restore(); let [t, items] = MENU[k];
-    if (k === "ops" && S.tog.observe && HLC) items = items.map(x => x[0] === "run" ? ["run", "Bot vero", "Conto, posizioni e operazioni"] : x); $("cTitle").textContent = t; $("cUp").classList.add("hidden");
+    if (k === "ops" && SRV_VIEW && HLC) items = items.map(x => x[0] === "run" ? ["run", "Bot vero", "Conto, posizioni e operazioni"] : x); $("cTitle").textContent = t; $("cUp").classList.add("hidden");
     $("cBody").innerHTML = '<div class="copts">' + items.map(([w, a, b]) => `<button data-w="${w}" class="pix">${a}<b>${b}</b></button>`).join("") + "</div>";
     $("cSheet").classList.remove("tall"); $("cSheet").classList.add("open");
   }
@@ -2949,7 +3353,7 @@ const Casa = (() => {
     const room = { run: "ops", chart: "ops", wallet: "ops", risk: "ops", log: "ops", tog: "ops", sim: "games", coins: "games", manual: "games", lab: "lab" }[w];
     if (room && cur !== room) zoomTo(room, true);
     restore(); openW = w; let [title, ids] = WIN[w];
-    if (w === "run" && S.tog.observe && HLC) { title = "Bot vero · sul server"; ids = ["srvPanel", "runPanel"]; }
+    if (w === "run" && SRV_VIEW && HLC) { title = "Bot vero · sul server"; ids = ["srvPanel", "runPanel"]; }
     $("cTitle").textContent = title; $("cUp").classList.remove("hidden");
     const body = $("cBody"); body.innerHTML = "";
     for (const id of ids) { const el = $(id); moved.push([el, el.parentNode, el.nextSibling]); body.appendChild(el); }
@@ -2976,7 +3380,7 @@ const Casa = (() => {
       $("hudLL").textContent = "Saldo finto"; $("hudSim").textContent = $("sEquity").textContent; $("hudSim").className = "mono blue";
       $("hudSub").textContent = hasReal ? "tocca: conto vero" : "";
     }
-    if (S.tog.observe && HLC) {
+    if (SRV_VIEW && HLC) {
       const n = W.acc ? Object.keys(W.acc.positions).length : 0;
       $("hudRunL").textContent = "Bot vero · server"; $("hudRun").textContent = W.acc ? (n ? n + (n > 1 ? " posizioni" : " posizione") : "in attesa") : "—"; $("hudRun").className = "mono " + (n ? "gold" : "blue");
     } else {
@@ -2986,10 +3390,11 @@ const Casa = (() => {
     sign();
     // etichette dei cabinati con prezzo e posizione in classifica
     const rk = coinsOn().length ? (() => { try { return ranks(); } catch (e) { return {}; } })() : {};
-    const hr = box.querySelector('.chot[data-win="run"] span'); if (hr) hr.textContent = S.tog.observe && HLC ? "BOT VERO" : "AVVIA / FERMA";
+    const hr = box.querySelector('.chot[data-win="run"] span'); if (hr) hr.textContent = SRV_VIEW && HLC ? "BOT VERO" : "AVVIA / FERMA";
     box.querySelectorAll('.chot[data-win^="coin:"] span').forEach(sp => { const c = sp.parentNode.dataset.win.slice(5), m = M[c]; sp.textContent = c + (m.price ? " " + usd(m.price) : "") + (rk[c] != null && S.coinOn[c] ? " · " + (rk[c] + 1) + "ª" : S.coinOn[c] ? "" : " · spenta"); });
   }
   const hdrH = () => document.documentElement.style.setProperty("--hdrh", document.querySelector(".hdr").offsetHeight + "px");
+  if (window.ResizeObserver) new ResizeObserver(() => { if (S.tog.house) { hdrH(); if (built) cur ? zoomTo(cur, true) : home(); } }).observe(document.querySelector(".hdr"));
   function apply() {
     const on = !!S.tog.house;
     document.body.classList.toggle("casa", on);
@@ -3247,7 +3652,8 @@ function bind() {
     S.tog[id] = e.target.checked;
     if (id === "steady") for (const k of COINS) M[k].lastBot = 0;
     if (id === "rsTop" && Object.keys(labD).length) showLabData();
-    if (id === "house") Casa.apply();
+    if (id === "house") { Casa.apply(); renderPort(); }
+    if (id === "ship") renderPort();
     if (id === "observe") { SRV.at = 0; refreshWallet(); }
     if (id === "week") { renderWeek(); Casa.sign(); }
     if (id === "profiles") { profTouch(); renderProf(); }
@@ -3275,6 +3681,7 @@ function bind() {
     renderWallet(); log("Rete del wallet: " + n + ".");
   });
   $("profBox").addEventListener("click", e => { const a = e.target.dataset.pa; if (a === "ren") renameProfile(); if (a === "sw") switchProfile(); });
+  shipBind(); $("bShip").onclick = () => teleport(true);
   $("bWConnect").onclick = () => connectWallet();
   $("bWVerify").onclick = () => verifyWallet();
   $("bWForget").onclick = () => forgetWallet();
@@ -3303,7 +3710,7 @@ function start() {
   if (S.bestV !== Core.BEST.version) applyBest(true);
   buildToggles(); bind(); renderTF(); renderCoinChips(); renderLog();
   if (!S.book) $("setup").classList.remove("hidden");
-  renderAll(); save(); Casa.apply();
+  renderAll(); save(); Casa.apply(); renderAssoc(); renderPort();
   (async () => {
     for (const c of COINS) {
       let cached = await idbGet("lab_" + c);
@@ -3327,7 +3734,7 @@ $("bLockCancel").onclick = () => { $("lock").classList.add("hidden"); buildToggl
 $("bLockNow").onclick = () => { if (!unlocked) return; if (!S.tog.askPw) { if (profMeta().on !== false) { switchProfile(); return; } alert("Accendi prima l'interruttore \"Password all'apertura\"."); return; } showLock("unlock"); };
 $("bProfile").onclick = () => { if (unlocked) switchProfile(); };
 bootLock();
-window.__qg = { Casa, get S() { return S; }, get W() { return W; }, M, get candles() { return M.BTC.candles; }, Core, COINS,
+window.__qg = { Casa, shipFetch, get S() { return S; }, get W() { return W; }, M, get candles() { return M.BTC.candles; }, Core, COINS,
   setPrice: (p, coin) => { if (typeof p === "object") { for (const k in p) { M[k].price = p[k]; M[k].priceAt = Date.now(); } } else { const k = coin || "BTC"; M[k].price = p; M[k].priceAt = Date.now(); } onTick(); },
   inject: (arr, coin) => { const k = coin || "BTC"; M[k].candles = arr; src = "hl"; M[k].priceAt = Date.now(); }, processClosed };
 })();
