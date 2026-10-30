@@ -3356,6 +3356,8 @@ function shipRender() {
     <div class="kv"><span>Collegato al server da</span><b>${d.linked ? dur(now - d.linked).replace(/ \d+ min$/, "") : "—"}</b></div>
     <div class="kv"><span>Rete</span><b>${d.net === "mainnet" ? "MAINNET · soldi veri" : "TESTNET · prova"}</b></div>
     <div class="kv"><span>Dati di mercato</span><b class="${d.mkt ? "pos" : "neg"}">${d.mkt ? "regolari" : "in ritardo"}</b></div>
+    ${d.ctl ? `<div class="kv"><span>Controllo con Hyperliquid</span><b class="${!d.ctl.on ? "" : d.ctl.lock ? "neg" : "pos"}">${!d.ctl.on ? "spento" : d.ctl.lock ? "⚠ blocco" : d.ctl.start ? "coerente" : "in corso"}</b></div>${d.ctl.lock ? `<div class="note neg">${(d.ctl.issues || []).filter(x => !x.ignored).map(x => esc(x.t)).join("<br>")}</div>` : ""}` : ""}
+    ${d.alarm ? `<div class="kv"><span>Allarme Telegram</span><b>${d.alarm.on ? "acceso" : "spento"}${d.alarm.morning ? " · buongiorno alle 9" : ""}</b></div>` : ""}
     ${d.dayLocked ? `<div class="note neg">Perdita giornaliera raggiunta: niente nuove entrate fino a domani.</div>` : ""}
     <div class="note" id="shipAgo"></div></section>`;
   // 2. conto e posizioni
