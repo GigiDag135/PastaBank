@@ -2165,6 +2165,92 @@ root.Scene = { mount, mountLand, mountShip, ROOMS, W, H, LAND: { LW, LH, OX, OY 
 })(window);
 
 </script>
+<script>// Esportazione delle operazioni per le tasse (stesso codice nel server e nell'app).
+// Dati da Hyperliquid: eseguiti (userFillsByTime) e funding (userFunding); cambio USD→EUR della BCE (Frankfurter).
+// CSV all'italiana: separatore ";", virgola decimale, date in ora italiana, BOM per Excel.
+(function (root) {
+"use strict";
+const DAY = 86400000;
+const pad = n => String(n).padStart(2, "0");
+// ora italiana (Europe/Rome) senza dipendere dal fuso del dispositivo
+function rome(t) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("it-IT", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date(t)).map(x => [x.type, x.value]));
+  return { d: `${p.day}/${p.month}/${p.year}`, dt: `${p.day}/${p.month}/${p.year} ${p.hour}:${p.minute}`, iso: `${p.year}-${p.month}-${p.day}`, y: +p.year, m: +p.month };
+}
+const num = (v, dec) => v == null || !isFinite(v) ? "" : (+v).toFixed(dec == null ? 2 : dec).replace(".", ",");
+const pxDec = v => Math.abs(v) < 10 ? 5 : Math.abs(v) < 1000 ? 3 : 2;
+const cell = s => { s = String(s == null ? "" : s); return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+
+// tutti gli eseguiti e i funding dell'anno (più 90 giorni prima, per le operazioni aperte a dicembre)
+async function fetchYear(info, user, year) {
+  const y0 = Date.UTC(year, 0, 1) - 2 * 3600000, y1 = Date.UTC(year + 1, 0, 1), from = y0 - 90 * DAY, end = Math.min(y1, Date.now());
+  const page = async (type, key) => {
+    let all = [], t = from;
+    for (let i = 0; i < 40 && t < end; i++) {
+      const r = (await info({ type, user, startTime: Math.floor(t), endTime: Math.floor(end) })) || [];
+      all = all.concat(r); if (r.length < (type === "userFunding" ? 500 : 2000)) break;
+      t = Math.max(...r.map(x => +x.time)) + 1;
+    }
+    const seen = new Set(); return all.filter(x => { const k = key(x); if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => a.time - b.time);
+  };
+  const fills = await page("userFillsByTime", f => f.tid || (f.hash + f.time + f.sz + f.px));
+  let funding = []; try { funding = await page("userFunding", f => f.hash + f.time + (f.delta && f.delta.coin)); } catch (e) {}
+  return { fills, funding };
+}
+// cambio BCE: dollari → euro per ogni giorno lavorativo dell'anno (weekend e festivi: ultimo cambio disponibile)
+async function fxYear(fetchJ, year) {
+  const a = `${year - 1}-12-20`, b = `${year}-12-31`;
+  for (const base of ["https://api.frankfurter.dev/v1/", "https://api.frankfurter.app/"]) {
+    try { const j = await fetchJ(`${base}${a}..${b}?from=USD&to=EUR`); if (j && j.rates && Object.keys(j.rates).length) return Object.fromEntries(Object.entries(j.rates).map(([d, r]) => [d, +r.EUR])); } catch (e) {}
+  }
+  return null;
+}
+function fxOn(fx, iso) { if (!fx) return null; if (fx[iso]) return fx[iso]; const ks = Object.keys(fx).filter(k => k <= iso).sort(); return ks.length ? fx[ks[ks.length - 1]] : null; }
+
+// eseguiti → operazioni (da posizione zero a posizione zero, per moneta)
+function trades(fills) {
+  const open = {}, out = [];
+  for (const f of fills) {
+    const c = f.coin, sz = +f.sz, sgn = f.side === "B" ? 1 : -1;
+    let st = open[c];
+    const start = f.startPosition != null ? +f.startPosition : st ? st.pos : 0;
+    if (!st) st = open[c] = { coin: c, opened: Math.abs(start) < 1e-12 ? +f.time : 0, side: Math.abs(start) > 1e-12 ? Math.sign(start) : sgn, pos: start, gross: 0, fee: 0, inSz: 0, inVal: 0, outSz: 0, outVal: 0 };
+    const after = start + sgn * sz, isOpen = f.dir ? /^Open/i.test(f.dir) : Math.abs(after) > Math.abs(start) && Math.sign(after) === st.side;
+    if (isOpen) { st.inSz += sz; st.inVal += sz * +f.px; } else { st.outSz += sz; st.outVal += sz * +f.px; }
+    st.gross += +f.closedPnl || 0; st.fee += +f.fee || 0; st.pos = after;
+    if (Math.abs(after) < 1e-9) { st.closed = +f.time; out.push(st); delete open[c]; }
+  }
+  return out;
+}
+function buildCsv(o) {
+  const { fills, funding, hist, year, fx, name, net } = o;
+  const T = trades(fills || []).filter(t => rome(t.closed).y === year);
+  for (const t of T) { const h = (hist || []).find(x => x.coin === t.coin && Math.abs(x.closed - t.closed) < 180000); if (h) { t.strat = h.strat; t.why = h.why; } }
+  const H = ["Tipo", "Data apertura", "Data chiusura", "Moneta", "Direzione", "Quantità", "Prezzo medio entrata (USD)", "Prezzo medio uscita (USD)", "Risultato lordo (USD)", "Commissioni (USD)", "Risultato netto (USD)", "Cambio BCE (EUR per 1 USD)", "Risultato netto (EUR)", "Strategia", "Motivo uscita"];
+  const rows = [], S = { n: 0, won: 0, gross: 0, fee: 0, net: 0, eur: 0, eurOk: true, fund: 0, fundEur: 0 };
+  for (const t of T) {
+    const r = rome(t.closed), rate = fxOn(fx, r.iso), netU = t.gross - t.fee, inP = t.inSz ? t.inVal / t.inSz : null, outP = t.outSz ? t.outVal / t.outSz : null;
+    rows.push(["Operazione", t.opened ? rome(t.opened).dt : "prima del " + rome(Date.UTC(year, 0, 1) - 90 * DAY).d, r.dt, t.coin, t.side > 0 ? "Long" : "Short", num(t.inSz || t.outSz, 6), inP ? num(inP, pxDec(inP)) : "", outP ? num(outP, pxDec(outP)) : "", num(t.gross), num(t.fee), num(netU), rate ? num(rate, 4) : "", rate ? num(netU * rate) : "", o.stratName && t.strat ? o.stratName(t.strat) : (t.strat || ""), t.why || ""]);
+    S.n++; if (netU > 0) S.won++; S.gross += t.gross; S.fee += t.fee; S.net += netU; if (rate) S.eur += netU * rate; else S.eurOk = false;
+  }
+  // funding raggruppato per mese e moneta (positivo = ricevuto, negativo = pagato)
+  const FM = {};
+  for (const f of funding || []) { const d = f.delta || {}; if (d.type && d.type !== "funding") continue; const r = rome(+f.time); if (r.y !== year) continue; const k = r.m + "|" + d.coin, x = FM[k] || (FM[k] = { m: r.m, coin: d.coin, usd: 0, eur: 0, eurOk: true }); const u = +d.usdc || 0, rate = fxOn(fx, r.iso); x.usd += u; if (rate) x.eur += u * rate; else x.eurOk = false; }
+  for (const x of Object.values(FM).sort((a, b) => a.m - b.m || (a.coin > b.coin ? 1 : -1))) {
+    const last = new Date(Date.UTC(year, x.m, 0)), lastD = `${pad(last.getUTCDate())}/${pad(x.m)}/${year}`;
+    rows.push(["Funding", `01/${pad(x.m)}/${year}`, lastD, x.coin, "", "", "", "", num(x.usd), "", num(x.usd), "", x.eurOk ? num(x.eur) : "", "", "funding del mese"]);
+    S.fund += x.usd; S.fundEur += x.eur; S.net += x.usd; if (x.eurOk) S.eur += x.eur; else S.eurOk = false;
+  }
+  const L = [`CashMkr · operazioni ${year} · ${name || ""} (${net || "mainnet"}) · esportato il ${rome(Date.now()).dt}`, H.join(";")]
+    .concat(rows.map(r => r.map(cell).join(";")))
+    .concat(["", "Totali dell'anno", `Operazioni chiuse;${S.n}`, `Vinte;${S.won}`, `Perse;${S.n - S.won}`, `Risultato lordo (USD);${num(S.gross)}`, `Commissioni (USD);${num(S.fee)}`, `Funding (USD);${num(S.fund)}`, `Risultato netto con funding (USD);${num(S.net)}`, `Risultato netto con funding (EUR, cambio BCE del giorno);${fx ? num(S.eur) : "cambio non disponibile"}`,
+      "", "Nota: file di aiuto per la dichiarazione, non è un calcolo fiscale. Verifica le regole con il tuo commercialista."]);
+  return { csv: "﻿" + L.join("\r\n"), sum: S, n: S.n };
+}
+const API = { fetchYear, fxYear, buildCsv, trades };
+if (typeof module !== "undefined") module.exports = API; else root.Esporta = API;
+})(typeof window !== "undefined" ? window : this);
+</script>
 <script>
 (() => {
 "use strict";
@@ -2195,6 +2281,7 @@ const TOGGLES = [
   { id: "save", t: "Salva nel browser", d: "Conserva conto, posizioni e impostazioni", def: true },
   { id: "ship", t: "Teletrasporto e astronave", d: "Tasto del portale sottoterra (accanto a \"Tocca una stanza\"): ti porta sull'astronave, dove controlli il bot che gira su CashMkr Server per questo profilo. Solo controllo, niente si può modificare", def: true },
   { id: "shipAnim", t: "Animazioni dell'astronave", d: "Stelle, pianeti e luci in movimento. Spento: astronave ferma, consuma meno batteria", def: true },
+  { id: "export", t: "Esportazione operazioni (CSV)", d: "Nel Riepilogo dell'astronave: scarica un file con tutte le operazioni vere dell'anno, commissioni, funding e risultato anche in euro (cambio BCE). Aiuto per la dichiarazione", def: true },
   { id: "week", t: "Resoconto settimanale", d: "Cartello nell'orto del trattore con il totale della settimana; toccandolo si aprono operazioni aperte, chiuse e le ultime 8 settimane (vero e finto)", def: true },
   { id: "real", t: "Soldi veri", d: "Il bot e i pulsanti manuali inviano anche ordini veri al wallet collegato e verificato", def: false },
   { id: "rememberKey", t: "Ricorda la chiave dell'API wallet", d: "Spento: alla riapertura della pagina va reinserita", def: false },
@@ -3402,6 +3489,7 @@ function shipRender() {
     <div class="kv"><span>Vinte · perse</span><b><span class="pos">${R.won}</span> · <span class="neg">${R.cl.length - R.won}</span>${R.cl.length ? ` <span class="note">(${Math.round(R.won / R.cl.length * 100)}% vinte)</span>` : ""}</b></div>
     ${R.best ? `<div class="kv"><span>Migliore</span><b class="${cls(R.best.pnl)}">${R.best.coin} ${signUsd(R.best.pnl)} <span class="note">${dm(R.best.closed)}</span></b></div><div class="kv"><span>Peggiore</span><b class="${cls(R.worst.pnl)}">${R.worst.coin} ${signUsd(R.worst.pnl)} <span class="note">${dm(R.worst.closed)}</span></b></div>` : ""}
     ${Object.keys(R.byCoin).length ? `<div class="scrs pix">Per moneta</div>${COINS.filter(c => R.byCoin[c]).map(c => `<div class="kv"><span>${c} · ${R.byCoin[c].n} op</span><b class="${cls(R.byCoin[c].pnl)}">${signUsd(R.byCoin[c].pnl)}</b></div>`).join("")}` : ""}`}</details>`;
+  if (S.tog.export) { const cy = new Date().getFullYear(); h = h.replace(/<\/details>$/, `<div class="scrs pix">File per le tasse</div><div class="row" style="display:flex;gap:6px;flex-wrap:wrap">${[cy, cy - 1].map(y => `<button class="btn sm" data-ship="csv" data-y="${y}">${SHIP.csvBusy === y ? "Preparo…" : "Scarica CSV " + y}</button>`).join("")}</div><div class="note" style="margin-top:6px">${SHIP.csvMsg ? esc(SHIP.csvMsg) : "Operazioni chiuse, commissioni, funding e risultato in dollari e in euro (cambio BCE del giorno). Si apre con Excel o Numbers."}</div></details>`); }
   // 6. registro del server
   h += `<details class="scr drop" data-d="log" ${SHIP.open.log ? "open" : ""}><summary class="pix">Registro del server</summary><div class="slog">${(d.log || []).map(l => `<div>${esc(l)}</div>`).join("") || '<div class="note">vuoto</div>'}</div></details>`;
   el.innerHTML = h + footHTML();
@@ -3441,6 +3529,21 @@ function shipShow(on) {
     clearInterval(SHIP.poll); SHIP.poll = setInterval(() => { shipFetch(); shipFills(); }, 15000);
   } else { clearInterval(SHIP.tick); clearInterval(SHIP.poll); }
 }
+// file CSV delle operazioni di un anno (stesso codice del comando /esporta del server)
+async function exportCsv(year) {
+  const d = SHIP.data; if (!d || SHIP.csvBusy) return;
+  SHIP.csvBusy = year; SHIP.csvMsg = ""; shipRender();
+  try {
+    const c = new HLM.Client(d.net, d.address, "");
+    const { fills, funding } = await Esporta.fetchYear(body => c.info(body), d.address, year);
+    const fx = await Esporta.fxYear(async u => { const r = await fetch(u); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }, year);
+    const out = Esporta.buildCsv({ fills, funding, hist: d.hist, year, fx, name: d.name, net: d.net, stratName: stName });
+    saveBlob(new Blob([out.csv], { type: "text/csv;charset=utf-8" }), `cashmkr_${String(d.name).replace(/[^\w-]+/g, "_")}_${year}.csv`);
+    SHIP.csvMsg = `Salvato: ${out.n} operazioni del ${year}, netto con funding ${signUsd(out.sum.net)}${fx ? "" : " (cambio BCE non disponibile: colonne in euro vuote)"}.`;
+    log(`Esportate le operazioni ${year} (${out.n}).`);
+  } catch (e) { SHIP.csvMsg = "Non riuscito: " + e.message + ". Riprova tra poco."; }
+  SHIP.csvBusy = 0; shipRender();
+}
 function shipBind() {
   document.querySelector("#shipBack .portalwrap").innerHTML = PORTAL_SVG;
   $("shipBack").onclick = () => teleport(false);
@@ -3449,6 +3552,7 @@ function shipBind() {
       if (a === "assoc") { const inp = $("shipCode") || $("wSrvCode"); const box = b.closest("section, #wSrv"); associate((box && box.querySelector("input") || inp || {}).value); }
       if (a === "dis") dissociate();
       if (a === "retry") shipFetch(true);
+      if (a === "csv") exportCsv(+b.dataset.y);
       return; }
     const sb = e.target.closest("[data-sum]"); if (sb && SHIP.on) { SHIP.sum = sb.dataset.sum; shipRender(); }
   });
