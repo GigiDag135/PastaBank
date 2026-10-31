@@ -490,6 +490,8 @@ details.op[open] { background: #0b1a33; margin: 0 -6px; padding: 6px; }
       <div class="row" id="rowRiskLo"><label>Rischio adattivo: % sotto il massimo</label><input type="number" id="cRiskLo" min="0.1" max="3" step="0.05"></div>
       <div class="row"><label>Leva massima consentita</label><input type="number" id="cMaxLev" min="1" max="40" step="1"></div>
       <div class="row"><label>Perdita massima giornaliera (%)</label><input type="number" id="cDaily" min="1" max="50" step="1"></div>
+      <div class="row" id="rowLim"><label>Entrata con ordine limite: attesa prima del piano B a mercato (minuti)</label><input type="number" id="cLimWait" min="1" max="120" step="1"></div>
+      <div class="note" id="limNow"></div>
       <div class="note">La perdita di ogni operazione del bot è limitata dallo stop al rischio scelto; la leva serve solo a impegnare meno margine, e la liquidazione resta sempre più lontana dello stop.</div>
     </section>
 
@@ -1267,6 +1269,28 @@ class Client {
     const d = await this.exchange({ type: "order", orders, grouping: "normalTpsl" });
     return d.statuses || [];
   }
+  // Migliore denaro/lettera dal libro ordini
+  async book(coin) {
+    const b = await this.info({ type: "l2Book", coin }), lv = (b && b.levels) || [[], []];
+    const bid = lv[0][0] ? +lv[0][0].px : 0, ask = lv[1][0] ? +lv[1][0].px : 0;
+    if (!(bid > 0 && ask > 0)) throw new Error("libro ordini " + coin + " non disponibile");
+    return { bid, ask };
+  }
+  // Entrata con ordine limite "solo maker" (Alo) con lo stop agganciato: lo stop si attiva sulla parte eseguita
+  async openLimitProtected(coin, isBuy, sz, px, sl) {
+    const m = await this.coinMeta(coin);
+    const orders = [this.wire(m, isBuy, px, sz, false, { limit: { tif: "Alo" } }), this.wire(m, !isBuy, sl, sz, true, this.trig(m, sl, "sl"))];
+    const d = await this.exchange({ type: "order", orders, grouping: "normalTpsl" });
+    return d.statuses || [];
+  }
+  // Aggiunta a mercato senza stop (lo stop si rimette poi sulla posizione intera)
+  async addMarket(coin, isBuy, sz, slippage) {
+    const m = await this.coinMeta(coin), mid = await this.mid(coin);
+    const px = isBuy ? mid * (1 + slippage) : mid * (1 - slippage);
+    const d = await this.exchange({ type: "order", orders: [this.wire(m, isBuy, px, sz, false, { limit: { tif: "Ioc" } })], grouping: "na" });
+    const st = (d.statuses || [])[0] || {}; if (st.error) throw new Error(st.error);
+    return st.filled || null;
+  }
   async placeStop(coin, isBuy, sz, px) {
     const m = await this.coinMeta(coin);
     const d = await this.exchange({ type: "order", orders: [this.wire(m, isBuy, px, sz, true, this.trig(m, px, "sl"))], grouping: "na" });
@@ -1367,6 +1391,8 @@ const presetLabel = () => PRESET.name + " " + PRESET.ver;
 // "Solo le monete più forti": classifica sui rendimenti di 3, 7 e 14 giorni, entra solo sulle prime 2
 const RS = { lbs: [3, 7, 14], top: 2 };
 
+/* Entrata con ordine limite: commissione maker, attraversamento minimo del prezzo, nessuno scarto dal prezzo del segnale */
+const LIMIT = { maker: 0.00015, q: 0.0001, off: 0, waitMin: 30 };
 const DEFAULTS = { risk: 0.01, maxPos: 1, maxLev: 40, fee: 0.00045, feeIn: 0.00045, slip: 0.0001, funding: 0.0001, mmr: 0.0125, minNotional: 10, riskCap: 0 };
 // Tetto di rischio totale: quanto si perderebbe se tutte le posizioni del bot toccassero lo stop (più la commissione di chiusura)
 // Rischio adattivo (piano B): rischio alto quando il saldo realizzato è al suo massimo, base sotto il massimo; tetto = k × rischio (con un massimo)
@@ -1610,7 +1636,7 @@ function backtestMulti(data, strats, opt, extras) {
   const needR = o.rs || strats.some(s => s.smart);
   const rsD = needR ? Object.fromEntries(coins.map(c => [c, (extras && extras[c] && extras[c].daily) || E.resample(data[c], 96).C])) : null;
   const btcD = (rsD && rsD.BTC) || o.btcDaily || (extras && extras.BTC && extras.BTC.daily) || null;
-  let lastD = -1;
+  let lastD = -1; const pend = []; const LE = o.limitEntry; const stats = { sig: 0, filled: 0, fallback: 0, missed: 0, sameBarStop: 0 };
   for (;;) {
     let t = Infinity; for (const c of coins) if (idx[c] < data[c].t.length) t = Math.min(t, data[c].t[idx[c]]);
     if (t === Infinity) break;
@@ -1619,6 +1645,24 @@ function backtestMulti(data, strats, opt, extras) {
       const C = data[c], i = idx[c], bar = { t: C.t[i], o: C.o[i], h: C.h[i], l: C.l[i], c: C.c[i] };
       for (const pos of B.positions.filter(p => (p.coin || "BTC") === c)) manageOnBar(B, pos, bar, S[c][pos.strat] ? S[c][pos.strat].raw[i] : 0, o);
     }
+    // Entrata con ordine limite: l'ordine conta solo se il prezzo lo attraversa (coda davanti); scaduta l'attesa, piano B a mercato
+    if (LE) for (const c of here) {
+      const C = data[c], i = idx[c];
+      for (const p of pend.filter(p => p.coin === c)) {
+        if (i <= p.i0) continue;
+        const L = p.side > 0, hit = L ? C.l[i] < p.lim * (1 - LE.q) : C.h[i] > p.lim * (1 + LE.q);
+        if (hit) {
+          pend.splice(pend.indexOf(p), 1);
+          const pos = openAuto(B, p.s, p.side, p.lim, p.atr, C.t[i], Object.assign({}, o, { coin: c, slip: 0, feeIn: LE.maker }, p.extra));
+          if (pos && typeof pos === "object") { stats.filled++; pos.limit = true;
+            if (L ? C.l[i] <= pos.sl : C.h[i] >= pos.sl) { stats.sameBarStop++; closePos(B, pos, pos.sl * (1 - pos.side * o.slip), C.t[i] + 900000, "Stop loss", o); } }
+        } else if (i - p.i0 >= LE.wait) {
+          pend.splice(pend.indexOf(p), 1);
+          if (LE.fallback && i + 1 < C.t.length) { const pos = openAuto(B, p.s, p.side, C.o[i + 1], p.atr, C.t[i + 1], Object.assign({}, o, { coin: c }, p.extra)); if (pos && typeof pos === "object") stats.fallback++; }
+          else stats.missed++;
+        }
+      }
+    }
     if (B.balance > peak) peak = B.balance; const dd = (peak - B.balance) / peak; if (dd > mdd) mdd = dd;
     for (const c of here) {
       const C = data[c], i = idx[c]; if (i + 1 >= C.t.length) continue;
@@ -1626,6 +1670,9 @@ function backtestMulti(data, strats, opt, extras) {
       for (const s of strats) { const x = S[c][s.id]; if (!x.sig[i] || isNaN(x.A[i])) continue;
         if (s.smart) { if (!rk) rk = rsRanks(rsD, C.t[i] + 900000, RS.lbs); if (smartShortReason(rk, c, btcD, C.t[i] + 900000)) continue; }
         else if (o.rs) { if (!rk) rk = rsRanks(rsD, C.t[i] + 900000, o.rs.lbs); if (rk[c] >= o.rs.top) continue; }
+        if (LE) { if (B.positions.some(p => (p.coin || "BTC") === c) || pend.some(p => p.coin === c)) continue;
+          if (B.positions.filter(p => p.by === "bot").length >= o.maxPos) continue;
+          stats.sig++; pend.push({ coin: c, s: sById[s.id], side: x.sig[i], lim: C.c[i] * (1 - x.sig[i] * (LE.off || 0)), atr: x.A[i], i0: i, extra: RM ? { risk: o.risk * RM[c][i] } : {} }); continue; }
         openAuto(B, sById[s.id], x.sig[i], C.o[i + 1], x.A[i], C.t[i + 1], Object.assign({}, o, { coin: c }, RM ? { risk: o.risk * RM[c][i] } : {})); }
     }
     for (const c of here) idx[c]++;
@@ -1633,10 +1680,10 @@ function backtestMulti(data, strats, opt, extras) {
   }
   for (const pos of [...B.positions]) { const C = data[pos.coin || "BTC"]; closePos(B, pos, C.c[C.c.length - 1], C.t[C.t.length - 1] + 900000, "Fine dati", o); }
   curve.push([toT, B.balance]);
-  return { book: B, mdd, curve, from: fromT, to: toT };
+  return { book: B, mdd, curve, from: fromT, to: toT, stats: LE ? stats : null };
 }
 
-const API = { PRESET, presetLabel, adaptRisk, openRisk, RS, rsRanks, btcDown, smartShortReason, backtestMulti, closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
+const API = { LIMIT, PRESET, presetLabel, adaptRisk, openRisk, RS, rsRanks, btcDown, smartShortReason, backtestMulti, closePart, STRATEGIES, BEST, DEFAULTS, buildSignals, volPct, dailyTrend, riskMult, newBook, closePos, manageOnBar, manageOnTick, openAuto, openManual, unrealized, equity, backtest };
 if (typeof module !== "undefined") module.exports = API; else root.Core = API;
 })(typeof window !== "undefined" ? window : this);
 
@@ -2288,6 +2335,7 @@ const TOGGLES = [
   { id: "profiles", t: "Profili", d: "All'apertura scegli il profilo (es. Gigi, Pippo Pasta): ognuno ha la sua password, il suo conto vero, il suo TEST FREE e le sue impostazioni, cifrati a parte. Spento: si apre subito l'ultimo profilo, con una sola password come prima", def: true },
   { id: "askPw", t: "Password all'apertura", d: "Dati salvati cifrati: senza password l'app non si apre", def: true },
   { id: "autoLock", t: "Blocco automatico dopo 15 minuti", d: "Se non usi la pagina chiede di nuovo la password (il bot continua a lavorare)", def: false },
+  { id: "limitEntry", t: "Entrata con ordine limite", d: "Il bot entra con un ordine limite (maker 0,015%) al prezzo del segnale invece che a mercato (0,045% + slittamento). Se entro l'attesa scelta non viene eseguito entra a mercato come prima (piano B). Lo stop è sempre a mercato. Prova 2022-2026 sul PastaBank v1: circa 194% l'anno invece di 176%, stessa discesa massima", def: false },
   { id: "steady", t: "Modalità costanza", d: "Chiude metà posizione quando guadagna 3 volte il rischio e porta lo stop a pareggio: guadagni minori, mesi più regolari", def: false },
   { id: "saveCsv", t: "Chiedi di salvare il pacchetto delle candele scaricate", d: "Alla fine dei download del laboratorio propone un unico file .zip con i CSV di tutte le monete (cartella Download)", def: true },
 ];
@@ -2316,13 +2364,14 @@ let S = {
   stratOn: Object.fromEntries(STR.map(s => [s.id, s.def])),
   stratOpt: Object.fromEntries(STR.map(s => [s.id, { long: s.dir === "long", lowVol: s.vol === "low" }])),
   bestV: Core.BEST.version,
-  cfg: { risk: 0.75, maxPos: 4, maxLev: 40, daily: 5, cap: 1.5, riskHi: 1.5, riskLo: 0.75, capK: 2, capMax: 3 },
+  cfg: { risk: 0.75, maxPos: 4, maxLev: 40, daily: 5, cap: 1.5, riskHi: 1.5, riskLo: 0.75, capK: 2, capMax: 3, limWait: 30 },
+  pend: [], limStats: { lim: 0, fb: 0, gone: 0 },
   manual: { lev: 10, margin: 20, sl: 1, tp: 2 },
   day: { key: "", startEq: 0, locked: "" },
   wallet: { net: "testnet", addr: "", key: "", verifiedFor: "" },
   srv: { url: "", k: "" },  // bot associato su CashMkr Server (solo lettura)
   sess: { since: 0, alive: 0, total: 0 },
-  real: { pos: {}, history: [], day: { key: "", startEq: 0, locked: "" } },
+  real: { pos: {}, history: [], day: { key: "", startEq: 0, locked: "" }, pend: {}, limStats: { lim: 0, fb: 0, gone: 0 } },
 };
 let memKey = "", HLC = null, W = { acc: null, orders: [], err: "", at: 0, busy: false, mids: {} };
 // dati di mercato per moneta
@@ -2359,7 +2408,8 @@ function rsReason(coin, t) {
   return r >= Core.RS.top ? `${coin} è ${r + 1}ª in classifica, non tra le prime ${Core.RS.top}` : "";
 }
 function opts(coin) {
-  return Object.assign({}, Core.DEFAULTS, { coin: coin || "BTC", risk: S.cfg.risk / 100, maxPos: S.cfg.maxPos, maxLev: S.cfg.maxLev, feesOn: S.tog.feesOn, fundingOn: S.tog.fundingOn, riskCap: S.tog.riskCap ? S.cfg.cap / 100 : 0, adapt: adaptCfg() });
+  return Object.assign({}, Core.DEFAULTS, { coin: coin || "BTC", risk: S.cfg.risk / 100, maxPos: S.cfg.maxPos, maxLev: S.cfg.maxLev, feesOn: S.tog.feesOn, fundingOn: S.tog.fundingOn, riskCap: S.tog.riskCap ? S.cfg.cap / 100 : 0, adapt: adaptCfg(),
+    limitEntry: S.tog.limitEntry ? { wait: Math.max(1, Math.round((S.cfg.limWait || Core.LIMIT.waitMin) / 15)), off: Core.LIMIT.off, q: Core.LIMIT.q, maker: Core.LIMIT.maker, fallback: true } : null });
 }
 // la configurazione attuale è ancora "PastaBank v1"? (altrimenti: modificata)
 function presetDiff() {
@@ -2744,9 +2794,15 @@ function processCoin(coin) {
       const rw = s.smart ? smartReason(coin, bar.t + BAR) : rsReason(coin, bar.t + BAR);
       if (rw) { log(`${nm} ignorato: ${rw}.`); continue; }
       const px = m.price || bar.c;
+      if (S.tog.limitEntry) {
+        if (S.book.positions.some(p => coinOf(p) === coin) || S.pend.some(p => p.coin === coin)) log(`${nm} non eseguito: c'è già una posizione o un ordine limite su ${coin}.`);
+        else { S.pend.push({ coin, sid: s.id, side: d, lim: px, atr: x.A[i], t: Date.now(), until: Date.now() + (S.cfg.limWait || Core.LIMIT.waitMin) * 60000 });
+          log(`🤖 ${coin} · ordine limite ${d > 0 ? "LONG" : "SHORT"} a ${usd(px)} · ${s.title} · attesa ${S.cfg.limWait} min, poi a mercato`); save(); }
+      } else {
       const r = Core.openAuto(S.book, s, d, px, x.A[i], Date.now(), o);
       if (typeof r === "string") log(`${nm} non eseguito: ${r}.`);
       else { log(`🤖 ${coin} · aperto ${d > 0 ? "LONG" : "SHORT"} · ${s.title} · leva ${r.lev}x · valore ${eur(r.qty * r.entry)} · rischio ${eur(r.riskAmt)}`); beep(660); }
+      }
       if (realOn()) { const slPct = s.ex.sl * x.A[i] / px; realOpen(coin, s.id, d, slPct, 0, Math.floor(1 / (slPct * 1.5 + Core.DEFAULTS.mmr)), null, s.ex); }
     }
     S.lastBarT[coin] = bar.t;
@@ -2760,8 +2816,28 @@ function processClosed() {
   for (const c of COINS) if (processCoin(c)) any = true;
   if (any) { booted = true; save(); renderAll(); }
 }
+// TEST FREE: ordini limite in attesa (eseguiti se il prezzo li attraversa; scaduta l'attesa, piano B a mercato)
+function checkPend() {
+  if (!S.pend || !S.pend.length || !S.book) return;
+  const now = Date.now();
+  for (const p of [...S.pend]) {
+    const q = M[p.coin].price, s = ES().find(x => x.id === p.sid); if (!q || !s) continue;
+    const hit = p.side > 0 ? q < p.lim * (1 - Core.LIMIT.q) : q > p.lim * (1 + Core.LIMIT.q);
+    if (!hit && now < p.until) continue;
+    S.pend.splice(S.pend.indexOf(p), 1);
+    const nm = `${p.coin} · ${p.side > 0 ? "LONG" : "SHORT"} · ${s.title}`;
+    if (!hit) { const why = blockedReason(p.coin); if (why) { S.limStats.gone++; log(`${nm}: ordine limite scaduto, piano B non eseguito (${why}).`); continue; } }
+    const r = hit ? Core.openAuto(S.book, s, p.side, p.lim, p.atr, now, Object.assign(opts(p.coin), { slip: 0, feeIn: Core.LIMIT.maker }))
+                  : Core.openAuto(S.book, s, p.side, q, p.atr, now, opts(p.coin));
+    if (typeof r === "string") { S.limStats.gone++; log(`${nm} non eseguito: ${r}.`); continue; }
+    if (hit) S.limStats.lim++; else S.limStats.fb++;
+    log(`🤖 ${p.coin} · aperto ${p.side > 0 ? "LONG" : "SHORT"} · ${s.title} · ${hit ? "ordine limite eseguito" : "piano B a mercato"} a ${usd(r.entry)} · leva ${r.lev}x · rischio ${eur(r.riskAmt)}`); beep(660);
+  }
+  save(); needRender = true;
+}
 function onTick() {
   if (!S.book) return;
+  checkPend();
   for (const pos of [...S.book.positions]) { const q = M[coinOf(pos)].price; if (q) afterClose(Core.manageOnTick(S.book, pos, q, Date.now(), opts(coinOf(pos)))); }
   if (S.book.positions.some(p => !M[coinOf(p)].price)) return; // manca un prezzo: niente controllo giornaliero
   const k = todayKey(), eq = Core.equity(S.book, pxMap());
@@ -2837,7 +2913,50 @@ async function recordRealClose(coin, why) {
   rlog(`${coin} · chiuso ${P.side > 0 ? "LONG" : "SHORT"} vero · ${stratName(P.strat)} · ${why}${isNaN(pnl) ? "" : ": " + (pnl >= 0 ? "+" : "") + usd2(pnl)}`);
   beep(pnl >= 0 ? 880 : 330);
 }
-async function manageReal() { for (const c of Object.keys(S.real.pos)) await manageRealCoin(c); }
+async function manageReal() {
+  // dopo un ordine limite eseguito o un piano B il conto letto prima è vecchio: lo rileggo, altrimenti la posizione nuova sembrerebbe chiusa
+  if (Object.keys(S.real.pend || {}).length) { await manageRealPend(); const [acc, orders] = await Promise.all([HLC.account(), HLC.openOrders()]); W.acc = acc; W.orders = orders; }
+  for (const c of Object.keys(S.real.pos)) await manageRealCoin(c);
+}
+// Ordini limite veri in attesa: eseguito → posizione del bot; scaduto → annullo, e il resto entra a mercato (piano B) con lo stop sulla posizione intera
+let pendIv = null;
+function pendTimer() {
+  if (pendIv || !Object.keys(S.real.pend || {}).length) return;
+  pendIv = setInterval(() => { if (!Object.keys(S.real.pend || {}).length) { clearInterval(pendIv); pendIv = null; return; } refreshWallet(); }, 5000);
+}
+async function manageRealPend() {
+  const now = Date.now();
+  for (const coin of Object.keys(S.real.pend || {})) {
+    const Q = S.real.pend[coin], open = (W.orders || []).some(o => o.oid === Q.oid), pos = W.acc && W.acc.positions[coin];
+    const record = (p, how) => {
+      S.real.pos[coin] = { coin, strat: Q.strat, side: Q.side, size: Math.abs(+p.szi), entry: +p.entryPx, sl: Q.sl, slD: Math.abs(+p.entryPx - Q.sl), tp: Q.tp, lev: Q.lev, beDone: false, ex: Q.ex, opened: Q.placed, entryBy: how };
+      delete S.real.pend[coin]; save();
+      rlog(`${coin} · aperto ${Q.side > 0 ? "LONG" : "SHORT"} vero · ${stratName(Q.strat)} · ${how} · ${Math.abs(+p.szi)} ${coin} a ${usd(+p.entryPx)} · leva ${Q.lev}x · stop ${usd(Q.sl)}`); beep(660);
+    };
+    if (!open && pos && +pos.szi * Q.side > 0 && Math.abs(+pos.szi) >= Q.sz * 0.999) { S.real.limStats.lim++; record(pos, "ordine limite eseguito"); continue; }
+    if (open && now < Q.until) continue;
+    // scaduto (o sparito senza esecuzione completa): annullo il resto e completo a mercato
+    try { if (open) await HLC.cancel(coin, Q.oid); } catch (e) {}
+    await new Promise(r => setTimeout(r, 1200));
+    let acc; try { acc = await HLC.account(); } catch (e) { rlog(`${coin}: lettura del conto non riuscita, riprovo: ${e.message}`); continue; }
+    const p = acc.positions[coin], done = p && +p.szi * Q.side > 0 ? Math.abs(+p.szi) : 0;
+    const meta = await HLC.coinMeta(coin), mid = await HLC.mid(coin), rest = HLM.roundSz(Q.sz - done, meta.szDecimals);
+    const why = blockedReason(coin);
+    try {
+      if (rest * mid >= 10.5 && !why) { const f = await HLC.addMarket(coin, Q.side > 0, rest, SLIP_REAL); rlog(`${coin}: piano B, ${done ? "completati" : "entrati"} a mercato ${rest} ${coin}${f ? " a " + usd(+f.avgPx) : ""}.`); }
+      else if (why && !done) rlog(`${coin}: ordine limite scaduto, piano B non inviato (${why}).`);
+      await new Promise(r => setTimeout(r, 1200));
+      const a2 = await HLC.account(), p2 = a2.positions[coin];
+      if (p2 && +p2.szi * Q.side > 0) {
+        // prima lo stop nuovo sulla posizione intera, poi tolgo i vecchi: mai un istante senza protezione
+        const keep = await HLC.placeStop(coin, Q.side < 0, Math.abs(+p2.szi), Q.sl);
+        for (const o of await HLC.openOrders()) if (o.coin === coin && o.isTrigger && o.reduceOnly && o.oid !== keep) { try { await HLC.cancel(coin, o.oid); } catch (e) {} }
+        if (done) S.real.limStats.lim++; else S.real.limStats.fb++;
+        record(p2, done ? "ordine limite in parte + piano B" : "piano B a mercato");
+      } else { await HLC.cancelTriggers(coin); S.real.limStats.gone++; delete S.real.pend[coin]; save(); }
+    } catch (e) { rlog(`${coin}: piano B non riuscito (${e.message}), riprovo; se c'è una posizione lo stop viene controllato.`); }
+  }
+}
 // Allinea lo stato con il conto e protegge la posizione di una moneta
 async function manageRealCoin(coin) {
   const P = S.real.pos[coin], pos = W.acc.positions[coin];
@@ -2896,8 +3015,9 @@ async function doRealOpen(coin, stratId, side, slPct, tpPct, lev, notionalWanted
   if (S.tog.dailyLimit && S.real.day.locked === todayKey()) { rlog(`${coin}: ordine vero non inviato, perdita giornaliera massima raggiunta.`); return; }
   try {
     const [acc, mid, meta] = await Promise.all([HLC.account(), HLC.mid(coin), HLC.coinMeta(coin)]);
+    if (S.real.pend && S.real.pend[coin]) { rlog(`${coin}: ordine vero non inviato, c'è già un ordine limite in attesa su ${coin}.`); return; }
     if (acc.positions[coin] || S.real.pos[coin]) { rlog(`${coin}: ordine vero non inviato, c'è già una posizione ${coin} sul conto (Hyperliquid ne consente una per moneta).`); return; }
-    const nBot = Object.values(S.real.pos).filter(p => p.strat !== "manuale").length;
+    const nBot = Object.values(S.real.pos).filter(p => p.strat !== "manuale").length + Object.keys(S.real.pend || {}).length;
     if (bot && nBot >= S.cfg.maxPos) { rlog(`${coin}: ordine vero non inviato, già ${nBot} posizioni vere del bot (limite ${S.cfg.maxPos}).`); return; }
     lev = Math.max(1, Math.min(lev, meta.maxLeverage, S.cfg.maxLev));
     const ac = bot ? adaptCfg() : null, ad = ac ? Core.adaptRisk({ balance: trackHwm(acc), peak: S.real.hwm }, ac) : null;
@@ -2915,6 +3035,18 @@ async function doRealOpen(coin, stratId, side, slPct, tpPct, lev, notionalWanted
     if (sz * mid < 10.5) { rlog(`${coin}: ordine vero non inviato, valore ${usd2(sz * mid)} sotto il minimo di 10 $ (conto ${usd2(acc.equity)}).`); return; }
     const sl = mid * (1 - side * slPct), tp = tpPct ? mid * (1 + side * tpPct) : 0;
     await HLC.setLeverage(coin, lev);
+    if (bot && S.tog.limitEntry) {
+      const bk = await HLC.book(coin), lim = side > 0 ? bk.bid : bk.ask;
+      const ls = await HLC.openLimitProtected(coin, side > 0, sz, lim, sl);
+      const r0 = ls[0] || {};
+      if (r0.resting) {
+        S.real.pend[coin] = { oid: r0.resting.oid, coin, strat: stratId, side, sz, lim, sl, tp, lev, ex: ex || {}, placed: Date.now(), until: Date.now() + (S.cfg.limWait || Core.LIMIT.waitMin) * 60000 };
+        save(); rlog(`${coin} · ordine limite ${side > 0 ? "LONG" : "SHORT"} vero a ${usd(lim)} · ${sz} ${coin} · stop ${usd(sl)} agganciato · attesa ${S.cfg.limWait} min, poi a mercato`);
+        pendTimer(); return;
+      }
+      rlog(`${coin}: ordine limite non accettato (${r0.error || "eseguibile subito"}), entro a mercato.`);
+      try { await HLC.cancelTriggers(coin); } catch (e) {}
+    }
     const st = await HLC.openProtected(coin, side > 0, sz, mid, sl, tp, SLIP_REAL);
     const f = st[0] && st[0].filled;
     if (!f) { rlog(`${coin}: ordine vero rifiutato: ` + ((st[0] && st[0].error) || JSON.stringify(st[0]))); return; }
@@ -3176,7 +3308,7 @@ function renderRiskUI() {
     el.innerHTML = `<b>Adesso il bot usa il rischio adattivo</b> · ${simHi ? `TEST FREE: ${simHi.high ? "saldo ai massimi" : "saldo sotto il massimo"} → rischio <b>${n(simHi.risk * 100)}%</b>, tetto <b>${n(simHi.cap * 100)}%</b>` : `TEST FREE non ancora avviato: ${n(S.cfg.riskHi)}% ai massimi, ${n(S.cfg.riskLo)}% sotto`}${realTxt}`;
   } else el.innerHTML = `<b>Adesso il bot usa il rischio fisso</b>: <b>${n(S.cfg.risk)}%</b> per operazione · tetto totale ${S.tog.riskCap ? "<b>" + n(S.cfg.cap) + "%</b>" : "spento"}`;
 }
-function renderAll() { renderRiskUI(); renderRun(); renderHeader(); renderAccount(); renderCoins(); renderOpen(); renderHist(); renderStrats(); renderManual(); renderWallet(); renderServer(); renderWeek(); drawChart(); }
+function renderAll() { renderLim(); renderRiskUI(); renderRun(); renderHeader(); renderAccount(); renderCoins(); renderOpen(); renderHist(); renderStrats(); renderManual(); renderWallet(); renderServer(); renderWeek(); drawChart(); }
 
 /* grafico */
 const cv = $("chart"), cx = cv.getContext("2d");
@@ -3226,8 +3358,14 @@ function renderProf() {
   $("profBox").innerHTML = `<div>Profilo <b>${esc(n)}</b><small>${m.list.length} ${m.list.length === 1 ? "profilo" : "profili"} su questo dispositivo: ${m.list.map(p => esc(p.name)).join(", ")}. I profili restano su questo telefono o computer.</small></div>
     <div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn sm" data-pa="ren">Rinomina</button><button class="btn sm" data-pa="sw">Cambia</button></div>`;
 }
+function renderLim() {
+  const el = $("limNow"); if (!el) return;
+  const a = S.limStats || {}, b = (S.real && S.real.limStats) || {}, n = Object.keys((S.real && S.real.pend) || {}).length + (S.pend || []).length;
+  $("rowLim").classList.toggle("hidden", !S.tog.limitEntry); el.classList.toggle("hidden", !S.tog.limitEntry);
+  el.textContent = `Entrata con ordine limite · TEST FREE: ${a.lim || 0} eseguiti con limite, ${a.fb || 0} con piano B` + (b.lim || b.fb ? ` · conto vero: ${b.lim || 0} con limite, ${b.fb || 0} con piano B` : "") + (n ? ` · ${n} in attesa` : "");
+}
 function buildToggles() {
-  renderProf();
+  renderProf(); renderLim();
   $("toggles").innerHTML = TOGGLES.map(t => `<div class="tog"><div>${t.t}${t.d ? `<small>${t.d}</small>` : ""}</div>
     <label class="sw"><input type="checkbox" data-tog="${t.id}" ${S.tog[t.id] ? "checked" : ""} ${t.locked ? "disabled" : ""}><span></span></label></div>`).join("");
 }
@@ -3913,10 +4051,10 @@ function drawCurve(curve, start) {
 /* ---------------- eventi ---------------- */
 function bind() {
   const c = S.cfg, m = S.manual;
-  $("cRisk").value = c.risk; $("cMaxPos").value = c.maxPos; $("cMaxLev").value = c.maxLev; $("cDaily").value = c.daily; $("cCap").value = c.cap; $("cRiskHi").value = c.riskHi; $("cRiskLo").value = c.riskLo;
+  $("cRisk").value = c.risk; $("cMaxPos").value = c.maxPos; $("cMaxLev").value = c.maxLev; $("cDaily").value = c.daily; $("cCap").value = c.cap; $("cRiskHi").value = c.riskHi; $("cRiskLo").value = c.riskLo; $("cLimWait").value = c.limWait;
   $("mLev").value = m.lev; $("mMargin").value = m.margin; $("mSl").value = m.sl; $("mTp").value = m.tp;
   const num = (id, obj, k, lo, hi, intg) => $(id).addEventListener("input", () => { let v = parseFloat($(id).value); if (isNaN(v)) return; v = Math.min(hi, Math.max(lo, v)); obj[k] = intg ? Math.round(v) : v; save(); renderManual(); renderHeader(); renderRiskUI(); });
-  num("cRisk", c, "risk", 0.1, 10); num("cMaxPos", c, "maxPos", 1, 4, 1); num("cMaxLev", c, "maxLev", 1, 40, 1); num("cDaily", c, "daily", 1, 50, 1); num("cCap", c, "cap", 0.5, 6); num("cRiskHi", c, "riskHi", 0.1, 3); num("cRiskLo", c, "riskLo", 0.1, 3);
+  num("cRisk", c, "risk", 0.1, 10); num("cMaxPos", c, "maxPos", 1, 4, 1); num("cMaxLev", c, "maxLev", 1, 40, 1); num("cDaily", c, "daily", 1, 50, 1); num("cCap", c, "cap", 0.5, 6); num("cRiskHi", c, "riskHi", 0.1, 3); num("cRiskLo", c, "riskLo", 0.1, 3); num("cLimWait", c, "limWait", 1, 120, 1);
   num("mLev", m, "lev", 1, 40, 1); num("mMargin", m, "margin", 1, 1e7); num("mSl", m, "sl", 0, 100); num("mTp", m, "tp", 0, 1000);
   $("mLev").addEventListener("input", () => { if (m.lev > c.maxLev) { m.lev = c.maxLev; $("mLev").value = m.lev; } });
   const manual = side => {
