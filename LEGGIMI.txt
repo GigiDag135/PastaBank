@@ -1,0 +1,47 @@
+JERIKO OS · L'UFFICIO DEGLI AGENTI
+==================================
+
+Cosa c'è
+- index.html: l'ufficio in pixel art (scrivania del Wallet Hyperliquid con PastaCrypto e HLP,
+  scrivania GoldSilver con 2 PC, una scrivania libera, ufficio di Gigi, tavolo delle proposte, Pepper).
+- GoldSilver, PC 1 (a sinistra): il resoconto del bot, che arriva dal server Oracle ogni minuto:
+  ATTIVO / SPENTO / NON RISPONDE, strategie con parametri e versione, conto, discesa dal massimo,
+  posizioni con i loro stop, ultime operazioni chiuse, fonte dei dati. Finché il resoconto non
+  arriva mostra i dati pubblici del wallet letti da Hyperliquid. I comandi restano sul bot Telegram.
+- GoldSilver, PC 2 (a destra): il banco prova (cartella goldsilver/). Scarica lo storico Dukascopy
+  di argento e oro dal 2015 nel browser (3-5 minuti), puoi cambiare tutto della strategia e vedere
+  i risultati; "Applica al bot" ti dà la riga /applica CODICE da mandare al bot GoldSilver.
+- Toccando il PC di PastaCrypto si entra in CashMkr (casa e astronave) a tutto schermo, con
+  "Torna all'ufficio". CashMkr resta su GitHub Pages come prima.
+- HLP mostra dati veri e pubblici del vault, letti da Hyperliquid ogni 5 minuti.
+- Saldo di PastaCrypto, conto economico e proposte arriveranno con Pepper.
+- Password all'ingresso controllata da Cloudflare: 5 errori (da chiunque) bloccano per 1 ora.
+  Lo sblocco via email e l'avviso su Telegram arriveranno con Pepper.
+- Interruttori: in cima allo script di index.html, const FUNZIONI = {hlpDalVivo, cashmkrNelPC,
+  pepperGiro, goldSilver, goldSilverDalVivo}: true acceso, false spento.
+  Con goldSilver: false torna la scrivania libera.
+
+Installazione
+1. PASSWORD (prima di tutto). Cloudflare → Workers & Pages → jeriko-os → Settings →
+   Variables and Secrets → Add → tipo "Secret", nome JERIKO_PASSWORD, valore = la tua password
+   (lunga: 4-5 parole a caso). Salva. Non scriverla in chat né nel codice.
+2. FILE. Su GitHub apri il repository Jeriko-OS:
+   - sostituisci index.html con quello nuovo e carica la cartella goldsilver (banco.html, engine.js,
+     strat.js);
+   - carica la cartella lib (lib/sessione.js);
+   - carica functions/_middleware.js, functions/api/accesso.js, functions/api/esci.js
+     (health.js e agents.js restano come sono).
+   Il modo più semplice: Add file → Upload files, trascina il contenuto della cartella
+   Jeriko-OS dello zip (le cartelle si caricano trascinandole), poi Commit.
+   Cloudflare pubblica da solo in 1-2 minuti.
+2b. SEGRETO GOLDSILVER (dopo aver installato il bot GoldSilver sul server). Sul server scrivi
+   cd ~/goldsilver-server && node server.js jeriko : ti mostra una lunga riga di lettere e numeri.
+   Cloudflare → Workers & Pages → jeriko-os → Settings → Variables and Secrets → Add → tipo
+   "Secret", nome GOLDSILVER_SECRET, valore = quella riga. Salva e rifai il deploy (Deployments →
+   ultimo → Retry deployment). Entro un minuto il PC 1 mostra il bot. Non contiene chiavi del wallet.
+3. PULIZIA AGENTI. Cloudflare → D1 → jeriko-db → Console: incolla pulizia-agenti.sql ed esegui.
+4. Apri https://jeriko-os.pages.dev: chiede la password, poi entri nell'ufficio.
+
+Se Cloudflare non pubblica da GitHub (progetto caricato a mano): Workers & Pages → jeriko-os →
+Create deployment → carica la cartella Jeriko-OS. In quel caso le Functions vanno caricate con
+Wrangler: dimmelo e ti preparo i comandi.

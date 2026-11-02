@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0a16">
+<title>Banco prova GoldSilver</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Banco prova della scrivania GoldSilver (PC 2): stesso motore del bot, storico Dukascopy scaricato nel browser. Look notturno di Jeriko OS. */
+:root{
+  --page:#0b0a16;--panel:#15122a;--card:#1d1838;--line:#2f2856;--text:#f4efe6;--muted:#b3aac9;--dim:#7d7499;
+  --gold:#d8b25a;--gold2:#ffd98a;--silver:#c9ced8;--gain:#4ade80;--loss:#f87171;--warn:#fbbf24;
+  --pixel:"Silkscreen","JetBrains Mono",monospace;--sans:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--page);color:var(--text);font-family:var(--sans)}
+.wrap{max-width:1180px;margin:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
+h1{font-family:var(--pixel);font-weight:400;font-size:20px;letter-spacing:.1em;color:var(--gold2);margin:0}
+h1 small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--dim);margin-top:4px}
+h2{font-family:var(--pixel);font-weight:400;font-size:12px;letter-spacing:.08em;color:var(--gold2);margin:0 0 10px}
+.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;min-width:0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+label{display:flex;flex-direction:column;gap:4px;font-size:11.5px;color:var(--muted);min-width:0}
+input,select{font:inherit;font-family:var(--mono);font-size:13px;background:#0b0a16;color:var(--text);border:1px solid #463b7a;border-radius:4px;padding:6px 8px;min-width:0}
+input[type=number]{width:84px}
+input.wide{width:220px;max-width:100%}
+button{font:inherit;font-size:13px;background:#2a2350;color:var(--text);border:1px solid #463b7a;border-radius:4px;padding:8px 12px;cursor:pointer}
+button:hover{border-color:var(--gold)}
+button.main{font-family:var(--pixel);font-size:12px;letter-spacing:.06em;background:var(--gold);color:#1a1440;border:0}
+button:disabled{opacity:.5;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.st{border:1px solid var(--line);border-left:3px solid var(--silver);background:var(--card);border-radius:4px;padding:11px;margin-top:10px}
+.st.gold{border-left-color:var(--gold)}
+.st.off{opacity:.55}
+.st .hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.st .hd input.nm{flex:1;min-width:140px;font-family:var(--sans)}
+.st .sub{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:8px 0 4px}
+.tog{width:42px;height:22px;border-radius:3px;border:1px solid #463b7a;background:#5d5a66;position:relative;cursor:pointer;padding:0;flex:none}
+.tog::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;background:#f4efe6;transition:left .15s}
+.tog[aria-pressed="true"]{background:#2f7d4f}.tog[aria-pressed="true"]::after{left:23px}
+.x{padding:4px 9px;font-size:12px}
+.bar{height:8px;background:#0b0a16;border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--silver),var(--gold));transition:width .2s}
+.note{font-size:12px;color:var(--dim);line-height:1.5;margin-top:8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:9px 10px}
+.kpi span{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.kpi b{font-family:var(--mono);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.pos{color:var(--gain)}.neg{color:var(--loss)}
+.tw{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+th,td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--dim);font-weight:400;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+canvas{width:100%;height:220px;display:block;margin-top:12px;background:#0b0a16;border:1px solid var(--line);border-radius:4px}
+.code{font-family:var(--mono);font-size:12px;word-break:break-all;background:#0b0a16;border:1px solid #463b7a;border-radius:4px;padding:10px;margin-top:8px;user-select:all;color:var(--gold2)}
+.err{color:var(--loss);font-size:13px;margin-top:8px;white-space:pre-line}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>BANCO PROVA · GOLDSILVER<small>PC 2 · PROVA SUL PASSATO, STESSO MOTORE DEL BOT</small></h1>
+    <div class="row">
+      <button id="bData">Scarica lo storico (2015 → oggi)</button>
+    </div>
+  </div>
+  <div class="box" id="dataBox"><div id="dataTxt" class="note" style="margin:0">Lo storico di argento e oro (Dukascopy, candele da 15 minuti) si scarica nel browser ogni volta che apri il banco prova: 3-5 minuti.</div><div class="bar"><i id="dataBar"></i></div></div>
+
+  <div class="grid" style="margin-top:14px">
+    <div class="box">
+      <h2>IMPOSTAZIONI</h2>
+      <div class="row">
+        <label>Capitale iniziale $<input type="number" id="gCap" min="10" step="10"></label>
+        <label>Rischio per operazione %<input type="number" id="gRisk" min="0.1" max="3" step="0.05"></label>
+        <label>Dal<input type="number" id="gFrom" min="2016" max="2026" step="1"></label>
+        <label>Al<input type="number" id="gTo" min="2016" max="2026" step="1"></label>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <label>Commissione argento %<input type="number" id="gFeeS" min="0" step="0.001"></label>
+        <label>Commissione oro %<input type="number" id="gFeeG" min="0" step="0.001"></label>
+        <label>Slittamento %<input type="number" id="gSlip" min="0" step="0.005"></label>
+        <label>Funding ogni 8 ore %<input type="number" id="gFund" min="0" step="0.001"></label>
+      </div>
+      <div class="note">Commissioni di oggi: argento 0,009% (growth mode su xyz:SILVER), oro 0,045% (PAXG). Il rischio vale per ogni strategia; con più posizioni aperte insieme il rischio totale sale.</div>
+      <h2 style="margin-top:16px">STRATEGIE</h2>
+      <div id="strats"></div>
+      <div class="btns">
+        <button id="bAdd">+ Aggiungi strategia</button>
+        <button id="bBest">Ripristina configurazione migliore</button>
+      </div>
+    </div>
+    <div class="box">
+      <h2>RISULTATI</h2>
+      <div class="btns" style="margin-top:0"><button class="main" id="bRun" disabled>Esegui la prova</button><button id="bApply">Applica al bot</button></div>
+      <div id="err" class="err"></div>
+      <div id="res" class="note">Scarica lo storico, poi premi "Esegui la prova".</div>
+      <div id="apply" hidden></div>
+    </div>
+  </div>
+</div>
+<script src="engine.js"></script>
+<script src="strat.js"></script>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const FUNZIONI = { ricordaImpostazioni: true };    // interruttori di questa pagina
+const fmt = (v, d) => (+v).toLocaleString("it-IT", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+const pc = v => (v >= 0 ? "+" : "−") + fmt(Math.abs(v * 100), 1) + "%";
+const ATTR = s => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+
+/* ---------- stato del banco ---------- */
+const DEF = () => ({ cap: 100, from: 2016, to: 2026, feeS: 0.009, feeG: 0.045, slip: 0.02, fund: 0.01, cfg: JSON.parse(JSON.stringify(GS.BEST)) });
+let S = DEF();
+try { if (FUNZIONI.ricordaImpostazioni) { const s = JSON.parse(localStorage.getItem("gs-banco") || "null"); if (s && s.cfg && !GS.validate(s.cfg).length) S = Object.assign(DEF(), s); } } catch (e) {}
+const save = () => { try { if (FUNZIONI.ricordaImpostazioni) localStorage.setItem("gs-banco", JSON.stringify(S)); } catch (e) {} };
+
+/* ---------- editor ---------- */
+const PN = { n: "periodo", k: "ampiezza", q: "quota calma", look: "confronto", tf: "filtro trend", f: "media veloce", s: "media lenta", adx: "ADX min", r: "RSI", lo: "soglia", adxMax: "ADX max", from: "dalle ore", to: "alle ore", g: "segnale", zero: "sopra zero", th: "soglia", z: "distanza", m: "volume ×", mode: "verso" };
+function stratHTML(s, i) {
+  const fam = Object.entries(Engine.STRATS).map(([k, v]) => `<option value="${k}"${k === s.key ? " selected" : ""}>${v.name}</option>`).join("");
+  const tfs = Object.entries(GS.TF_NAMES).map(([f, n]) => `<option value="${f}"${+f === s.f ? " selected" : ""}>${n}</option>`).join("");
+  const par = Object.keys(Engine.STRATS[s.key].grid).map(k => `<label>${PN[k] || k} (${k})<input type="number" data-i="${i}" data-p="${k}" value="${s.p[k]}" step="any"></label>`).join("");
+  const x = s.ex;
+  return `<div class="st ${s.mkt === "GOLD" ? "gold" : ""} ${s.on ? "" : "off"}">
+    <div class="hd"><button class="tog" aria-pressed="${s.on}" data-i="${i}" data-act="on" aria-label="Accendi o spegni"></button>
+      <input class="nm" data-i="${i}" data-f="name" value="${ATTR(s.name)}" aria-label="Nome">
+      <button class="x" data-i="${i}" data-act="del" aria-label="Elimina">✕</button></div>
+    <div class="row">
+      <label>Mercato<select data-i="${i}" data-f="mkt"><option value="SILVER"${s.mkt === "SILVER" ? " selected" : ""}>Argento</option><option value="GOLD"${s.mkt === "GOLD" ? " selected" : ""}>Oro</option></select></label>
+      <label>Famiglia<select data-i="${i}" data-f="key">${fam}</select></label>
+      <label>Candele<select data-i="${i}" data-f="f">${tfs}</select></label>
+      <label>Verso<select data-i="${i}" data-f="dir"><option value="L"${s.dir === "L" ? " selected" : ""}>solo long</option><option value="S"${s.dir === "S" ? " selected" : ""}>solo short</option><option value="B"${s.dir === "B" ? " selected" : ""}>long e short</option></select></label>
+    </div>
+    <div class="sub">Parametri</div><div class="row">${par}</div>
+    <div class="sub">Uscita</div><div class="row">
+      <label>Stop (ATR)<input type="number" data-i="${i}" data-x="sl" value="${x.sl || 2}" step="0.25" min="0.3"></label>
+      <label>Obiettivo (× stop, 0 = no)<input type="number" data-i="${i}" data-x="rr" value="${x.rr || 0}" step="0.5" min="0"></label>
+      <label>Trailing (ATR, 0 = no)<input type="number" data-i="${i}" data-x="tr" value="${x.tr || 0}" step="0.5" min="0"></label>
+      <label>Massimo ore (0 = no)<input type="number" data-i="${i}" data-x="hours" value="${x.bars ? x.bars / 4 : 0}" step="1" min="0"></label>
+      <label>Pareggio dopo R (0 = no)<input type="number" data-i="${i}" data-x="be" value="${x.be || 0}" step="0.5" min="0"></label>
+      <label>Segnale opposto<select data-i="${i}" data-x="opp"><option value="1"${x.opp ? " selected" : ""}>chiude</option><option value="0"${x.opp ? "" : " selected"}>ignora</option></select></label>
+    </div></div>`;
+}
+function renderStrats() { $("strats").innerHTML = S.cfg.strats.map(stratHTML).join(""); }
+function renderGlobals() { $("gCap").value = S.cap; $("gRisk").value = +(S.cfg.risk * 100).toFixed(3); $("gFrom").value = S.from; $("gTo").value = S.to; $("gFeeS").value = S.feeS; $("gFeeG").value = S.feeG; $("gSlip").value = S.slip; $("gFund").value = S.fund; }
+$("strats").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const i = +b.dataset.i, s = S.cfg.strats[i];
+  if (b.dataset.act === "on") { s.on = !s.on; } else if (b.dataset.act === "del") { if (S.cfg.strats.length <= 1) return; S.cfg.strats.splice(i, 1); }
+  save(); renderStrats(); });
+$("strats").addEventListener("change", e => { const t = e.target, i = +t.dataset.i, s = S.cfg.strats[i]; if (!s) return;
+  if (t.dataset.f) { const f = t.dataset.f; if (f === "f") s.f = +t.value; else s[f] = t.value;
+    if (f === "key") s.p = Object.fromEntries(Object.entries(Engine.STRATS[s.key].grid).map(([k, v]) => [k, v[Math.floor((v.length - 1) / 2)]]));
+    if (f === "key" || f === "mkt") renderStrats(); }
+  if (t.dataset.p) s.p[t.dataset.p] = +t.value;
+  if (t.dataset.x) { const k = t.dataset.x, v = +t.value; if (k === "hours") { if (v > 0) s.ex.bars = Math.round(v * 4); else delete s.ex.bars; } else if (v > 0) s.ex[k] = v; else delete s.ex[k]; }
+  save(); });
+for (const [id, k, sc] of [["gCap", "cap", 1], ["gFrom", "from", 1], ["gTo", "to", 1], ["gFeeS", "feeS", 1], ["gFeeG", "feeG", 1], ["gSlip", "slip", 1], ["gFund", "fund", 1]]) $(id).addEventListener("change", e => { S[k] = +e.target.value; save(); });
+$("gRisk").addEventListener("change", e => { S.cfg.risk = +e.target.value / 100; save(); });
+$("bAdd").onclick = () => { let n = 1; while (S.cfg.strats.some(s => s.id === "s" + n)) n++; S.cfg.strats.push({ id: "s" + n, name: "Nuova strategia " + n, on: true, mkt: "GOLD", key: "keltner", f: 16, p: { n: 20, k: 2, tf: 0 }, dir: "L", ex: { sl: 2, opp: 1 } }); save(); renderStrats(); };
+$("bBest").onclick = () => { const cap = S.cap; S = DEF(); S.cap = cap; save(); renderGlobals(); renderStrats(); $("err").textContent = ""; };
+
+/* ---------- storico Dukascopy ---------- */
+const DATA = {};
+let cbn = 0;
+const dk = (inst, ts) => new Promise(resolve => {
+  const name = "_dk" + (cbn++), s = document.createElement("script"); let done = false;
+  window[name] = d => { done = true; delete window[name]; s.remove(); resolve(d); };
+  s.src = `https://freeserv.dukascopy.com/2.0/?path=chart/json3&instrument=${encodeURIComponent(inst)}&offer_side=B&interval=15MIN&splits=true&stocks=true&limit=3000&time_direction=N&timestamp=${ts}&jsonp=${name}`;
+  s.onerror = () => { if (!done) { s.remove(); resolve(null); } }; document.head.appendChild(s); setTimeout(() => { if (!done) resolve(null); }, 30000);
+});
+async function loadInst(inst, prog) {
+  const starts = []; for (let y = 2015; y <= new Date().getUTCFullYear(); y++) for (let m = 0; m < 12; m++) for (const d of [1, 16]) { const t = Date.UTC(y, m, d); if (t < Date.now()) starts.push(t); }
+  const parts = []; let k = 0; const failed = [];
+  async function w() { while (k < starts.length) { const i = k++; let d = null; for (let a = 0; a < 4 && !d; a++) { d = await dk(inst, starts[i]); if (!d) await new Promise(r => setTimeout(r, 2000)); } if (d) parts.push(...d); else failed.push(starts[i]); prog(1 / starts.length); await new Promise(r => setTimeout(r, 250)); } }
+  await Promise.all([w(), w(), w()]);
+  for (const t of failed) { let d = null; for (let a = 0; a < 4 && !d; a++) { d = await dk(inst, t); if (!d) await new Promise(r => setTimeout(r, 3000)); } if (d) parts.push(...d); }
+  const seen = new Set(), R = parts.filter(r => !seen.has(r[0]) && seen.add(r[0])).sort((a, b) => a[0] - b[0]).filter(r => r[0] + 900000 <= Date.now());
+  const N = R.length, C = { t: new Float64Array(N), o: new Float64Array(N), h: new Float64Array(N), l: new Float64Array(N), c: new Float64Array(N), v: new Float64Array(N) };
+  R.forEach((r, i) => { C.t[i] = r[0]; C.o[i] = r[1]; C.h[i] = r[2]; C.l[i] = r[3]; C.c[i] = r[4]; C.v[i] = r[5]; });
+  return C;
+}
+$("bData").onclick = async () => {
+  $("bData").disabled = true; let p = 0; const bump = d => { p += d / 2; $("dataBar").style.width = Math.min(100, p * 100).toFixed(1) + "%"; $("dataTxt").textContent = `Scarico lo storico… ${Math.round(p * 100)}%`; };
+  try {
+    DATA.SILVER = await loadInst("XAG/USD", bump); DATA.GOLD = await loadInst("XAU/USD", bump);
+    const d = C => new Date(C.t[C.t.length - 1]).toISOString().slice(0, 16).replace("T", " ");
+    $("dataTxt").textContent = `Storico pronto: argento ${fmt(DATA.SILVER.t.length)} candele, oro ${fmt(DATA.GOLD.t.length)} candele, fino al ${d(DATA.GOLD)} UTC.`;
+    $("dataBar").style.width = "100%"; $("bRun").disabled = false;
+  } catch (e) { $("dataTxt").textContent = "Scaricamento non riuscito: " + e.message + ". Riprova."; $("bData").disabled = false; }
+};
+
+/* ---------- prova ---------- */
+const TFC = { SILVER: {}, GOLD: {} };
+function runOne(s) {
+  const C = DATA[s.mkt], N = C.t.length, from = C.t.findIndex(t => t >= Date.UTC(S.from, 0, 1)), toI = C.t.findIndex(t => t >= Date.UTC(S.to + 1, 0, 1)), to = toI < 0 ? N : toI;
+  const T = TFC[s.mkt][s.f] || (TFC[s.mkt][s.f] = Engine.makeTF(C, s.f));
+  const raw = T.expandSig(Engine.STRATS[s.key].signal(T.K, s.p)), A = T.A(14), sig = new Int8Array(N);
+  for (let i = 0; i < N; i++) { const d = raw[i]; if (d && (s.dir === "B" || (s.dir === "L" && d > 0) || (s.dir === "S" && d < 0))) sig[i] = d; }
+  const fee = (s.mkt === "SILVER" ? S.feeS : S.feeG) / 100;
+  const r = Engine.backtest({ C, atr: () => A }, sig, s.ex, Math.max(from, 1), to, { A, exitSig: raw, risk: 0.01, fixedRisk: true, keepR: true, fee, feeIn: fee, slip: S.slip / 100, fundingPer8h: S.fund / 100, maxLev: GS.MARKETS[s.mkt].maxLev });
+  return { s, R: r.Rs, win: r.win, n: r.trades };
+}
+function simulate(runs) {
+  const all = runs.flatMap(x => x.R).sort((a, b) => a[0] - b[0]); let eq = S.cap, pk = S.cap, dd = 0; const yr = {}, curve = [[Date.UTC(S.from, 0, 1), eq]];
+  for (const [t, r] of all) { const y = new Date(t).getUTCFullYear(); if (!(y in yr)) yr[y] = { s: eq, pk: eq, dd: 0, n: 0 }; eq *= 1 + S.cfg.risk * r; if (eq < 0) eq = 0; const Y = yr[y]; Y.e = eq; Y.n++; if (eq > Y.pk) Y.pk = eq; Y.dd = Math.max(Y.dd, 1 - eq / Y.pk); if (eq > pk) pk = eq; dd = Math.max(dd, 1 - eq / pk); curve.push([t, eq]); }
+  const lastT = all.length ? all[all.length - 1][0] : Date.now(), years = Math.max(0.1, (Math.min(lastT, Date.UTC(S.to + 1, 0, 1)) - Date.UTC(S.from, 0, 1)) / (365.25 * 864e5));
+  return { eq, dd, yr, curve, n: all.length, cagr: Math.pow(Math.max(eq, 1e-9) / S.cap, 1 / years) - 1 };
+}
+function drawCurve(curve) {
+  const cv = document.createElement("canvas"), dpr = window.devicePixelRatio || 1; $("res").appendChild(cv);
+  const w = cv.clientWidth, h = cv.clientHeight; cv.width = w * dpr; cv.height = h * dpr; const g = cv.getContext("2d"); g.scale(dpr, dpr);
+  const t0 = curve[0][0], t1 = curve[curve.length - 1][0] || t0 + 1, lv = curve.map(x => Math.log(Math.max(x[1], 1e-6))), mn = Math.min(...lv), mx = Math.max(...lv), pad = 22;
+  const X = t => pad + (t - t0) / (t1 - t0 || 1) * (w - pad * 2), Y = v => h - pad - (v - mn) / (mx - mn || 1) * (h - pad * 2);
+  g.strokeStyle = "#2f2856"; g.lineWidth = 1; g.fillStyle = "#7d7499"; g.font = "11px JetBrains Mono, monospace";
+  for (let y = new Date(t0).getUTCFullYear() + 1; y <= new Date(t1).getUTCFullYear(); y++) { const x = X(Date.UTC(y, 0, 1)); g.beginPath(); g.moveTo(x, pad); g.lineTo(x, h - pad); g.stroke(); g.fillText("'" + String(y).slice(2), x - 9, h - 6); }
+  g.beginPath(); g.moveTo(pad, Y(Math.log(S.cap))); g.lineTo(w - pad, Y(Math.log(S.cap))); g.setLineDash([3, 4]); g.stroke(); g.setLineDash([]);
+  g.strokeStyle = "#ffd98a"; g.lineWidth = 1.8; g.beginPath(); curve.forEach(([t, v], i) => { const x = X(t), y = Y(Math.log(Math.max(v, 1e-6))); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke();
+  g.fillStyle = "#b3aac9"; g.fillText("$" + fmt(curve[curve.length - 1][1]), w - pad - 60, Y(lv[lv.length - 1]) - 6 < 12 ? 14 : Y(lv[lv.length - 1]) - 6);
+}
+$("bRun").onclick = () => {
+  $("err").textContent = ""; const e = GS.validate(S.cfg); if (e.length) { $("err").textContent = e.join("\n"); return; }
+  const on = S.cfg.strats.filter(s => s.on); if (!on.length) { $("err").textContent = "Accendi almeno una strategia."; return; }
+  $("bRun").disabled = true; $("bRun").textContent = "Calcolo…";
+  setTimeout(() => {
+    try {
+      const runs = on.map(runOne), r = simulate(runs), cls = v => v >= 0 ? "pos" : "neg";
+      const years = Object.entries(r.yr).map(([y, Y]) => `<tr><td>${y}</td><td class="${cls(Y.e / Y.s - 1)}">${pc(Y.e / Y.s - 1)}</td><td>${pc(-Y.dd)}</td><td>${Y.n}</td></tr>`).join("");
+      const per = runs.map(x => { const R = x.R.reduce((a, [, v]) => a + v, 0); return `<tr><td>${ATTR(x.s.name)}</td><td>${x.n}</td><td>${fmt(x.win * 100)}%</td><td class="${cls(R)}">${(R >= 0 ? "+" : "") + fmt(R, 1)}</td><td>${x.n ? (R / x.n >= 0 ? "+" : "") + fmt(R / x.n, 2) : "–"}</td></tr>`; }).join("");
+      $("res").className = ""; $("res").innerHTML = `<div class="kpis">
+        <div class="kpi"><span>Finale</span><b>$${fmt(r.eq)}</b></div><div class="kpi"><span>All'anno</span><b class="${cls(r.cagr)}">${pc(r.cagr)}</b></div>
+        <div class="kpi"><span>Discesa massima</span><b class="neg">${pc(-r.dd)}</b></div><div class="kpi"><span>Operazioni</span><b>${fmt(r.n)}</b></div></div>
+        <div class="tw"><table><thead><tr><th>Anno</th><th>Rendimento</th><th>Discesa nell'anno</th><th>Operazioni</th></tr></thead><tbody>${years}</tbody></table></div>
+        <div class="tw"><table><thead><tr><th>Strategia</th><th>Op.</th><th>Vinte</th><th>Totale R</th><th>R medio</th></tr></thead><tbody>${per}</tbody></table></div>
+        <div class="note">R = multipli del rischio di una operazione. Ogni strategia lavora per conto suo con il ${fmt(S.cfg.risk * 100, 2)}% del conto; il conto cresce con l'interesse composto. Prova sul passato con dati Dukascopy, non è una promessa sul futuro.</div>`;
+      drawCurve(r.curve);
+    } catch (err) { $("err").textContent = "Errore nella prova: " + err.message; }
+    $("bRun").disabled = false; $("bRun").textContent = "Esegui la prova";
+  }, 30);
+};
+
+/* ---------- applica al bot ---------- */
+$("bApply").onclick = () => {
+  const e = GS.validate(S.cfg), box = $("apply"); if (e.length) { $("err").textContent = e.join("\n"); return; }
+  const code = GS.encode(S.cfg); box.hidden = false;
+  box.innerHTML = `<h2 style="margin-top:16px">APPLICA AL BOT</h2><div class="note" style="margin-top:0">Copia questa riga e mandala al bot GoldSilver su Telegram. Il bot ti mostra la nuova versione e la applica solo dopo che premi "Applica al bot". La versione di adesso resta salvata: con /ripristina torni indietro.</div><div class="code" id="code">/applica ${code}</div><div class="btns"><button id="bCopy">Copia</button></div>`;
+  $("bCopy").onclick = () => { const t = "/applica " + code; navigator.clipboard.writeText(t).then(() => { $("bCopy").textContent = "Copiato"; }).catch(() => { const r = document.createRange(); r.selectNodeContents($("code")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("bCopy").textContent = "Selezionato: copia a mano"; }); };
+};
+
+renderGlobals(); renderStrats();
+</script>
+</body>
+</html>
