@@ -568,6 +568,7 @@ details.op[open] { background: #0b1a33; margin: 0 -6px; padding: 6px; }
     </div>
     <div class="row">
       <button class="btn" id="bLabRun" disabled>Rifai la prova sui dati caricati</button>
+      <button class="btn blue" id="bLabPepper">Carica dati di Pepper</button>
       <label class="btn" style="flex:none;min-width:0;color:var(--text)">Carica CSV o pacchetto .zip<input type="file" id="labFile" accept=".csv,.zip,text/csv,application/zip" multiple class="hidden"></label>
       <span class="note">Usa le monete e le strategie accese, il rischio, il limite di posizioni, commissioni e funding attuali. Per i file CSV il nome deve iniziare con btc_, eth_, sol_ o xrp_ (si possono caricare più file insieme); il pacchetto .zip salvato dal laboratorio si carica con un solo file.</span>
     </div>
@@ -2337,6 +2338,7 @@ const TOGGLES = [
   { id: "autoLock", t: "Blocco automatico dopo 15 minuti", d: "Se non usi la pagina chiede di nuovo la password (il bot continua a lavorare)", def: false },
   { id: "limitEntry", t: "Entrata con ordine limite", d: "Il bot entra con un ordine limite (maker 0,015%) al prezzo del segnale invece che a mercato (0,045% + slittamento). Se entro l'attesa scelta non viene eseguito entra a mercato come prima (piano B). Lo stop è sempre a mercato. Prova 2022-2026 sul PastaBank v1: circa 194% l'anno invece di 176%, stessa discesa massima", def: false },
   { id: "steady", t: "Modalità costanza", d: "Chiude metà posizione quando guadagna 3 volte il rischio e porta lo stop a pareggio: guadagni minori, mesi più regolari", def: false },
+  { id: "datiPepper", t: "Pulsante «Carica dati di Pepper» nel laboratorio", d: "Legge le candele di BTC, ETH, SOL e XRP dalla cartella dati di Jeriko OS (gli stessi CSV della stima di Pepper): niente download da Binance. Funziona con CashMkr aperto dal PC di PastaCrypto in Jeriko OS", def: true },
   { id: "saveCsv", t: "Chiedi di salvare il pacchetto delle candele scaricate", d: "Alla fine dei download del laboratorio propone un unico file .zip con i CSV di tutte le monete (cartella Download)", def: true },
 ];
 const STR = Core.STRATEGIES, SBY = Object.fromEntries(STR.map(s => [s.id, s]));
@@ -3886,6 +3888,7 @@ function showLabData(extra) {
     return `<b>${c}</b> <span class="mono">${n.toLocaleString("it-IT")}</span> candele dal ${dIt(d.arr[0].t)} al ${dIt(d.arr[n - 1].t)}${d.how ? " (" + d.how + ")" : ""}${S.coinOn[c] ? "" : ' <span class="mut">· moneta spenta, non entra nella prova</span>'}`; }).join("<br>") + (extra ? "<br>" + extra : "")
     : "Nessun dato caricato." + (extra ? " " + extra : "");
   $("bLabRun").disabled = !ks.some(c => S.coinOn[c] && labD[c].arr.length >= 1200);
+  $("bLabPepper").classList.toggle("hidden", !S.tog.datiPepper);
 }
 const csvText = arr => { const lines = ["time,open,high,low,close,volume"]; for (const x of arr) lines.push([x.t, x.o, x.h, x.l, x.c, x.v].join(",")); return lines.join("\n"); };
 function saveBlob(blob, name) {
@@ -3961,6 +3964,46 @@ $("bLabDl").onclick = async () => {
     try { saveBlob(makeZip(pack.map(x => ({ name: x.name, text: csvText(x.arr) }))), zname); log(`Laboratorio: salvato il pacchetto ${zname} (${names}).`); }
     catch (e) { log("Laboratorio: pacchetto non salvato (" + e.message + ")."); }
   }, 600);
+};
+// Dati di Pepper: le candele della cartella dati di Jeriko OS (BTC.csv, ETH.csv, SOL.csv, XRP.csv), per gli ultimi "Giorni da provare".
+// I file restano dietro la password di Jeriko OS: li chiede l'ufficio di Jeriko (la pagina che contiene CashMkr nel PC di PastaCrypto)
+// e li passa qui con un messaggio. Funziona solo con CashMkr aperto dal PC di PastaCrypto in Jeriko OS.
+const JERIKO_ORIGIN = "https://jeriko-os.pages.dev";
+function datiDaJeriko(coin) {
+  return new Promise((resolve, reject) => {
+    if (window.parent === window) return reject(new Error("apri CashMkr dal PC di PastaCrypto in Jeriko OS"));
+    const id = coin + "-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+    const done = (fn, v) => { clearTimeout(tm); window.removeEventListener("message", on); fn(v); };
+    const on = ev => { const m = ev.data; if (ev.origin !== JERIKO_ORIGIN || ev.source !== window.parent || !m || m.tipo !== "jeriko-dati-risposta" || m.id !== id) return;
+      if (m.ok && typeof m.text === "string") done(resolve, m.text); else done(reject, new Error(m.err || "file non disponibile")); };
+    const tm = setTimeout(() => done(reject, new Error("Jeriko OS non risponde: apri CashMkr dal PC di PastaCrypto")), 30000);
+    window.addEventListener("message", on);
+    window.parent.postMessage({ tipo: "jeriko-dati", id, coin }, JERIKO_ORIGIN);
+  });
+}
+$("bLabPepper").classList.toggle("hidden", !S.tog.datiPepper);
+$("bLabPepper").onclick = async () => {
+  if (!S.tog.datiPepper) return;
+  const days = Math.round(Math.min(1500, Math.max(7, +$("labDays").value || 360))); $("labDays").value = days;
+  const coins = coinsOn(); if (!coins.length) { showLabData('<b class="neg">Accendi almeno una moneta.</b>'); return; }
+  const b = $("bLabPepper"); b.disabled = true; $("labBarWrap").classList.remove("hidden"); $("labBar").style.width = "0";
+  const errs = [], notes = []; let ok = 0;
+  for (let k = 0; k < coins.length; k++) {
+    const c = coins[k]; showLabData(`Leggo ${c} dalla cartella dati di Pepper (${k + 1} di ${coins.length})…`);
+    try {
+      const C = E.loadCSV(await datiDaJeriko(c)), arr = Array.from(C.t, (t, i) => ({ t, o: C.o[i], h: C.h[i], l: C.l[i], c: C.c[i], v: C.v[i] })).filter(x => x.t > 0 && x.c > 0);
+      if (arr.length < 1200) throw new Error("file troppo corto o non valido");
+      const last = arr[arr.length - 1].t, want = last - days * 86400000, fromT = Math.max(want, arr[0].t + WARM_DAYS * 86400000), got = Math.floor((last - fromT) / 86400000);
+      if (fromT > want) notes.push(`${c}: il file basta per ${got} giorni`);
+      const how = `dalla cartella dati di Pepper, ultimi ${got} giorni`;
+      setLab(c, arr, how, fromT, got); idbPut("lab_" + c, { arr, fromT, days: got, how }); ok++;
+    } catch (e) { errs.push(`${c}: ${e.message}`); }
+    $("labBar").style.width = Math.round((k + 1) / coins.length * 100) + "%";
+  }
+  log(`Laboratorio: dati di Pepper per ${ok} monete, ultimi ${days} giorni${errs.length ? " (problemi: " + errs.join("; ") + ")" : ""}.`);
+  showLabData([errs.length ? `<span class="neg">${errs.join(" · ")}</span>` : "", notes.length ? `<span class="mut">${notes.join(" · ")}</span>` : ""].filter(Boolean).join("<br>"));
+  b.disabled = false; setTimeout(() => $("labBarWrap").classList.add("hidden"), 800);
+  if (ok) runLab();
 };
 $("labFile").onchange = async e => {
   const picked = [...e.target.files]; if (!picked.length) return;
@@ -4113,6 +4156,7 @@ function bind() {
     if (id === "steady") for (const k of COINS) M[k].lastBot = 0;
     if (id === "adapt" || id === "riskCap") renderRiskUI();
     if (id === "rsTop" && Object.keys(labD).length) showLabData();
+    if (id === "datiPepper") $("bLabPepper").classList.toggle("hidden", !S.tog.datiPepper);
     if (id === "house") { Casa.apply(); renderPort(); }
     if (id === "ship") renderPort();
     if (id === "observe") { SRV.at = 0; refreshWallet(); }
