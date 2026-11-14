@@ -23,6 +23,9 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
 
 ## Impostazioni dal vivo
 - Rischio adattivo acceso, "Solo la più forte" (/classifica 1), PiramidBoost acceso, Ibrido acceso (non agisce con l'adattivo).
+- Equivale all'assetto 🙂 4 (medio-prudente). Assetti 1-10 in server.js (ASSETTI): cambiano solo rischio adattivo, tetto e
+  PiramidBoost. Se cambi i numeri di un assetto, ricalcola i riferimenti del termometro di Pepper (repo Jeriko-OS).
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 14 nov: /assetto 1-10 (🧊 molto prudente … 😡 incazzato nero), assetto in /stato e nel resoconto a Jeriko (set.assetto).
 - 13 nov: /classifica 1|2 (long solo sulla moneta più forte); il resoconto a Jeriko include le impostazioni di rischio.
