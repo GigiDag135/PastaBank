@@ -24,10 +24,13 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
 ## Impostazioni dal vivo
 - Rischio adattivo acceso, "Solo la più forte" (/classifica 1), PiramidBoost acceso, Ibrido acceso (non agisce con l'adattivo).
 - Dal vivo (15 nov 2026): adattivo 1,3% / 0,65%, tetto 2× (max 3%), PiramidBoost = assetto 🏃 6.
+- Monete: BTC, ETH, SOL. XRP spenta con /moneta XRP off (15 nov 2026, ricerca 039 nella cartella del Mac): la classifica
+  usa solo le monete accese. Gli short intelligenti restano come sono (ricerca 040: nessuna variante migliore).
 - Assetti 1-10 in server.js (ASSETTI): scelti su 61 combinazioni (2018-22 e 2022-26). Se cambi i numeri di un assetto,
   cambiali anche in Jeriko-OS (pepper/stima.html, index.html, scarica/jeriko-pepper.zip con riferimenti.json).
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 15 nov: XRP spenta dal bot (/moneta XRP off), nessuna modifica al codice.
 - 15 nov: assetti rifatti con la prova di 61 combinazioni (adattivo o fisso+Ibrido, sempre PiramidBoost); il bot di oggi è il 6.
 - 14 nov: /assetto 1-10 (🧊 molto prudente … 😡 incazzato nero), assetto in /stato e nel resoconto a Jeriko (set.assetto).
 - 13 nov: /classifica 1|2 (long solo sulla moneta più forte); il resoconto a Jeriko include le impostazioni di rischio.
