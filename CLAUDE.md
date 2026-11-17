@@ -33,6 +33,7 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 17 nov: ricerca 048: modalità ribasso moneta per moneta provata e scartata (più discesa nel 2022-26): resta solo BTC.
 - 17 nov: modalità ribasso (/ribasso on|off): long a metà e short in più nel ribasso efficiente, niente short con funding
   basso; /stato, avviso giornaliero, set.ribasso/ribassoOggi/fund7 nel resoconto a Jeriko. 25 prove con mercato finto.
 - 15 nov: XRP spenta dal bot (/moneta XRP off), nessuna modifica al codice.
