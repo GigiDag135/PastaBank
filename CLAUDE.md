@@ -35,6 +35,8 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
 - 21 nov: lettura sicura del saldo (decisione di Gigi, senza interruttore): lettura incompleta (spot mancante) = scartata, non 0 $
   (hl.js incompleto, accountSicuro 3 tentativi; doOpen/doAdd non inviano); blocco del 5% solo con due letture di fila. Gigi è passato all'assetto 7.
+  DA FARE: Gigi deve lanciare aggiorna.sh sul server; poi leggere registro.log (grep ignorato|non eseguito|non inviato|Perdita di oggi):
+  il wallet 0x8294… non ha MAI operato (ultime operazioni 5 nov sul wallet vecchio 0xe2d5…): capire perché.
 - 17 nov: ricerca 048: modalità ribasso moneta per moneta provata e scartata (più discesa nel 2022-26): resta solo BTC.
 - 17 nov: modalità ribasso (/ribasso on|off): long a metà e short in più nel ribasso efficiente, niente short con funding
   basso; /stato, avviso giornaliero, set.ribasso/ribassoOggi/fund7 nel resoconto a Jeriko. 25 prove con mercato finto.
