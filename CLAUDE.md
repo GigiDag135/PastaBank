@@ -33,6 +33,9 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 21 nov: ricerca 062 (filtro di volatilità, assetto 7, BTC/ETH/SOL, ott 2022-11 nov 2026): HyperStrategy ferma dal 5 nov perché la volatilità
+  è sopra il 50° percentile (kel1h, mom1h, kelS entrano solo sotto: segnali scartati in silenzio). Filtro 50 il migliore in OGNI anno; senza filtro
+  +1.209% contro +2.842%, PF 1,36 contro 1,90; 60/70/80, metà rischio, solo long/short tutti peggio. Bot invariato. Tutte e 3 sopra il filtro 31% dei giorni.
 - 21 nov: Sentinella di Pepper (decisione di Gigi, interruttore SENTINELLA in server.js): con allarme 🔴/⛔ su Hyperliquid in
   ~/jeriko-pepper/data/sentinella.json doOpen e doAdd non inviano (sentinellaFerma); file mancante, spento o vecchio > 10 min = apre normalmente.
 - 21 nov: lettura sicura del saldo (decisione di Gigi, senza interruttore): lettura incompleta (spot mancante) = scartata, non 0 $
