@@ -33,6 +33,10 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 22 nov: ricerca 064 (cartella research del Mac, regola fissata prima): segnali scartati dal filtro di volatilità divisi per modalità ribasso.
+  Mercato agitato E in discesa: kel1h, mom1h e short perdono tutti nel 2023-26 (short −17 R). Unica casella buona (mom1h agitato senza ribasso)
+  peggiora il bot in ogni periodo (2023-26 rapporto 7,78 → 4,66). Bot invariato. 1-5 nov rifatti: stesse 5 operazioni del vivo; DA VEDERE:
+  dal vivo il rischio adattivo non è sceso dopo le perdite (~1,2% ciascuna invece di 0,65%).
 - 21 nov: ricerca 063 (cartella research del Mac, dati 2017-2026, scelta 2018-22, fuori campione 2023-26): nessuna strategia per il mercato agitato
   regge: 0 su 29 finaliste e 0 su 455 combinazioni migliorano il bot fuori campione; gli short col mercato agitato perdono sempre. Bot invariato.
   LighterStrategy rende +0,40%/giorno proprio quando HyperStrategy è ferma (+0,15% gli altri giorni): diviso 70/30 discesa 15,7% invece di 20%.
@@ -51,4 +55,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
 - 15 nov: XRP spenta dal bot (/moneta XRP off), nessuna modifica al codice.
 - 15 nov: assetti rifatti con la prova di 61 combinazioni (adattivo o fisso+Ibrido, sempre PiramidBoost); il bot di oggi è il 6.
 - 14 nov: /assetto 1-10 (🧊 molto prudente … 😡 incazzato nero), assetto in /stato e nel resoconto a Jeriko (set.assetto).
-- 13 nov: /classifica 1|2 (long solo sulla moneta più forte); il resoconto a Jeriko include le impostazioni di rischio.
