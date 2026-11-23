@@ -33,6 +33,9 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 23 nov: ricerca 076 (Mac, solo analisi): percorsi delle 756 operazioni 2020-26. Grandi vincite poco riconoscibili nelle prime ore
+  (AUC 0,58 a 1 h, ~0,7 a 2-8 h); sopra +1 R a 2 h 19% diventano >10 R (contro 4%): è già PiramidBoost. Le oltre 20 R restituiscono
+  in mediana 16,6 R prima del segnale opposto: unico punto aperto è l'uscita dopo +10 R. Bot invariato.
 - 23 nov: ricerca 075 (Mac): modello che stima la probabilità di grandi vincite (> 5 R) su 14 monete, regole di Gigi fissate prima.
   Forti peggio dei normali in 2020-22 e 2023-26 (R medio 0,71/0,94 contro 1,23/1,08); oltre 20 R il modello si rovescia fra i periodi.
   Le grandi vincite non si vedono all'entrata. Tema «modello sui segnali» chiuso (4 prove). Bot invariato.
@@ -58,5 +61,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   DA FARE: Gigi deve lanciare aggiorna.sh sul server; poi leggere registro.log (grep ignorato|non eseguito|non inviato|Perdita di oggi):
   il wallet 0x8294… non ha MAI operato (ultime operazioni 5 nov sul wallet vecchio 0xe2d5…): capire perché.
 - 17 nov: ricerca 048: modalità ribasso moneta per moneta provata e scartata (più discesa nel 2022-26): resta solo BTC.
-- 17 nov: modalità ribasso (/ribasso on|off): long a metà e short in più nel ribasso efficiente, niente short con funding
-  basso; /stato, avviso giornaliero, set.ribasso/ribassoOggi/fund7 nel resoconto a Jeriko. 25 prove con mercato finto.
