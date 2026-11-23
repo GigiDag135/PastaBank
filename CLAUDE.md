@@ -33,6 +33,9 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 23 nov: ricerca 073 (cartella research del Mac): HyperStrategy «che impara» come LighterStrategy. M1 meta-modello mese per mese: previsione
+  al contrario del risultato (correlazione −0,09/−0,22), peggio del filtro; M2 soglia di volatilità che si adatta: meglio 2020-22, peggio 2023-26.
+  Fermate a metà, niente prova col bot. Solo ~200 segnali l'anno: troppo pochi per imparare. Filtro 50° resta. Bot invariato.
 - 22 nov: ricerca 064 (cartella research del Mac, regola fissata prima): segnali scartati dal filtro di volatilità divisi per modalità ribasso.
   Mercato agitato E in discesa: kel1h, mom1h e short perdono tutti nel 2023-26 (short −17 R). Unica casella buona (mom1h agitato senza ribasso)
   peggiora il bot in ogni periodo (2023-26 rapporto 7,78 → 4,66). Bot invariato. 1-5 nov rifatti: stesse 5 operazioni del vivo; DA VEDERE:
@@ -54,4 +57,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   basso; /stato, avviso giornaliero, set.ribasso/ribassoOggi/fund7 nel resoconto a Jeriko. 25 prove con mercato finto.
 - 15 nov: XRP spenta dal bot (/moneta XRP off), nessuna modifica al codice.
 - 15 nov: assetti rifatti con la prova di 61 combinazioni (adattivo o fisso+Ibrido, sempre PiramidBoost); il bot di oggi è il 6.
-- 14 nov: /assetto 1-10 (🧊 molto prudente … 😡 incazzato nero), assetto in /stato e nel resoconto a Jeriko (set.assetto).
