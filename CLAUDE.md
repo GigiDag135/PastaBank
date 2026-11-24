@@ -33,6 +33,9 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 24 nov: ricerca 077 (Mac): HyperStrategy ferma dal 5 nov (BTC 80.500 → 59.800, volatilità al 98-100° percentile): simulazione identica, zero
+  aperture: è la strategia. 3 prove fissate prima: ATR 7 (no, B peggio), short di crollo BTC Donchian 4h (no, A peggio), Lighter ×1,2 nei giorni fermi (no).
+  Short di crollo con precedenza al long (P2b, scelta dopo): A 111% contro 108%, B 158% contro 147%; mai visto 2012-17 PF 1,54, +5,2 R (di poco). Bot invariato.
 - 23 nov: ricerca 076 (Mac, solo analisi): percorsi delle 756 operazioni 2020-26. Grandi vincite poco riconoscibili nelle prime ore
   (AUC 0,58 a 1 h, ~0,7 a 2-8 h); sopra +1 R a 2 h 19% diventano >10 R (contro 4%): è già PiramidBoost. Le oltre 20 R restituiscono
   in mediana 16,6 R prima del segnale opposto: unico punto aperto è l'uscita dopo +10 R. Bot invariato.
@@ -60,4 +63,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   (hl.js incompleto, accountSicuro 3 tentativi; doOpen/doAdd non inviano); blocco del 5% solo con due letture di fila. Gigi è passato all'assetto 7.
   DA FARE: Gigi deve lanciare aggiorna.sh sul server; poi leggere registro.log (grep ignorato|non eseguito|non inviato|Perdita di oggi):
   il wallet 0x8294… non ha MAI operato (ultime operazioni 5 nov sul wallet vecchio 0xe2d5…): capire perché.
-- 17 nov: ricerca 048: modalità ribasso moneta per moneta provata e scartata (più discesa nel 2022-26): resta solo BTC.
