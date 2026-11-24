@@ -35,7 +35,8 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
 - 24 nov: ricerca 077 (Mac): HyperStrategy ferma dal 5 nov (BTC 80.500 → 59.800, volatilità al 98-100° percentile): simulazione identica, zero
   aperture: è la strategia. 3 prove fissate prima: ATR 7 (no, B peggio), short di crollo BTC Donchian 4h (no, A peggio), Lighter ×1,2 nei giorni fermi (no).
-  Short di crollo con precedenza al long (P2b, scelta dopo): A 111% contro 108%, B 158% contro 147%; mai visto 2012-17 PF 1,54, +5,2 R (di poco). Bot invariato.
+  Short di crollo con precedenza al long (P2b, scelta dopo): A 111% contro 108%, B 158% contro 147%; nel bot intero su BTC 2012-17
+  (mai visto) 111,8% contro 111,9%: chiuso. Il bot di oggi su 2014-17 mai visto: ogni anno in attivo (2014 +25%). Bot invariato.
 - 23 nov: ricerca 076 (Mac, solo analisi): percorsi delle 756 operazioni 2020-26. Grandi vincite poco riconoscibili nelle prime ore
   (AUC 0,58 a 1 h, ~0,7 a 2-8 h); sopra +1 R a 2 h 19% diventano >10 R (contro 4%): è già PiramidBoost. Le oltre 20 R restituiscono
   in mediana 16,6 R prima del segnale opposto: unico punto aperto è l'uscita dopo +10 R. Bot invariato.
