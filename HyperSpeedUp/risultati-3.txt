@@ -1,0 +1,17 @@
+| Segnali Lighter su BTC ETH SOL, fee Hyperliquid | Operazioni | 2022 | 2023 | 2024 | 2025 | 2026 | t 2023-26 | Passa? |
+|---|---|---|---|---|---|---|---|---|
+| Tutte | 5385 | +0.08% (939) | -0.05% (1157) | +0.07% (1032) | -0.06% (1095) | -0.02% (1162) | -1.2 | no |
+| Più forti del 50° percentile | 2641 | +0.19% (425) | -0.00% (578) | +0.10% (495) | -0.09% (553) | +0.02% (590) | 0.2 | no |
+| Più forti del 80° percentile | 1077 | +0.20% (187) | +0.03% (233) | +0.18% (193) | -0.01% (227) | +0.03% (237) | 1.1 | no |
+| Più forti del 90° percentile | 543 | +0.43% (96) | +0.22% (117) | +0.18% (99) | +0.00% (108) | +0.12% (123) | 1.8 | no |
+| Più forti del 95° percentile | 289 | +0.21% (55) | +0.55% (54) | +0.18% (54) | +0.24% (61) | +0.20% (65) | 2.3 | SÌ |
+| Prova (mar 2022 - 18 nov 2026) | Op/anno | %/anno | Discesa | Rapporto | 5-18 nov 2026 |
+|---|---|---|---|---|---|
+| Originale | 77 | 110% | 19% | 5.84 | 0 op Lighter · -0.8% |
+| + Lighter forti sempre, quota 0.2 | 138 | 118% | 20% | 5.95 | 3 op Lighter · -0.4% |
+| + Lighter forti solo quando è ferma, quota 0.2 | 102 | 113% | 20% | 5.72 | 3 op Lighter · -0.4% |
+| + Lighter forti sempre, quota 0.35 | 138 | 123% | 20% | 6.04 | 3 op Lighter · -0.2% |
+| + Lighter forti solo quando è ferma, quota 0.35 | 102 | 116% | 21% | 5.63 | 3 op Lighter · -0.2% |
+| + Lighter forti sempre, quota 0.5 | 138 | 128% | 21% | 6.11 | 3 op Lighter · 0.1% |
+| + Lighter forti solo quando è ferma, quota 0.5 | 102 | 118% | 21% | 5.55 | 3 op Lighter · 0.1% |
+Operazioni Lighter forti dal 5 nov: 11-07T15:45 SOL -0.37%; 11-14T14:15 ETH 1.54%; 11-14T14:30 SOL 0.47%

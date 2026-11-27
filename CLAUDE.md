@@ -37,6 +37,8 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   della 077 (107,9% / 147,2%). Dati con prendi-dati.sh (Release), confronto con node prova.js. Bot invariato.
 - 27 nov: HyperSpeedUp, più operazioni (Gigi): classifica 2/3, +XRP, +sq2h/ema4h/kel4h/mom8h, +segnali Lighter nei giorni fermi: nessuna
   passa (più operazioni ma rapporto peggiore nel 2023-26). Lighter su BTC/ETH/SOL +0,07%/op, 2026 ~0: con le fee Hyperliquid perde.
+- 27 nov: HyperSpeedUp prove 1-3 (Gigi): classifica 2 con meno rischio e squeeze 2h solo da ferma: no. Segnali Lighter più forti (>95° perc.
+  90 g) su BTC/ETH/SOL con fee HL: positivi ogni anno 2022-26, t 2,3; nel bot +60 op/anno, 110→123%/anno, discesa 19→20% (prova-3b.js). Da confermare.
 - 24 nov: ricerca 077 (Mac): HyperStrategy ferma dal 5 nov (BTC 80.500 → 59.800, volatilità al 98-100° percentile): simulazione identica, zero
   aperture: è la strategia. 3 prove fissate prima: ATR 7 (no, B peggio), short di crollo BTC Donchian 4h (no, A peggio), Lighter ×1,2 nei giorni fermi (no).
   Short di crollo con precedenza al long (P2b, scelta dopo): A 111% contro 108%, B 158% contro 147%; nel bot intero su BTC 2012-17
@@ -52,13 +54,6 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
 - 23 nov: ricerca 073 (cartella research del Mac): HyperStrategy «che impara» come LighterStrategy. M1 meta-modello mese per mese: previsione
   al contrario del risultato (correlazione −0,09/−0,22), peggio del filtro; M2 soglia di volatilità che si adatta: meglio 2020-22, peggio 2023-26.
   Fermate a metà, niente prova col bot. Solo ~200 segnali l'anno: troppo pochi per imparare. Filtro 50° resta. Bot invariato.
-- 22 nov: ricerca 064 (cartella research del Mac, regola fissata prima): segnali scartati dal filtro di volatilità divisi per modalità ribasso.
-  Mercato agitato E in discesa: kel1h, mom1h e short perdono tutti nel 2023-26 (short −17 R). Unica casella buona (mom1h agitato senza ribasso)
-  peggiora il bot in ogni periodo (2023-26 rapporto 7,78 → 4,66). Bot invariato. 1-5 nov rifatti: stesse 5 operazioni del vivo; DA VEDERE:
-  dal vivo il rischio adattivo non è sceso dopo le perdite (~1,2% ciascuna invece di 0,65%).
-- 21 nov: ricerca 063 (cartella research del Mac, dati 2017-2026, scelta 2018-22, fuori campione 2023-26): nessuna strategia per il mercato agitato
-  regge: 0 su 29 finaliste e 0 su 455 combinazioni migliorano il bot fuori campione; gli short col mercato agitato perdono sempre. Bot invariato.
-  LighterStrategy rende +0,40%/giorno proprio quando HyperStrategy è ferma (+0,15% gli altri giorni): diviso 70/30 discesa 15,7% invece di 20%.
 - 21 nov: lettura sicura del saldo (decisione di Gigi, senza interruttore): lettura incompleta (spot mancante) = scartata, non 0 $
   (hl.js incompleto, accountSicuro 3 tentativi; doOpen/doAdd non inviano); blocco del 5% solo con due letture di fila. Gigi è passato all'assetto 7.
   FATTO (25 nov, controllo sul server): lettura sicura e Sentinella installate, 5 servizi attivi. Dal 5 nov nessun segnale ha passato i filtri
