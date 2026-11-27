@@ -33,6 +33,8 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 27 nov: ricerca 118 (griglia-118.js): griglia BTC con stop solo col bot fermo. NON PASSA: +33%/anno 2018-22 ma +2% 2023-26 (−4% a taker);
+  insieme al bot peggiora il rapporto nel 2023-26. Bot invariato.
 - 27 nov: ricerca 117 (walkforward-117.js): parametri scelti ogni anno sui 3 anni prima → efficienza 58-59%, 56-60%/anno nel 2021-26,
   2022 −6/−7%. Parametri di oggi vicini a quelli scelti, solo più fortunati nel 2022-26. Bot invariato.
 - 27 nov: ricerca 116 (solidita-116.js): 92/92 partenze di 12 mesi in guadagno, batte entrate a caso 199/200. Parametri di oggi 1° su 81 nel
@@ -41,5 +43,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   2023-26 i parametri sono al picco e fuori da BTC/ETH/SOL rende 5-22%/anno. Monte Carlo 1 anno: discesa 1 su 100 = 36%. Soglie proposte a Gigi.
 - 27 nov: ricerca 114 (Mac): uscita più stretta dopo +10 R (massimo −3/−5/−8 R o metà del massimo). NON PASSA: perde dal 19% al 53%
   della somma R. L'uscita al segnale opposto resta la migliore. Bot invariato.
-- 27 nov: ricerca 113 (Mac): chiudere a mercato dopo 2/4/8 ore le operazioni sotto −0,5 R o in perdita. NON PASSA: la migliore
-  +1,5% (2020-22) e −5,6% (2023-26). Lo stop a 2 ATR fa già il suo lavoro. Tema «riconoscere i perdenti» chiuso. Bot invariato.

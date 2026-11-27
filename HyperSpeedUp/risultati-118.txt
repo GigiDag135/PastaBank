@@ -1,0 +1,24 @@
+| Variante | Periodo | Griglia: %/anno · discesa · giri chiusi · stop | Bot da solo: %/anno · disc. · rapp. | 80% bot + 20% griglia: %/anno · disc. · rapp. |
+|---|---|---|---|---|
+| (bot senza posizioni il 46% del tempo) | A apr 2018-22 | | | |
+| BTC s=0.2 ATR | A apr 2018-22 | 33.2% · 12% · 3737 · 36 | 108% · 29% · 3.68 | 100% · 26% · 3.79 |
+| BTC s=0.4 ATR | A apr 2018-22 | 2.1% · 37% · 938 · 12 | 108% · 29% · 3.68 | 99% · 26% · 3.78 |
+| BTC s=0.2 ATR (tutto taker) | A apr 2018-22 | 24.4% · 16% · 3737 · 36 | 108% · 29% · 3.68 | 99% · 26% · 3.75 |
+| BTC s=0.4 ATR (tutto taker) | A apr 2018-22 | 0.2% · 39% · 938 · 12 | 108% · 29% · 3.68 | 99% · 26% · 3.77 |
+| ETH s=0.2 ATR | A apr 2018-22 | 23.6% · 18% · 3414 · 40 | 108% · 29% · 3.68 | 99% · 26% · 3.86 |
+| ETH s=0.4 ATR | A apr 2018-22 | 4.7% · 33% · 959 · 10 | 108% · 29% · 3.68 | 99% · 26% · 3.83 |
+| (bot senza posizioni il 43% del tempo) | B 2023-nov 2026 | | | |
+| BTC s=0.2 ATR | B 2023-nov 2026 | 2.0% · 18% · 2658 · 34 | 147% · 19% · 7.78 | 134% · 19% · 7.11 |
+| BTC s=0.4 ATR | B 2023-nov 2026 | 4.2% · 12% · 638 · 7 | 147% · 19% · 7.78 | 134% · 19% · 7.12 |
+| BTC s=0.2 ATR (tutto taker) | B 2023-nov 2026 | -4.0% · 26% · 2658 · 34 | 147% · 19% · 7.78 | 134% · 19% · 7.09 |
+| BTC s=0.4 ATR (tutto taker) | B 2023-nov 2026 | 2.6% · 13% · 638 · 7 | 147% · 19% · 7.78 | 134% · 19% · 7.11 |
+| ETH s=0.2 ATR | B 2023-nov 2026 | 12.4% · 17% · 2484 · 29 | 147% · 19% · 7.78 | 134% · 19% · 7.14 |
+| ETH s=0.4 ATR | B 2023-nov 2026 | 3.2% · 19% · 561 · 7 | 147% · 19% · 7.78 | 134% · 19% · 7.11 |
+
+Esito: BTC s=0.2 ATR NON PASSA · BTC s=0.4 ATR NON PASSA
+A apr 2018-22 · BTC s=0.2: bot 108% disc. 29% rapp. 3.68 → bot + griglia stessi soldi 177% disc. 34% rapp. 5.24
+A apr 2018-22 · BTC s=0.2 taker: bot 108% disc. 29% rapp. 3.68 → bot + griglia stessi soldi 159% disc. 35% rapp. 4.58
+A apr 2018-22 · ETH s=0.2: bot 108% disc. 29% rapp. 3.68 → bot + griglia stessi soldi 157% disc. 32% rapp. 4.91
+B 2023-nov 2026 · BTC s=0.2: bot 147% disc. 19% rapp. 7.78 → bot + griglia stessi soldi 152% disc. 22% rapp. 6.82
+B 2023-nov 2026 · BTC s=0.2 taker: bot 147% disc. 19% rapp. 7.78 → bot + griglia stessi soldi 137% disc. 25% rapp. 5.45
+B 2023-nov 2026 · ETH s=0.2: bot 147% disc. 19% rapp. 7.78 → bot + griglia stessi soldi 177% disc. 23% rapp. 7.75
