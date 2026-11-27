@@ -43,15 +43,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   negativo; nel bot 139→161%/anno ma per gli anni forti). Niente attivazione. Bot invariato.
 - 27 nov: ricerca 112 (Mac, idea di Gigi): riconoscere all'entrata i segnali che perdono e saltarli. NON PASSA: AUC 0,49/0,46 (peggio del caso),
   i segnali da saltare rendono più della media. Tema «modello sui segnali» 073-075-112 chiuso. Bot invariato.
-- 27 nov: ricerca 111 (prova-111.js): classifica 2 a 0,6%/0,5% su Bitfinex 2014-mar 2018 mai visti (BTC+LTC) NON PASSA: rapporto 0,51/0,50
-  contro 1,00, discesa 50/44% contro 37%. Solo il 2017 con 3 monete molto meglio. Niente attivazione.
-- 23 nov: ricerca 074 (Mac): modello che impara da 14.866 segnali su 14 monete e dà solo la forza (forti rischio ×1,5, strategia uguale).
-  I «forti» vanno PEGGIO degli altri (2023-26 R medio +0,48 contro +1,27): il modello ritrova solo il filtro di volatilità. Bot invariato.
-- 23 nov: ricerca 073 (cartella research del Mac): HyperStrategy «che impara» come LighterStrategy. M1 meta-modello mese per mese: previsione
-  al contrario del risultato (correlazione −0,09/−0,22), peggio del filtro; M2 soglia di volatilità che si adatta: meglio 2020-22, peggio 2023-26.
-  Fermate a metà, niente prova col bot. Solo ~200 segnali l'anno: troppo pochi per imparare. Filtro 50° resta. Bot invariato.
-- 21 nov: lettura sicura del saldo (decisione di Gigi, senza interruttore): lettura incompleta (spot mancante) = scartata, non 0 $
-  (hl.js incompleto, accountSicuro 3 tentativi; doOpen/doAdd non inviano); blocco del 5% solo con due letture di fila. Gigi è passato all'assetto 7.
-  FATTO (25 nov, controllo sul server): lettura sicura e Sentinella installate, 5 servizi attivi. Dal 5 nov nessun segnale ha passato i filtri
-  (0 Squeeze 4h, tutti gli altri scartati dalla volatilità): il silenzio del registro è spiegato. RESTA: /stato del conto Tommaso (bot acceso?); il
-  conto nuovo non ha ancora avuto un segnale valido. Non spiegato: blocco 5% dell'8 nov su [Gigi] senza operazioni nel registro letto.
