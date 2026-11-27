@@ -4,4 +4,4 @@ core.js / engine.js = quelli del bot, con i ganci di Pepper per simulare la moda
 bot.js = il bot intero come gira: assetto 7 (0,8%), BTC ETH SOL, "solo la più forte", PiramidBoost, modalità ribasso.
 Controllo: la copia ridà i numeri della ricerca 077 (2018-22: 107,9%/anno, discesa 29,3%; 2023-26: 147,2%, discesa 18,9%).
 Uso (sul Mac):  sh prendi-dati.sh   poi   node prova.js   (originale contro copia modificata, 2 secondi)
-Prove 27 nov (più operazioni): prove-movimenti.js, prova-lighter.js (vuole dati/lighter-operazioni.json da Jeriko-OS/pepper); risultati nei .txt
+Prove 27 nov (più operazioni): prove-movimenti.js, prova-lighter.js (vuole dati/lighter-operazioni.json da Jeriko-OS/pepper); risultati nei .txt. Verifica 110 (anni 2018-21 mai visti): verifica-110.js, file dati/lighter-2018-21.json nella Release (ricerca-110.tgz)

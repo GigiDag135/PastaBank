@@ -1,0 +1,29 @@
+Periodo 2018-04-01 - 2022-01-01, fee Hyperliquid 0.09% tolte
+
+| Segnali | Operazioni | 2018 | 2019 | 2020 | 2021 | 1ª metà · 2ª metà | t | Senza il 5% migliore |
+| Tutte | 2734 | 0.10% (518) | 0.08% (455) | 0.29% (683) | 0.33% (1078) | 0.10% · 0.32% | 5.7 | -0.06% |
+| Più forti del 90° percentile | 278 | -0.09% (59) | -0.10% (37) | 1.55% (66) | 1.07% (116) | -0.10% · 1.25% | 3.1 | 0.15% |
+| Più forti del 95° percentile | 160 | -0.01% (36) | -0.50% (23) | 1.52% (40) | 0.89% (61) | -0.20% · 1.14% | 1.7 | -0.12% |
+
+| Bot | Op/anno | %/anno | Discesa | Rapporto |
+|---|---|---|---|---|
+| HyperStrategy da sola | 68 | 139% | 29% | 4.73 |
+| + segnali Lighter forti, quota 0,35 | 111 | 161% | 28% | 5.82 |
+
+Regole: 1. netto > 0 nelle due metà: NO · 2. t ≥ 2: NO · 3. senza il 5% migliore > 0: NO · 4. rapporto non peggiore e discesa ≤ 30%: SÌ
+ESITO: NON PASSA
+
+Periodo 2022-03-01 - 2026-11-18, fee Hyperliquid 0.09% tolte
+
+| Segnali | Operazioni | 2022 | 2023 | 2024 | 2025 | 2026 | 1ª metà · 2ª metà | t | Senza il 5% migliore |
+| Tutte | 5378 | 0.08% (939) | -0.05% (1157) | 0.07% (1032) | -0.06% (1095) | -0.01% (1155) | 0.02% · -0.02% | -0.0 | -0.15% |
+| Più forti del 90° percentile | 543 | 0.43% (96) | 0.22% (117) | 0.18% (99) | 0.00% (108) | 0.12% (123) | 0.31% · 0.07% | 2.5 | -0.08% |
+| Più forti del 95° percentile | 289 | 0.21% (55) | 0.55% (54) | 0.18% (54) | 0.24% (61) | 0.20% (65) | 0.33% · 0.23% | 2.4 | -0.01% |
+
+| Bot | Op/anno | %/anno | Discesa | Rapporto |
+|---|---|---|---|---|
+| HyperStrategy da sola | 77 | 110% | 19% | 5.84 |
+| + segnali Lighter forti, quota 0,35 | 138 | 123% | 20% | 6.04 |
+
+Regole: 1. netto > 0 nelle due metà: SÌ · 2. t ≥ 2: SÌ · 3. senza il 5% migliore > 0: NO · 4. rapporto non peggiore e discesa ≤ 30%: SÌ
+ESITO: NON PASSA

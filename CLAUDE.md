@@ -39,10 +39,8 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   passa (più operazioni ma rapporto peggiore nel 2023-26). Lighter su BTC/ETH/SOL +0,07%/op, 2026 ~0: con le fee Hyperliquid perde.
 - 27 nov: HyperSpeedUp prove 1-3 (Gigi): classifica 2 con meno rischio e squeeze 2h solo da ferma: no. Segnali Lighter più forti (>95° perc.
   90 g) su BTC/ETH/SOL con fee HL: positivi ogni anno 2022-26, t 2,3; nel bot +60 op/anno, 110→123%/anno, discesa 19→20% (prova-3b.js). Da confermare.
-- 24 nov: ricerca 077 (Mac): HyperStrategy ferma dal 5 nov (BTC 80.500 → 59.800, volatilità al 98-100° percentile): simulazione identica, zero
-  aperture: è la strategia. 3 prove fissate prima: ATR 7 (no, B peggio), short di crollo BTC Donchian 4h (no, A peggio), Lighter ×1,2 nei giorni fermi (no).
-  Short di crollo con precedenza al long (P2b, scelta dopo): A 111% contro 108%, B 158% contro 147%; nel bot intero su BTC 2012-17
-  (mai visto) 111,8% contro 111,9%: chiuso. Il bot di oggi su 2014-17 mai visto: ogni anno in attivo (2014 +25%). Bot invariato.
+- 27 nov: ricerca 110 (Mac, verifica-110.js): prova 3 su apr 2018-dic 2021 mai visti NON PASSA (2018-19 −0,20%/op, t 1,7, senza il 5% migliore
+  negativo; nel bot 139→161%/anno ma per gli anni forti). Niente attivazione. Bot invariato.
 - 23 nov: ricerca 076 (Mac, solo analisi): percorsi delle 756 operazioni 2020-26. Grandi vincite poco riconoscibili nelle prime ore
   (AUC 0,58 a 1 h, ~0,7 a 2-8 h); sopra +1 R a 2 h 19% diventano >10 R (contro 4%): è già PiramidBoost. Le oltre 20 R restituiscono
   in mediana 16,6 R prima del segnale opposto: unico punto aperto è l'uscita dopo +10 R. Bot invariato.
