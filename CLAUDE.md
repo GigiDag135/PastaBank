@@ -33,6 +33,8 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 27 nov: ricerca 113 (Mac): chiudere a mercato dopo 2/4/8 ore le operazioni sotto −0,5 R o in perdita. NON PASSA: la migliore
+  +1,5% (2020-22) e −5,6% (2023-26). Lo stop a 2 ATR fa già il suo lavoro. Tema «riconoscere i perdenti» chiuso. Bot invariato.
 - 27 nov: HyperSpeedUp/ (nome di Gigi): copia identica della strategia per provare modifiche senza toccare il bot. Ridà i numeri
   della 077 (107,9% / 147,2%). Dati con prendi-dati.sh (Release), confronto con node prova.js. Bot invariato.
 - 27 nov: HyperSpeedUp, più operazioni (Gigi): classifica 2/3, +XRP, +sq2h/ema4h/kel4h/mom8h, +segnali Lighter nei giorni fermi: nessuna
@@ -41,5 +43,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   90 g) su BTC/ETH/SOL con fee HL: positivi ogni anno 2022-26, t 2,3; nel bot +60 op/anno, 110→123%/anno, discesa 19→20% (prova-3b.js). Da confermare.
 - 27 nov: ricerca 110 (Mac, verifica-110.js): prova 3 su apr 2018-dic 2021 mai visti NON PASSA (2018-19 −0,20%/op, t 1,7, senza il 5% migliore
   negativo; nel bot 139→161%/anno ma per gli anni forti). Niente attivazione. Bot invariato.
-- 27 nov: ricerca 112 (Mac, idea di Gigi): riconoscere all'entrata i segnali che perdono e saltarli. NON PASSA: AUC 0,49/0,46 (peggio del caso),
-  i segnali da saltare rendono più della media. Tema «modello sui segnali» 073-075-112 chiuso. Bot invariato.
