@@ -6,3 +6,4 @@ Controllo: la copia ridà i numeri della ricerca 077 (2018-22: 107,9%/anno, disc
 Uso (sul Mac):  sh prendi-dati.sh   poi   node prova.js   (originale contro copia modificata, 2 secondi)
 Prove 27 nov (più operazioni): prove-movimenti.js, prova-lighter.js (vuole dati/lighter-operazioni.json da Jeriko-OS/pepper); risultati nei .txt. Verifica 110 (anni 2018-21 mai visti): verifica-110.js, file dati/lighter-2018-21.json nella Release (ricerca-110.tgz)
 Prova 111 (classifica 2 con meno rischio, Bitfinex 2014-mar 2018 mai visti): prova-111.js, candele in dati111/ da ricerca-111.tgz (111-codice/dati). Non passa.
+Prova 115 (solidità): node solidita-115.js . (prove 1-3, 11 s); prova 4 sulle 5 monete nuove nella Release (ricerca-115.tgz).

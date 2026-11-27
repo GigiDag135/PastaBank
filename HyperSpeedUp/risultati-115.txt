@@ -1,0 +1,59 @@
+## Prova 1 · Rimescolamento
+Storia vera apr 2018 - nov 2026: 104%/anno, discesa max 29.3%, giorni più lunghi senza nuovo massimo 200
+| Orizzonte | Discesa max: mediana · 1 su 20 · 1 su 100 | Giorni senza nuovo massimo: mediana · 1 su 20 · 1 su 100 | Rendimento: 1 su 100 · 1 su 20 · mediana | Storie in perdita |
+|---|---|---|---|---|
+| 1 anno | 17% · 29% · 36% | 122 · 281 · 348 | -17% · 4% · 97% | 4.0% |
+| 3 anni | 23% · 35% · 41% | 217 · 467 · 644 | 67% · 156% · 727% | 0.0% |
+Pause senza aperture (storia vera, 618 aperture): mediana 2.8 g · 1 su 20 18 g · 1 su 100 42 g · più lunga 89 g · pause ≥ 20 g: 28
+
+## Prova 2 · Parametri spostati (rendimento/anno · discesa · rapporto; tra parentesi il rapporto in % della base) — tiene se ≥ 70%
+| Variante | A apr 2018-22 | B 2023-nov 2026 | Tiene? |
+|---|---|---|---|
+| Base | 108% · 29% · 3.68 | 147% · 19% · 7.78 | — |
+| Stop 1,6 ATR | 109% · 31% · 3.55 (96%) | 131% · 20% · 6.40 (82%) | sì |
+| Stop 2,4 ATR | 98% · 22% · 4.54 (123%) | 91% · 18% · 5.00 (64%) | **NO** |
+| Filtro volatilità 40° | 87% · 30% · 2.85 (77%) | 146% · 20% · 7.16 (92%) | sì |
+| Filtro volatilità 60° | 108% · 30% · 3.55 (96%) | 139% · 20% · 6.86 (88%) | sì |
+| Keltner periodo 16 | 117% · 28% · 4.24 (115%) | 133% · 21% · 6.46 (83%) | sì |
+| Keltner periodo 24 | 113% · 26% · 4.37 (119%) | 151% · 19% · 7.90 (102%) | sì |
+| Keltner larghezza 1,6 | 107% · 24% · 4.38 (119%) | 105% · 24% · 4.40 (57%) | **NO** |
+| Keltner larghezza 2,4 | 115% · 28% · 4.07 (111%) | 116% · 22% · 5.39 (69%) | **NO** |
+| Momentum periodo 10 | 93% · 30% · 3.12 (85%) | 151% · 21% · 7.24 (93%) | sì |
+| Momentum periodo 14 | 104% · 30% · 3.50 (95%) | 149% · 19% · 7.86 (101%) | sì |
+| Momentum soglia 2,4 | 82% · 28% · 2.97 (81%) | 146% · 20% · 7.35 (95%) | sì |
+| Momentum soglia 3,6 | 105% · 27% · 3.85 (104%) | 135% · 21% · 6.51 (84%) | sì |
+| Squeeze periodo 24 | 105% · 28% · 3.79 (103%) | 122% · 29% · 4.22 (54%) | **NO** |
+| Squeeze periodo 36 | 108% · 29% · 3.69 (100%) | 139% · 19% · 7.30 (94%) | sì |
+| Classifica giorni ×0,8 (2,6,11) | 117% · 29% · 4.02 (109%) | 148% · 20% · 7.25 (93%) | sì |
+| Classifica giorni ×1,2 (4,8,17) | 113% · 24% · 4.72 (128%) | 90% · 19% · 4.71 (61%) | **NO** |
+| PiramidBoost scatto 0,8 R | 94% · 29% · 3.28 (89%) | 134% · 19% · 6.89 (89%) | sì |
+| PiramidBoost scatto 1,2 R | 100% · 30% · 3.37 (92%) | 128% · 19% · 6.74 (87%) | sì |
+Esito prova 2: FRAGILE su: Stop 2,4 ATR, Keltner larghezza 1,6, Keltner larghezza 2,4, Squeeze periodo 24, Classifica giorni ×1,2 (4,8,17)
+
+## Prova 3 · Costi peggiori e ritardi (tiene se in guadagno e rapporto ≥ 50% della base)
+| Variante | A apr 2018-22 | B 2023-nov 2026 | Tiene? |
+|---|---|---|---|
+| Commissioni ×2 | 93% · 30% · 3.11 (84%) | 125% · 19% · 6.48 (83%) | sì |
+| Commissioni ×3 | 80% · 30% · 2.64 (72%) | 107% · 20% · 5.48 (71%) | sì |
+| Slittamento ×5 | 97% · 30% · 3.27 (89%) | 113% · 19% · 5.93 (76%) | sì |
+| Funding ×3 | 93% · 32% · 2.95 (80%) | 128% · 21% · 6.03 (78%) | sì |
+| Ritardo 1 candela (15 min) | 119% · 23% · 5.06 (138%) | 106% · 19% · 5.59 (72%) | sì |
+| Ritardo 2 candele (30 min) | 117% · 22% · 5.33 (145%) | 167% · 19% · 8.75 (113%) | sì |
+| Tutto insieme (comm. ×2, slitt. ×3, funding ×2, ritardo 1) | 88% · 25% · 3.49 (95%) | 79% · 20% · 3.86 (50%) | **NO** |
+Esito prova 3: NON SOLIDO (conta il «tutto insieme»)
+## Prova 4 · 5 monete mai usate
+(a) portafoglio (tutte e 5 presenti da mar 2020)
+| | A mar 2020-22 | B 2023-ott 2026 |
+|---|---|---|
+| 5 monete nuove | 57 op/anno · +4%/anno · disc. 20% · rapp. 0.18 | 69 op/anno · +11%/anno · disc. 25% · rapp. 0.43 |
+| Bot vero BTC/ETH/SOL (stesse date) | 68 op/anno · +84%/anno · disc. 15% · rapp. 5.78 | 70 op/anno · +152%/anno · disc. 18% · rapp. 8.55 |
+
+(b) ciascuna da sola, da quando ha 200 giorni di storia (al più presto apr 2018) a ott 2026
+| Moneta | Periodo | Risultato | Metà 1 | Metà 2 |
+|---|---|---|---|---|
+| LTC | 2018-07 → 2026-10 | 50 op/anno · +5%/anno · disc. 38% · rapp. 0.13 | 18%/anno, disc. 12% | -7%/anno, disc. 32% |
+| BNB | 2018-05 → 2026-10 | 48 op/anno · +16%/anno · disc. 22% · rapp. 0.71 | 18%/anno, disc. 22% | 14%/anno, disc. 17% |
+| ADA | 2018-11 → 2026-10 | 45 op/anno · +18%/anno · disc. 20% · rapp. 0.88 | 21%/anno, disc. 15% | 14%/anno, disc. 20% |
+| LINK | 2019-08 → 2026-10 | 51 op/anno · +20%/anno · disc. 16% · rapp. 1.22 | 24%/anno, disc. 10% | 16%/anno, disc. 16% |
+| DOGE | 2020-01 → 2026-10 | 50 op/anno · +22%/anno · disc. 38% · rapp. 0.57 | 22%/anno, disc. 30% | 22%/anno, disc. 19% |
+Esito prova 4: SOLIDO (portafoglio in guadagno in A e B: sì; monete da sole in guadagno: 5 su 5)

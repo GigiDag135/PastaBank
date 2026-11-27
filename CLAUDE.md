@@ -33,6 +33,8 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 27 nov: ricerca 115 (solidita-115.js): solidità. Parametri ±20%, costi ×2-3, ritardi, 5 monete mai usate: sempre in guadagno, ma nel
+  2023-26 i parametri sono al picco e fuori da BTC/ETH/SOL rende 5-22%/anno. Monte Carlo 1 anno: discesa 1 su 100 = 36%. Soglie proposte a Gigi.
 - 27 nov: ricerca 114 (Mac): uscita più stretta dopo +10 R (massimo −3/−5/−8 R o metà del massimo). NON PASSA: perde dal 19% al 53%
   della somma R. L'uscita al segnale opposto resta la migliore. Bot invariato.
 - 27 nov: ricerca 113 (Mac): chiudere a mercato dopo 2/4/8 ore le operazioni sotto −0,5 R o in perdita. NON PASSA: la migliore
@@ -41,5 +43,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   della 077 (107,9% / 147,2%). Dati con prendi-dati.sh (Release), confronto con node prova.js. Bot invariato.
 - 27 nov: HyperSpeedUp, più operazioni (Gigi): classifica 2/3, +XRP, +sq2h/ema4h/kel4h/mom8h, +segnali Lighter nei giorni fermi: nessuna
   passa (più operazioni ma rapporto peggiore nel 2023-26). Lighter su BTC/ETH/SOL +0,07%/op, 2026 ~0: con le fee Hyperliquid perde.
-- 27 nov: HyperSpeedUp prove 1-3 (Gigi): classifica 2 con meno rischio e squeeze 2h solo da ferma: no. Segnali Lighter più forti (>95° perc.
-  90 g) su BTC/ETH/SOL con fee HL: positivi ogni anno 2022-26, t 2,3; nel bot +60 op/anno, 110→123%/anno, discesa 19→20% (prova-3b.js). Da confermare.
