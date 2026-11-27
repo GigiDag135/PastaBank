@@ -8,3 +8,4 @@ Prove 27 nov (più operazioni): prove-movimenti.js, prova-lighter.js (vuole dati
 Prova 111 (classifica 2 con meno rischio, Bitfinex 2014-mar 2018 mai visti): prova-111.js, candele in dati111/ da ricerca-111.tgz (111-codice/dati). Non passa.
 Prova 115 (solidità): node solidita-115.js . (prove 1-3, 11 s); prova 4 sulle 5 monete nuove nella Release (ricerca-115.tgz).
 Prova 116 (solidità 2): node solidita-116.js . (partenze mensili, entrate a caso, parametri scelti sul passato, 77 s); prezzi Bitfinex nella Release (ricerca-116.tgz).
+Prova 117 (walk-forward anno per anno 2021-26): node walkforward-117.js . (1 minuto).

@@ -1,0 +1,19 @@
+fatto 2021
+fatto 2022
+fatto 2023
+fatto 2024
+fatto 2025
+fatto 2026
+| Anno di prova | M · migliore del passato | C · centro dell'altopiano | O · bot di oggi (fisso) |
+|---|---|---|---|
+| 2021 | +29% · disc. 15% · eff. 12% | +16% · disc. 17% · eff. 6% | +64% · disc. 11% · eff. 37% |
+| 2022 | -7% · disc. 20% · eff. -4% | -6% · disc. 17% · eff. -4% | +8% · disc. 13% · eff. 5% |
+| 2023 | +115% · disc. 18% · eff. 105% | +115% · disc. 18% · eff. 105% | +265% · disc. 15% · eff. 318% |
+| 2024 | +135% · disc. 15% · eff. 147% | +119% · disc. 11% · eff. 143% | +155% · disc. 13% · eff. 222% |
+| 2025 | +66% · disc. 14% · eff. 58% | +70% · disc. 14% · eff. 58% | +62% · disc. 16% · eff. 55% |
+| 2026 (fino al 22 nov) | +59% · disc. 21% · eff. 39% | +62% · disc. 20% · eff. 41% | +116% · disc. 19% · eff. 94% |
+| **Totale 2021-26** | **60%/anno** · disc. anno peggiore 21% · eff. media **59%** (mediana 49%) | **56%/anno** · disc. anno peggiore 20% · eff. media **58%** (mediana 49%) | **99%/anno** · disc. anno peggiore 19% · eff. media **122%** (mediana 74%) |
+
+Parametri scelti ogni anno:
+  M: 2021 stop 2 · vol 50° · Keltner 1.6 · classifica ×1.2 · 2022 stop 2 · vol 50° · Keltner 2.4 · classifica ×1.2 · 2023 stop 1.6 · vol 50° · Keltner 2.4 · classifica ×1 · 2024 stop 2 · vol 60° · Keltner 2 · classifica ×0.8 · 2025 stop 2 · vol 40° · Keltner 2 · classifica ×1 · 2026 stop 2 · vol 40° · Keltner 2 · classifica ×0.8
+  C: 2021 stop 1.6 · vol 40° · Keltner 1.6 · classifica ×1.2 · 2022 stop 1.6 · vol 60° · Keltner 2.4 · classifica ×0.8 · 2023 stop 1.6 · vol 50° · Keltner 2.4 · classifica ×1 · 2024 stop 2 · vol 50° · Keltner 2.4 · classifica ×1 · 2025 stop 2 · vol 50° · Keltner 2 · classifica ×0.8 · 2026 stop 2 · vol 50° · Keltner 2 · classifica ×0.8

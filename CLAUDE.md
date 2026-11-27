@@ -33,6 +33,8 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 27 nov: ricerca 117 (walkforward-117.js): parametri scelti ogni anno sui 3 anni prima → efficienza 58-59%, 56-60%/anno nel 2021-26,
+  2022 −6/−7%. Parametri di oggi vicini a quelli scelti, solo più fortunati nel 2022-26. Bot invariato.
 - 27 nov: ricerca 116 (solidita-116.js): 92/92 partenze di 12 mesi in guadagno, batte entrate a caso 199/200. Parametri di oggi 1° su 81 nel
   2022-26 ma 67° nel 2018-21: scelti nel 2021 → 47%/anno, disc. 32%. Aspettativa realistica 50-70%/anno, disc. 25-32%. Bot invariato.
 - 27 nov: ricerca 115 (solidita-115.js): solidità. Parametri ±20%, costi ×2-3, ritardi, 5 monete mai usate: sempre in guadagno, ma nel
@@ -41,5 +43,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   della somma R. L'uscita al segnale opposto resta la migliore. Bot invariato.
 - 27 nov: ricerca 113 (Mac): chiudere a mercato dopo 2/4/8 ore le operazioni sotto −0,5 R o in perdita. NON PASSA: la migliore
   +1,5% (2020-22) e −5,6% (2023-26). Lo stop a 2 ATR fa già il suo lavoro. Tema «riconoscere i perdenti» chiuso. Bot invariato.
-- 27 nov: HyperSpeedUp/ (nome di Gigi): copia identica della strategia per provare modifiche senza toccare il bot. Ridà i numeri
-  della 077 (107,9% / 147,2%). Dati con prendi-dati.sh (Release), confronto con node prova.js. Bot invariato.
