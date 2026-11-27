@@ -33,6 +33,8 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
+- 27 nov: ricerca 119 (griglia-lighter-119.js): griglia da sola, commissioni 0 come Lighter. NON PASSA: BTC −1,5%/anno 2023-26 con
+  discesa 43%, ETH/SOL peggio. Tema griglia chiuso.
 - 27 nov: ricerca 118 (griglia-118.js): griglia BTC con stop solo col bot fermo. NON PASSA: +33%/anno 2018-22 ma +2% 2023-26 (−4% a taker);
   insieme al bot peggiora il rapporto nel 2023-26. Bot invariato.
 - 27 nov: ricerca 117 (walkforward-117.js): parametri scelti ogni anno sui 3 anni prima → efficienza 58-59%, 56-60%/anno nel 2021-26,
@@ -41,5 +43,3 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   2022-26 ma 67° nel 2018-21: scelti nel 2021 → 47%/anno, disc. 32%. Aspettativa realistica 50-70%/anno, disc. 25-32%. Bot invariato.
 - 27 nov: ricerca 115 (solidita-115.js): solidità. Parametri ±20%, costi ×2-3, ritardi, 5 monete mai usate: sempre in guadagno, ma nel
   2023-26 i parametri sono al picco e fuori da BTC/ETH/SOL rende 5-22%/anno. Monte Carlo 1 anno: discesa 1 su 100 = 36%. Soglie proposte a Gigi.
-- 27 nov: ricerca 114 (Mac): uscita più stretta dopo +10 R (massimo −3/−5/−8 R o metà del massimo). NON PASSA: perde dal 19% al 53%
-  della somma R. L'uscita al segnale opposto resta la migliore. Bot invariato.
