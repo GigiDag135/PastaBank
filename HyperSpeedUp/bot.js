@@ -1,14 +1,14 @@
 // 077 · bot intero (assetto 7, BTC/ETH/SOL, modalità ribasso) con ganci per le prove. Come 064/correzione.js, SOL entra quando ha 200 giorni di storia.
 "use strict";
 const Core=require("./core.js"),E=require("./engine.js"),{carica,taglia,DAY}=require("./dati.js");
-const COINS=["BTC","ETH","SOL"],RIB={ema:50,look:30,er:0.25,longMul:0.5};
-const FULL=Object.fromEntries(COINS.map(c=>[c,carica(c)])),Dd=Object.fromEntries(COINS.map(c=>[c,E.resample(FULL[c],96).C]));
+const COINS=["BTC","ETH","SOL"],TUTTE=["BTC","ETH","SOL","XRP"],RIB={ema:50,look:30,er:0.25,longMul:0.5};
+const FULL=Object.fromEntries(TUTTE.map(c=>[c,carica(c)])),Dd=Object.fromEntries(TUTTE.map(c=>[c,E.resample(FULL[c],96).C]));
 const emB=E.ema(Dd.BTC.c,RIB.ema),ribOn=new Set();
 for(let j=51;j<Dd.BTC.t.length;j++){let p=0;for(let k=j-RIB.look+1;k<=j;k++)p+=Math.abs(Dd.BTC.c[k]-Dd.BTC.c[k-1]);const er=p>0?Math.abs(Dd.BTC.c[j]-Dd.BTC.c[j-RIB.look])/p:0;if(Dd.BTC.c[j]<emB[j]&&er>RIB.er)ribOn.add(Math.floor(Dd.BTC.t[j]/DAY));}
 const giu=t=>ribOn.has(Math.floor(t/DAY)-1);
 const BASE=Core.STRATEGIES.filter(s=>Core.PRESET.strats.includes(s.id)),kelS=BASE.find(s=>s.id==="kelS");
 function prova(from,to,o){o=o||{};
-  const coins=COINS.filter(c=>FULL[c].t[0]+200*DAY<from),d={};for(const c of coins)d[c]=taglia(FULL[c],from-400*DAY,to);
+  const coins=(o.coins||COINS).filter(c=>FULL[c].t[0]+200*DAY<from),d={};for(const c of coins)d[c]=taglia(FULL[c],from-400*DAY,to);
   const weak=(c,t)=>Core.rsRanks(Object.fromEntries(coins.map(x=>[x,Dd[x]])),t,Core.RS.lbs)[c]===coins.length-1;
   const strats=(o.strats||BASE).concat([Object.assign({},kelS,{id:"kelSR",smart:false,noRs:true})]).concat(o.extra||[]);
   const gate=(c,s,t,dir,B)=>(s.id==="kelSR"&&!(giu(t)&&weak(c,t)))||(o.gate?o.gate(c,s,t,dir,B,{giu,weak}):false);

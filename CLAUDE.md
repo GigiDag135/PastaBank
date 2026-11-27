@@ -33,8 +33,10 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   se li cambi, cambiali in tutti e due. Ricerche 044-047 nella cartella research del Mac.
 
 ## Ultime modifiche (al massimo 10 righe, togli le più vecchie)
-- 27 nov: copia-hyperstrategy/ (Gigi): copia identica della strategia per provare modifiche senza toccare il bot. Ridà i numeri
+- 27 nov: HyperSpeedUp/ (nome di Gigi): copia identica della strategia per provare modifiche senza toccare il bot. Ridà i numeri
   della 077 (107,9% / 147,2%). Dati con prendi-dati.sh (Release), confronto con node prova.js. Bot invariato.
+- 27 nov: HyperSpeedUp, più operazioni (Gigi): classifica 2/3, +XRP, +sq2h/ema4h/kel4h/mom8h, +segnali Lighter nei giorni fermi: nessuna
+  passa (più operazioni ma rapporto peggiore nel 2023-26). Lighter su BTC/ETH/SOL +0,07%/op, 2026 ~0: con le fee Hyperliquid perde.
 - 24 nov: ricerca 077 (Mac): HyperStrategy ferma dal 5 nov (BTC 80.500 → 59.800, volatilità al 98-100° percentile): simulazione identica, zero
   aperture: è la strategia. 3 prove fissate prima: ATR 7 (no, B peggio), short di crollo BTC Donchian 4h (no, A peggio), Lighter ×1,2 nei giorni fermi (no).
   Short di crollo con precedenza al long (P2b, scelta dopo): A 111% contro 108%, B 158% contro 147%; nel bot intero su BTC 2012-17
@@ -57,8 +59,6 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
 - 21 nov: ricerca 063 (cartella research del Mac, dati 2017-2026, scelta 2018-22, fuori campione 2023-26): nessuna strategia per il mercato agitato
   regge: 0 su 29 finaliste e 0 su 455 combinazioni migliorano il bot fuori campione; gli short col mercato agitato perdono sempre. Bot invariato.
   LighterStrategy rende +0,40%/giorno proprio quando HyperStrategy è ferma (+0,15% gli altri giorni): diviso 70/30 discesa 15,7% invece di 20%.
-- 21 nov: Sentinella di Pepper (decisione di Gigi, interruttore SENTINELLA in server.js): con allarme 🔴/⛔ su Hyperliquid in
-  ~/jeriko-pepper/data/sentinella.json doOpen e doAdd non inviano (sentinellaFerma); file mancante, spento o vecchio > 10 min = apre normalmente.
 - 21 nov: lettura sicura del saldo (decisione di Gigi, senza interruttore): lettura incompleta (spot mancante) = scartata, non 0 $
   (hl.js incompleto, accountSicuro 3 tentativi; doOpen/doAdd non inviano); blocco del 5% solo con due letture di fila. Gigi è passato all'assetto 7.
   FATTO (25 nov, controllo sul server): lettura sicura e Sentinella installate, 5 servizi attivi. Dal 5 nov nessun segnale ha passato i filtri

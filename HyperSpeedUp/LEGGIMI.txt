@@ -1,6 +1,7 @@
-COPIA DI HYPERSTRATEGY PER LE PROVE (27 nov 2026, richiesta di Gigi)
+HYPERSPEEDUP: COPIA DI HYPERSTRATEGY PER LE PROVE (27 nov 2026, richiesta di Gigi)
 Il bot vero (cashmkr-server.zip) NON si tocca: le modifiche si provano solo qui.
 core.js / engine.js = quelli del bot, con i ganci di Pepper per simulare la modalità ribasso (stesso comportamento).
 bot.js = il bot intero come gira: assetto 7 (0,8%), BTC ETH SOL, "solo la più forte", PiramidBoost, modalità ribasso.
 Controllo: la copia ridà i numeri della ricerca 077 (2018-22: 107,9%/anno, discesa 29,3%; 2023-26: 147,2%, discesa 18,9%).
 Uso (sul Mac):  sh prendi-dati.sh   poi   node prova.js   (originale contro copia modificata, 2 secondi)
+Prove 27 nov (più operazioni): prove-movimenti.js, prova-lighter.js (vuole dati/lighter-operazioni.json da Jeriko-OS/pepper); risultati nei .txt

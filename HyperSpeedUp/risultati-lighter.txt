@@ -1,0 +1,12 @@
+Lighter su BTC ETH SOL: 5378 operazioni, di cui 2138 quando HyperStrategy è ferma; netto medio 0.07% (tutte: 0.09%)
+| Prova (mar 2022 - nov 2026) | Operazioni/anno | Risultato | 
+|---|---|---|
+| Originale | 77 | 110%/anno · discesa 19% · rapporto 5.84 |
+| + Lighter nei giorni fermi, quota 0.35 | 530 | 136%/anno · discesa 24% · rapporto 5.75 |
+| + Lighter nei giorni fermi, quota 0.7 | 530 | 162%/anno · discesa 31% · rapporto 5.20 |
+| + Lighter nei giorni fermi, quota 1 | 530 | 185%/anno · discesa 39% · rapporto 4.78 |
+2022 268 op, netto medio 0.21%
+2023 408 op, netto medio 0.05%
+2024 432 op, netto medio 0.16%
+2025 558 op, netto medio 0.03%
+2026 472 op, netto medio -0.00%

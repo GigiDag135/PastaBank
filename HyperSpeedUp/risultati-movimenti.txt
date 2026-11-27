@@ -1,0 +1,11 @@
+| Prova | 2018-22 | 2023-26 | Passa? |
+|---|---|---|---|
+| Originale (HyperStrategy di oggi) | 73 op/anno · 37% giorni fermi · 108%/anno · discesa 29% · rapporto 3.68 | 70 op/anno · 34% giorni fermi · 147%/anno · discesa 19% · rapporto 7.78 | — |
+| Classifica 2 (due monete più forti) | 107 op/anno · 28% giorni fermi · 148%/anno · discesa 32% · rapporto 4.60 | 115 op/anno · 30% giorni fermi · 168%/anno · discesa 29% · rapporto 5.81 | no |
+| Classifica 3 | 107 op/anno · 28% giorni fermi · 148%/anno · discesa 32% · rapporto 4.60 | 153 op/anno · 27% giorni fermi · 136%/anno · discesa 32% · rapporto 4.28 | no |
+| + XRP | 73 op/anno · 37% giorni fermi · 108%/anno · discesa 29% · rapporto 3.68 | 75 op/anno · 35% giorni fermi · 149%/anno · discesa 22% · rapporto 6.90 | no |
+| + sq2h (squeeze 2 ore, anche short) | 98 op/anno · 18% giorni fermi · 185%/anno · discesa 26% · rapporto 7.15 | 102 op/anno · 20% giorni fermi · 112%/anno · discesa 27% · rapporto 4.10 | no |
+| + ema4h (incrocio medie 4 ore) | 69 op/anno · 16% giorni fermi · 77%/anno · discesa 26% · rapporto 2.94 | 76 op/anno · 15% giorni fermi · 113%/anno · discesa 22% · rapporto 5.21 | no |
+| + kel4h (Keltner 4 ore, senza filtro vol.) | 70 op/anno · 11% giorni fermi · 96%/anno · discesa 25% · rapporto 3.79 | 83 op/anno · 13% giorni fermi · 89%/anno · discesa 28% · rapporto 3.18 | no |
+| + mom8h (momentum 8 ore) | 65 op/anno · 11% giorni fermi · 97%/anno · discesa 29% · rapporto 3.33 | 77 op/anno · 9% giorni fermi · 79%/anno · discesa 31% · rapporto 2.57 | no |
+| + tutte e 4 le strategie in più | 78 op/anno · 5% giorni fermi · 95%/anno · discesa 26% · rapporto 3.71 | 96 op/anno · 5% giorni fermi · 72%/anno · discesa 34% · rapporto 2.11 | no |
