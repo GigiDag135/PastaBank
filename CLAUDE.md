@@ -41,11 +41,10 @@ Leggilo all'inizio di ogni sessione. Aggiornalo alla fine (ultima sezione). Tien
   90 g) su BTC/ETH/SOL con fee HL: positivi ogni anno 2022-26, t 2,3; nel bot +60 op/anno, 110→123%/anno, discesa 19→20% (prova-3b.js). Da confermare.
 - 27 nov: ricerca 110 (Mac, verifica-110.js): prova 3 su apr 2018-dic 2021 mai visti NON PASSA (2018-19 −0,20%/op, t 1,7, senza il 5% migliore
   negativo; nel bot 139→161%/anno ma per gli anni forti). Niente attivazione. Bot invariato.
+- 27 nov: ricerca 112 (Mac, idea di Gigi): riconoscere all'entrata i segnali che perdono e saltarli. NON PASSA: AUC 0,49/0,46 (peggio del caso),
+  i segnali da saltare rendono più della media. Tema «modello sui segnali» 073-075-112 chiuso. Bot invariato.
 - 27 nov: ricerca 111 (prova-111.js): classifica 2 a 0,6%/0,5% su Bitfinex 2014-mar 2018 mai visti (BTC+LTC) NON PASSA: rapporto 0,51/0,50
   contro 1,00, discesa 50/44% contro 37%. Solo il 2017 con 3 monete molto meglio. Niente attivazione.
-- 23 nov: ricerca 075 (Mac): modello che stima la probabilità di grandi vincite (> 5 R) su 14 monete, regole di Gigi fissate prima.
-  Forti peggio dei normali in 2020-22 e 2023-26 (R medio 0,71/0,94 contro 1,23/1,08); oltre 20 R il modello si rovescia fra i periodi.
-  Le grandi vincite non si vedono all'entrata. Tema «modello sui segnali» chiuso (4 prove). Bot invariato.
 - 23 nov: ricerca 074 (Mac): modello che impara da 14.866 segnali su 14 monete e dà solo la forza (forti rischio ×1,5, strategia uguale).
   I «forti» vanno PEGGIO degli altri (2023-26 R medio +0,48 contro +1,27): il modello ritrova solo il filtro di volatilità. Bot invariato.
 - 23 nov: ricerca 073 (cartella research del Mac): HyperStrategy «che impara» come LighterStrategy. M1 meta-modello mese per mese: previsione
