@@ -1,0 +1,40 @@
+## Test 1 · Partire in un mese qualsiasi (12 mesi)
+92 partenze · in guadagno dopo 12 mesi: 92 (100%) · peggiore 3% (partenza 2021-11) · 1 su 10 peggio di 31% · mediana +112% · migliore +403%
+Discesa nei 12 mesi: mediana 14% · 1 su 10 oltre 22% · massima 29%
+| Partenza nell'anno | Partenze | In guadagno | Peggiore | Mediana | Migliore |
+|---|---|---|---|---|---|
+| 2018 | 9 | 9 | 67% | 164% | 262% |
+| 2019 | 12 | 12 | 147% | 259% | 350% |
+| 2020 | 12 | 12 | 46% | 104% | 206% |
+| 2021 | 12 | 12 | 3% | 62% | 108% |
+| 2022 | 12 | 12 | 8% | 31% | 223% |
+| 2023 | 12 | 12 | 134% | 300% | 403% |
+| 2024 | 12 | 12 | 57% | 86% | 163% |
+| 2025 | 11 | 11 | 62% | 106% | 186% |
+Partenze in perdita: nessuna
+Esito test 1: SOLIDO
+
+## Test 2 · Entrate a caso (100 prove)
+| Periodo | Bot vero | A caso: mediana | A caso: rapporto 1 su 20 migliore · massimo | A caso in guadagno | Bot vero batte |
+|---|---|---|---|---|---|
+| A apr 2018-22 | 108% · disc. 29% · rapp. 3.68 | 40% · disc. 29% · rapp. 1.21 | 2.76 · 3.79 | 100/100 | 99/100 |
+| B 2023-nov 2026 | 147% · disc. 19% · rapp. 7.78 | 23% · disc. 30% · rapp. 0.80 | 2.33 · 2.98 | 96/100 | 100/100 |
+Esito test 2: le entrate HANNO valore
+
+## Test 3 · Parametri scelti solo sul passato (81 combinazioni)
+| | 2018-21 (scelta) | 2022-nov 2026 (prova) | Posto su 81: 2018-21 · 2022-26 |
+|---|---|---|---|
+| Scelta sul passato: stop 2 · vol 50° · Keltner 1.6 · classifica ×1.2 | 162% · disc. 18% · rapp. 8.87 | 47% · disc. 32% · rapp. 1.44 | 1 · 72 |
+| Bot di oggi | 139% · disc. 29% · rapp. 4.74 | 107% · disc. 19% · rapp. 5.63 | 67 · 1 |
+| Mediana delle 81 | 135% · rapp. 5.62 | 67% · disc. 25% · rapp. 2.43 | |
+| Peggiore delle 81 su 2022-26 | | 45% · disc. 50% · rapp. 0.90 | |
+In guadagno su 2022-26: 81/81 · prime 5 su 2018-21 → loro rapporto 2022-26: 1.44, 1.55, 1.10, 1.04, 1.28
+Esito test 3: NON SOLIDO (scelta 26% del bot di oggi su 2022-26)
+Controllo (candele di oggi, apr 2018-22): 107.9% / 29.3% / 349 op (bot.js: 107,9% / 29,3% / 349)
+
+## Test 4 · Prezzi di Bitfinex
+| Periodo | Monete | Candele di oggi | Bitfinex | Rapporto Bitfinex / oggi | Operazioni uguali (stessa moneta, strategia, ±1 h) | Tiene? |
+|---|---|---|---|---|---|---|
+| apr 2018-2021 | BTC+ETH / BTC+ETH | 139% · disc. 29% · rapp. 4.74 · 255 op | 150% · disc. 27% · rapp. 5.57 · 291 op | 117% | 184 su 255 (72%) | sì |
+| 2022-nov 2026 | BTC+ETH+SOL / BTC+ETH+SOL | 107% · disc. 19% · rapp. 5.63 · 372 op | 82% · disc. 28% · rapp. 2.93 · 409 op | 52% | 309 su 372 (83%) | **NO** |
+Esito test 4: NON SOLIDO
